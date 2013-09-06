@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using SisoDb.Dac.BulkInserts;
 using SisoDb.DbSchema;
 using SisoDb.Querying.Sql;
@@ -20,8 +21,8 @@ namespace SisoDb.Dac
         bool IsAborted { get; }
         bool IsFailed { get; }
         IAdoDriver Driver { get; }
-        IDbConnection Connection { get; }
-        IDbTransaction Transaction { get; }
+        DbConnection Connection { get; }
+        DbTransaction Transaction { get; }
         Action<IDbClient> OnCompleted { set; }
         Action<IDbClient> AfterCommit { set; }
         Action<IDbClient> AfterRollback { set; }

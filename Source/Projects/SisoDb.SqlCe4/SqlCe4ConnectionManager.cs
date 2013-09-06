@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlServerCe;
 using System.Linq;
 using SisoDb.Dac;
@@ -21,14 +22,14 @@ namespace SisoDb.SqlCe4
             AppDomain.CurrentDomain.DomainUnload += (sender, args) => ReleaseAllConnections();
         }
 
-        public override IDbConnection OpenServerConnection(ISisoConnectionInfo connectionInfo)
+        public override DbConnection OpenServerConnection(ISisoConnectionInfo connectionInfo)
         {
             EnsureWarmedUp((SqlCe4ConnectionInfo)connectionInfo);
 
             return base.OpenServerConnection(connectionInfo);
         }
 
-        public override IDbConnection OpenClientConnection(ISisoConnectionInfo connectionInfo)
+        public override DbConnection OpenClientConnection(ISisoConnectionInfo connectionInfo)
         {
             EnsureWarmedUp((SqlCe4ConnectionInfo)connectionInfo);
 

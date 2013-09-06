@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Data;
+using System.Data.Common;
 using SisoDb.Dac;
 using SisoDb.DbSchema;
 using SisoDb.EnsureThat;
@@ -17,12 +17,12 @@ namespace SisoDb.SqlServer
             get { return 200; }
         }
 
-        public SqlServerDbClient(IAdoDriver driver, IDbConnection connection, IConnectionManager connectionManager, ISqlStatements sqlStatements, IDbPipe pipe)
+        public SqlServerDbClient(IAdoDriver driver, DbConnection connection, IConnectionManager connectionManager, ISqlStatements sqlStatements, IDbPipe pipe)
             : base(driver, connection, connectionManager, sqlStatements, pipe)
         {
         }
 
-        public SqlServerDbClient(IAdoDriver driver, IDbConnection connection, IDbTransaction transaction, IConnectionManager connectionManager, ISqlStatements sqlStatements, IDbPipe pipe)
+        public SqlServerDbClient(IAdoDriver driver, DbConnection connection, DbTransaction transaction, IConnectionManager connectionManager, ISqlStatements sqlStatements, IDbPipe pipe)
             : base(driver, connection, transaction, connectionManager, sqlStatements, pipe)
         {
         }

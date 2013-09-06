@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using SisoDb.Dac;
 using SisoDb.DbSchema;
@@ -9,7 +10,7 @@ namespace SisoDb.Sql2005
 {
     public class Sql2005AdoDriver : SqlServerAdoDriver
     {
-        protected override IDbDataParameter OnParameterCreated(IDbDataParameter parameter, IDacParameter dacParameter)
+        protected override DbParameter OnParameterCreated(DbParameter parameter, IDacParameter dacParameter)
         {
             var dbParam = (SqlParameter)parameter;
             var setSize = false;

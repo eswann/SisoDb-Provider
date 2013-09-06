@@ -1,17 +1,17 @@
 using System;
-using System.Data;
+using System.Data.Common;
 
 namespace SisoDb
 {
     public interface IConnectionManager
     {
-        Func<IDbConnection, IDbConnection> OnConnectionCreated { get; set; }
+        Func<DbConnection, DbConnection> OnConnectionCreated { get; set; }
         
-        IDbConnection OpenServerConnection(ISisoConnectionInfo connectionInfo);
-        IDbConnection OpenClientConnection(ISisoConnectionInfo connectionInfo);
+        DbConnection OpenServerConnection(ISisoConnectionInfo connectionInfo);
+        DbConnection OpenClientConnection(ISisoConnectionInfo connectionInfo);
         void Reset();
         void ReleaseAllConnections();
-        void ReleaseServerConnection(IDbConnection dbConnection);
-        void ReleaseClientConnection(IDbConnection dbConnection);
+        void ReleaseServerConnection(DbConnection dbConnection);
+        void ReleaseClientConnection(DbConnection dbConnection);
     }
 }

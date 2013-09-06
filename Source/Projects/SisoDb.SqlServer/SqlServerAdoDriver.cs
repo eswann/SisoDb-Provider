@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using SisoDb.Dac;
 using SisoDb.DbSchema;
@@ -16,26 +17,27 @@ namespace SisoDb.SqlServer
             CommandTimeout = 15;
         }
 
-        public virtual IDbConnection CreateConnection(string connectionString)
+        public virtual DbConnection CreateConnection(string connectionString)
         {
             Ensure.That(connectionString, "connectionString").IsNotNull();
 
             return new SqlConnection(connectionString);
         }
 
-        public virtual IDbCommand CreateCommand(IDbConnection connection, string sql, IDbTransaction transaction = null, params IDacParameter[] parameters)
+        public virtual DbCommand CreateCommand(DbConnection connection, string sql, DbTransaction transaction = null, params IDacParameter[] parameters)
         {
             return CreateCommand(connection, CommandType.Text, sql, transaction, parameters);
         }
 
-        public virtual IDbCommand CreateSpCommand(IDbConnection connection, string spName, IDbTransaction transaction = null, params IDacParameter[] parameters)
+        public virtual DbCommand CreateSpCommand(DbConnection connection, string spName, DbTransaction transaction = null, params IDacParameter[] parameters)
         {
             return CreateCommand(connection, CommandType.StoredProcedure, spName, transaction, parameters);
         }
 
-        protected virtual IDbCommand CreateCommand(IDbConnection connection, CommandType commandType, string sql, IDbTransaction transaction = null, IDacParameter[] parameters = null)
+        protected virtual DbCommand CreateCommand(DbConnection connection, CommandType commandType, string sql, DbTransaction transaction = null, IDacParameter[] parameters = null)
         {
             var cmd = connection.CreateCommand();
+
             cmd.CommandTimeout = CommandTimeout;
 
             if (transaction != null)
@@ -52,7 +54,7 @@ namespace SisoDb.SqlServer
             return cmd;
         }
 
-        public virtual void AddCommandParametersTo(IDbCommand cmd, params IDacParameter[] parameters)
+        public virtual void AddCommandParametersTo(DbCommand cmd, params IDacParameter[] parameters)
         {
             foreach (var dacParameter in parameters)
             {
@@ -68,7 +70,7 @@ namespace SisoDb.SqlServer
             }
         }
 
-        protected virtual IDbDataParameter OnParameterCreated(IDbDataParameter parameter, IDacParameter dacParameter)
+        protected virtual DbParameter OnParameterCreated(DbParameter parameter, IDacParameter dacParameter)
         {
             var dbParam = (SqlParameter)parameter;
             var setSize = false;

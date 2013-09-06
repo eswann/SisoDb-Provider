@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Data.Common;
 using System.Data.SqlServerCe;
 using SisoDb.Dac;
 using SisoDb.DbSchema;
@@ -18,14 +19,14 @@ namespace SisoDb.SqlCe4
             CommandTimeout = 0;
         }
 
-        public override IDbConnection CreateConnection(string connectionString)
+        public override DbConnection CreateConnection(string connectionString)
         {
             Ensure.That(connectionString, "connectionString").IsNotNull();
 
             return new SqlCeConnection(connectionString);
         }
 
-        protected override IDbDataParameter OnParameterCreated(IDbDataParameter parameter, IDacParameter dacParameter)
+        protected override DbParameter OnParameterCreated(DbParameter parameter, IDacParameter dacParameter)
         {
             var dbParam = (SqlCeParameter)parameter;
 

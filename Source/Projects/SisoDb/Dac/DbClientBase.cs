@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using SisoDb.Dac.BulkInserts;
 using SisoDb.DbSchema;
@@ -27,8 +28,8 @@ namespace SisoDb.Dac
         public bool IsAborted { get; protected set; }
         public bool IsFailed { get; protected set; }
         public IAdoDriver Driver { get; private set; }
-        public IDbConnection Connection { get; private set; }
-        public IDbTransaction Transaction { get; private set; }
+        public DbConnection Connection { get; private set; }
+        public DbTransaction Transaction { get; private set; }
         protected bool HasPipe { get { return Pipe != null; } }
 
         public Action<IDbClient> OnCompleted
@@ -56,13 +57,13 @@ namespace SisoDb.Dac
             }
         }
 
-        protected DbClientBase(IAdoDriver driver, IDbConnection connection, IConnectionManager connectionManager, ISqlStatements sqlStatements, IDbPipe pipe)
+        protected DbClientBase(IAdoDriver driver, DbConnection connection, IConnectionManager connectionManager, ISqlStatements sqlStatements, IDbPipe pipe)
             : this(driver, connection, connectionManager, sqlStatements, false, null, pipe) { }
 
-        protected DbClientBase(IAdoDriver driver, IDbConnection connection, IDbTransaction transaction, IConnectionManager connectionManager, ISqlStatements sqlStatements, IDbPipe pipe)
+        protected DbClientBase(IAdoDriver driver, DbConnection connection, DbTransaction transaction, IConnectionManager connectionManager, ISqlStatements sqlStatements, IDbPipe pipe)
             : this(driver, connection, connectionManager, sqlStatements, true, transaction, pipe) { }
 
-        private DbClientBase(IAdoDriver driver, IDbConnection connection, IConnectionManager connectionManager, ISqlStatements sqlStatements, bool isTransactional, IDbTransaction transaction, IDbPipe pipe)
+        private DbClientBase(IAdoDriver driver, DbConnection connection, IConnectionManager connectionManager, ISqlStatements sqlStatements, bool isTransactional, DbTransaction transaction, IDbPipe pipe)
         {
             Ensure.That(driver, "driver").IsNotNull();
             Ensure.That(connection, "connection").IsNotNull();
@@ -884,12 +885,12 @@ namespace SisoDb.Dac
             DbObjectNameValidator.EnsureValid(dbObjectName);
         }
 
-        protected virtual IDbCommand CreateCommand(string sql, params IDacParameter[] parameters)
+        protected virtual DbCommand CreateCommand(string sql, params IDacParameter[] parameters)
         {
             return Driver.CreateCommand(Connection, sql, Transaction, parameters);
         }
 
-        protected virtual IDbCommand CreateSpCommand(string spName, params IDacParameter[] parameters)
+        protected virtual DbCommand CreateSpCommand(string spName, params IDacParameter[] parameters)
         {
             return Driver.CreateSpCommand(Connection, spName, Transaction, parameters);
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Data.Common;
 using SisoDb.Dac;
 using SisoDb.DbSchema;
 using SisoDb.EnsureThat;
@@ -28,9 +29,9 @@ namespace SisoDb.SqlServer
             SqlStatements = sqlStatements;
         }
 
-        protected virtual void WithConnection(Action<IDbConnection> cnConsumer)
+        protected virtual void WithConnection(Action<DbConnection> cnConsumer)
         {
-            IDbConnection cn = null;
+            DbConnection cn = null;
 
             try
             {
@@ -43,10 +44,10 @@ namespace SisoDb.SqlServer
             }
         }
 
-        protected virtual T WithConnection<T>(Func<IDbConnection, T> cnConsumer)
+        protected virtual T WithConnection<T>(Func<DbConnection, T> cnConsumer)
         {
             T result;
-            IDbConnection cn = null;
+            DbConnection cn = null;
 
             try
             {
@@ -107,12 +108,12 @@ namespace SisoDb.SqlServer
             });
         }
 
-        protected virtual void OnInitializeSysTables(IDbConnection cn)
+        protected virtual void OnInitializeSysTables(DbConnection cn)
         {
             OnExecuteNonQuery(cn, SqlStatements.GetSql("Sys_Identities_CreateIfNotExists").Inject(ConnectionInfo.DbName));
         }
 
-        protected virtual void OnInitializeSysTypes(IDbConnection cn)
+        protected virtual void OnInitializeSysTypes(DbConnection cn)
         {
             OnExecuteNonQuery(cn, SqlStatements.GetSql("Sys_Types_CreateIfNotExists").Inject(ConnectionInfo.DbName));
         }
@@ -129,7 +130,7 @@ namespace SisoDb.SqlServer
             WithConnection(cn => OnExecuteNonQuery(cn, SqlStatements.GetSql("DropDatabase").Inject(ConnectionInfo.DbName)));
         }
 
-        protected virtual T OnExecuteScalar<T>(IDbConnection connection, string sql, params IDacParameter[] parameters)
+        protected virtual T OnExecuteScalar<T>(DbConnection connection, string sql, params IDacParameter[] parameters)
         {
             using (var cmd = CreateCommand(connection, sql, parameters))
             {
@@ -142,7 +143,7 @@ namespace SisoDb.SqlServer
             }
         }
 
-        protected virtual void OnExecuteNonQuery(IDbConnection connection, string sql, params IDacParameter[] parameters)
+        protected virtual void OnExecuteNonQuery(DbConnection connection, string sql, params IDacParameter[] parameters)
         {
             using (var cmd = CreateCommand(connection, sql, parameters))
             {
@@ -150,12 +151,12 @@ namespace SisoDb.SqlServer
             }
         }
 
-        protected virtual IDbCommand CreateCommand(IDbConnection connection, string sql, params IDacParameter[] parameters)
+        protected virtual DbCommand CreateCommand(DbConnection connection, string sql, params IDacParameter[] parameters)
         {
             return Driver.CreateCommand(connection, sql, null, parameters);
         }
 
-        protected virtual IDbCommand CreateSpCommand(IDbConnection connection, string spName, params IDacParameter[] parameters)
+        protected virtual DbCommand CreateSpCommand(DbConnection connection, string spName, params IDacParameter[] parameters)
         {
             return Driver.CreateSpCommand(connection, spName, null, parameters);
         }

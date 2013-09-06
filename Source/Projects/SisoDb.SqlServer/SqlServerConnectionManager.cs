@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Data.Common;
 using SisoDb.Dac;
 using SisoDb.EnsureThat;
 
@@ -7,7 +8,7 @@ namespace SisoDb.SqlServer
 {
     public class SqlServerConnectionManager : IConnectionManager
     {
-        private Func<IDbConnection, IDbConnection> _onConnectionCreated;
+        private Func<DbConnection, DbConnection> _onConnectionCreated;
 
         protected readonly IAdoDriver Driver;
 
@@ -19,7 +20,7 @@ namespace SisoDb.SqlServer
             OnConnectionCreated = cn => cn;
         }
 
-        public Func<IDbConnection, IDbConnection> OnConnectionCreated
+        public Func<DbConnection, DbConnection> OnConnectionCreated
         {
             get { return _onConnectionCreated; }
             set
@@ -34,14 +35,14 @@ namespace SisoDb.SqlServer
             OnConnectionCreated = cn => cn;
         }
 
-        public virtual IDbConnection OpenServerConnection(ISisoConnectionInfo connectionInfo)
+        public virtual DbConnection OpenServerConnection(ISisoConnectionInfo connectionInfo)
         {
             var cn = OnConnectionCreated(Driver.CreateConnection(connectionInfo.ServerConnectionString));
             cn.Open();
             return cn;
         }
 
-        public virtual IDbConnection OpenClientConnection(ISisoConnectionInfo connectionInfo)
+        public virtual DbConnection OpenClientConnection(ISisoConnectionInfo connectionInfo)
         {
             var cn = OnConnectionCreated(Driver.CreateConnection(connectionInfo.ClientConnectionString));
             cn.Open();
@@ -50,7 +51,7 @@ namespace SisoDb.SqlServer
 
         public virtual void ReleaseAllConnections() { }
 
-        public virtual void ReleaseServerConnection(IDbConnection dbConnection)
+        public virtual void ReleaseServerConnection(DbConnection dbConnection)
         {
             if (dbConnection == null)
                 return;
@@ -59,7 +60,7 @@ namespace SisoDb.SqlServer
             dbConnection.Dispose();
         }
 
-        public virtual void ReleaseClientConnection(IDbConnection dbConnection)
+        public virtual void ReleaseClientConnection(DbConnection dbConnection)
         {
             if (dbConnection == null)
                 return;

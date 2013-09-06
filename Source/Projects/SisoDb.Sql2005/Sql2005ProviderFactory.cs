@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Data.Common;
 using SisoDb.Dac;
 using SisoDb.Querying;
 using SisoDb.Querying.Sql;
@@ -32,7 +33,7 @@ namespace SisoDb.Sql2005
 
         public override IDbClient GetNonTransactionalDbClient(ISisoDatabase db)
         {
-            IDbConnection connection = null;
+            DbConnection connection = null;
             if (Transactions.ActiveTransactionExists)
                 Transactions.SuppressOngoingTransactionWhile(() => connection = ConnectionManager.OpenClientConnection(db.ConnectionInfo));
             else

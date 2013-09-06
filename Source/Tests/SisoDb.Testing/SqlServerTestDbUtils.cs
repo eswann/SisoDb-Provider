@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
 using SisoDb.Dac;
@@ -221,7 +222,7 @@ namespace SisoDb.Testing
             }
         }
 
-        protected virtual IDbConnection CreateConnection()
+        protected virtual DbConnection CreateConnection()
         {
             return Driver.CreateConnection(ConnectionString);
         }

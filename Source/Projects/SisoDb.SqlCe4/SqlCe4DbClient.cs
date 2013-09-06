@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using SisoDb.Dac;
 using SisoDb.DbSchema;
@@ -19,10 +20,10 @@ namespace SisoDb.SqlCe4
             get { return 32; }
         }
 
-        public SqlCe4DbClient(IAdoDriver driver, IDbConnection connection, IConnectionManager connectionManager, ISqlStatements sqlStatements, IDbPipe pipe)
+        public SqlCe4DbClient(IAdoDriver driver, DbConnection connection, IConnectionManager connectionManager, ISqlStatements sqlStatements, IDbPipe pipe)
             : base(driver, connection, connectionManager, sqlStatements, pipe) { }
 
-        public SqlCe4DbClient(IAdoDriver driver, IDbConnection connection, IDbTransaction transaction, IConnectionManager connectionManager, ISqlStatements sqlStatements, IDbPipe pipe)
+        public SqlCe4DbClient(IAdoDriver driver, DbConnection connection, DbTransaction transaction, IConnectionManager connectionManager, ISqlStatements sqlStatements, IDbPipe pipe)
             : base(driver, connection, transaction, connectionManager, sqlStatements, pipe) { }
 
         protected override IDbBulkCopy GetBulkCopy()
