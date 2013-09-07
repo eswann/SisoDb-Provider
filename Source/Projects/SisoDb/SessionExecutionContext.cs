@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using SisoDb.EnsureThat;
 using SisoDb.NCore;
 using SisoDb.Resources;
@@ -40,6 +41,38 @@ namespace SisoDb
             try
             {
                 return action.Invoke();
+            }
+            catch
+            {
+                Session.MarkAsFailed();
+                throw;
+            }
+        }
+
+        public virtual async Task TryAsync(Func<Task> action)
+        {
+            if (Session.Status.IsAborted()) return;
+            EnsureNotAlreadyFailed();
+
+            try
+            {
+                await action.Invoke();
+            }
+            catch
+            {
+                Session.MarkAsFailed();
+                throw;
+            }
+        }
+
+        public virtual async Task<T> TryAsync<T>(Func<Task<T>> action)
+        {
+            if (Session.Status.IsAborted()) return default(T);
+            EnsureNotAlreadyFailed();
+
+            try
+            {
+                return await action.Invoke();
             }
             catch
             {

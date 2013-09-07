@@ -2,6 +2,7 @@
 using System.Data;
 using System.Data.Common;
 using System.Linq;
+using System.Threading.Tasks;
 using SisoDb.Dac;
 using SisoDb.DbSchema;
 using SisoDb.EnsureThat;
@@ -37,6 +38,14 @@ namespace SisoDb.SqlCe4
                 base.ExecuteNonQuery(sql, parameters);
             else
                 base.ExecuteNonQuery(sql.ToSqlStatements(), parameters);
+        }
+
+        public override async Task ExecuteNonQueryAsync(string sql, params IDacParameter[] parameters)
+        {
+            if (!sql.IsMultiStatement())
+                await base.ExecuteNonQueryAsync(sql, parameters);
+            else
+                await base.ExecuteNonQueryAsync(sql.ToSqlStatements(), parameters);
         }
 
         public override long CheckOutAndGetNextIdentity(string entityName, int numOfIds)

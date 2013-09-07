@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 namespace SisoDb
 {
@@ -13,5 +14,8 @@ namespace SisoDb
         ISession Session { get; }
         void Try(Action action);
         T Try<T>(Func<T> action);
+
+        Task TryAsync(Func<Task> action);
+        Task<T> TryAsync<T>(Func<Task<T>> action);
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
+using System.Threading.Tasks;
 using SisoDb.Dac.BulkInserts;
 using SisoDb.DbSchema;
 using SisoDb.EnsureThat;
@@ -230,6 +231,58 @@ namespace SisoDb.Dac
                 }
             }
         }
+
+        #region Async Methods
+
+        public virtual async Task ExecuteNonQueryAsync(string sql, params IDacParameter[] parameters)
+        {
+            using (var cmd = CreateCommand(sql, parameters))
+            {
+                await cmd.ExecuteNonQueryAsync();
+            }
+        }
+
+        public virtual async Task ExecuteNonQueryAsync(string[] sqls, params IDacParameter[] parameters)
+        {
+            using (var cmd = CreateCommand(string.Empty, parameters))
+            {
+                foreach (var sqlStatement in sqls.Where(statement => !string.IsNullOrWhiteSpace(statement)))
+                {
+                    cmd.CommandText = sqlStatement;
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        public virtual async Task<T> ExecuteScalarAsync<T>(string sql, params IDacParameter[] parameters)
+        {
+            using (var cmd = CreateCommand(sql, parameters))
+            {
+                var value = await cmd.ExecuteScalarAsync();
+
+                if (value == null || value == DBNull.Value)
+                    return default(T);
+
+                return (T)Convert.ChangeType(value, typeof(T));
+            }
+        }
+
+        public virtual async Task ReadAsync(string sql, Action<IDataRecord> callback, params IDacParameter[] parameters)
+        {
+            using (var cmd = CreateCommand(sql, parameters))
+            {
+                using (var reader = await cmd.ExecuteReaderAsync(CommandBehavior.SingleResult | CommandBehavior.SequentialAccess))
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        callback(reader);
+                    }
+                    reader.Close();
+                }
+            }
+        }
+
+        #endregion
 
         public virtual long CheckOutAndGetNextIdentity(string entityName, int numOfIds)
         {

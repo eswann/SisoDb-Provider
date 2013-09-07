@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Threading.Tasks;
 using SisoDb.Dac.BulkInserts;
 using SisoDb.DbSchema;
 using SisoDb.Querying.Sql;
@@ -31,9 +32,13 @@ namespace SisoDb.Dac
         void MarkAsFailed();
         
         void ExecuteNonQuery(string sql, params IDacParameter[] parameters);
+        Task ExecuteNonQueryAsync(string sql, params IDacParameter[] parameters);
         void ExecuteNonQuery(string[] sqls, params IDacParameter[] parameters);
+        Task ExecuteNonQueryAsync(string[] sqls, params IDacParameter[] parameters);
         T ExecuteScalar<T>(string sql, params IDacParameter[] parameters);
+        Task<T> ExecuteScalarAsync<T>(string sql, params IDacParameter[] parameters);
         void Read(string sql, Action<IDataRecord> callback, params IDacParameter[] parameters);
+        Task ReadAsync(string sql, Action<IDataRecord> callback, params IDacParameter[] parameters);
         
         long CheckOutAndGetNextIdentity(string entityName, int numOfIds);
         void RenameStructureSet(string oldStructureName, string newStructureName);

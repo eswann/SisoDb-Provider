@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using SisoDb.Caching;
 using SisoDb.Dac;
 using SisoDb.EnsureThat;
@@ -105,6 +106,16 @@ namespace SisoDb
         protected virtual T Try<T>(Func<T> action)
         {
             return ExecutionContext.Try(action);
+        }
+
+        protected virtual async Task TryAsync(Func<Task> action)
+        {
+            await ExecutionContext.TryAsync(action);
+        }
+
+        protected virtual async Task<T> TryAsync<T>(Func<Task<T>> function)
+        {
+            return await ExecutionContext.TryAsync(function);
         }
 
         protected virtual IStructureSchema OnUpsertStructureSchema<T>() where T : class
