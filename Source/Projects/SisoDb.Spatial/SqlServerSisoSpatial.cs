@@ -13,7 +13,7 @@ namespace SisoDb.Spatial
 {
     public class SqlServerSisoSpatial : ISisoSpatial
     {
-        private const string GeoParamName = "geo";
+        private readonly IGeoParameterFactory _geoParamFactory;
 
         protected readonly ISessionExecutionContext ExecutionContext;
         protected ISession Session { get { return ExecutionContext.Session; } }
@@ -23,6 +23,7 @@ namespace SisoDb.Spatial
         {
             ExecutionContext = executionContext;
             SqlStatements = SpatialSqlStatements.Instance;
+            _geoParamFactory = new GeoParameterFactory(Session);
         }
 
         public virtual void EnableFor<T>() where T : class
@@ -52,7 +53,7 @@ namespace SisoDb.Spatial
             ExecutionContext.Try(() =>
             {
                 var schema = Session.GetStructureSchema<T>();
-                var sql = SqlStatements.GetSql("DropSpatialTable").Inject(schema.GetSpatialTableName());
+                var sql = SqlStatements.GetSql(SpatialQueryNames.DropSpatialTable).Inject(schema.GetSpatialTableName());
                 Session.DbClient.ExecuteNonQuery(sql);
             });
         }
@@ -61,9 +62,9 @@ namespace SisoDb.Spatial
         {
             await ExecutionContext.TryAsync(async () =>
             {
-                var schema = Session.GetStructureSchema<T>();
-                var sql = SqlStatements.GetSql("DropSpatialTable").Inject(schema.GetSpatialTableName());
-                await Session.DbClient.ExecuteNonQueryAsync(sql);
+                GeoParameters geoParams = _geoParamFactory.CreateGeoParameters<T>(SpatialQueryNames.DropSpatialTable);
+
+                await Session.DbClient.ExecuteNonQueryAsync(geoParams.Sql);
             });
         }
 
@@ -71,10 +72,9 @@ namespace SisoDb.Spatial
         {
             ExecutionContext.Try(() =>
             {
-                var schema = Session.GetStructureSchema<T>();
-                var sidParam = CreateStructureIdParam<T>(id);
-                var sql = SqlStatements.GetSql("DeleteGeo").Inject(schema.GetSpatialTableName());
-                Session.DbClient.ExecuteNonQuery(sql, sidParam);
+                var geoParams = _geoParamFactory.CreateGeoParameters<T>(id, SpatialQueryNames.DeleteGeo);
+
+                Session.DbClient.ExecuteNonQuery(geoParams.Sql, geoParams.SidParam);
             });
         }
 
@@ -82,10 +82,8 @@ namespace SisoDb.Spatial
         {
             await ExecutionContext.TryAsync(async () =>
             {
-                var schema = Session.GetStructureSchema<T>();
-                var sidParam = CreateStructureIdParam<T>(id);
-                var sql = SqlStatements.GetSql("DeleteGeo").Inject(schema.GetSpatialTableName());
-                await Session.DbClient.ExecuteNonQueryAsync(sql, sidParam);
+                var geoParams = _geoParamFactory.CreateGeoParameters<T>(id, SpatialQueryNames.DeleteGeo);
+                await Session.DbClient.ExecuteNonQueryAsync(geoParams.Sql, geoParams.SidParam);
             });
         }
 
@@ -93,11 +91,9 @@ namespace SisoDb.Spatial
         {
             ExecutionContext.Try(() =>
             {
-                var schema = Session.GetStructureSchema<T>();
-                var sidParam = CreateStructureIdParam<T>(id);
-                var geoParam = CreatePointParam(coords, srid);
-                var sql = SqlStatements.GetSql("InsertGeo").Inject(schema.GetSpatialTableName());
-                Session.DbClient.ExecuteNonQuery(sql, sidParam, geoParam);
+                var geoParams = _geoParamFactory.CreateGeoParameters<T>(id, SpatialQueryNames.InsertGeo);
+                var shapeParam = _geoParamFactory.CreatePointParam(coords, srid);
+                Session.DbClient.ExecuteNonQuery(geoParams.Sql, geoParams.SidParam, shapeParam);
             });
         }
 
@@ -105,11 +101,9 @@ namespace SisoDb.Spatial
         {
             await ExecutionContext.TryAsync(async () =>
             {
-                var schema = Session.GetStructureSchema<T>();
-                var sidParam = CreateStructureIdParam<T>(id);
-                var geoParam = CreatePointParam(coords, srid);
-                var sql = SqlStatements.GetSql("InsertGeo").Inject(schema.GetSpatialTableName());
-                await Session.DbClient.ExecuteNonQueryAsync(sql, sidParam, geoParam);
+                var geoParams = _geoParamFactory.CreateGeoParameters<T>(id, SpatialQueryNames.InsertGeo);
+                var shapeParam = _geoParamFactory.CreatePointParam(coords, srid);
+                await Session.DbClient.ExecuteNonQueryAsync(geoParams.Sql, geoParams.SidParam, shapeParam);
             });
         }
 
@@ -117,11 +111,9 @@ namespace SisoDb.Spatial
         {
             ExecutionContext.Try(() =>
             {
-                var schema = Session.GetStructureSchema<T>();
-                var sidParam = CreateStructureIdParam<T>(id);
-                var geoParam = CreatePointParam(coords, srid);
-                var sql = SqlStatements.GetSql("UpdateGeo").Inject(schema.GetSpatialTableName());
-                Session.DbClient.ExecuteNonQuery(sql, sidParam, geoParam);
+                var geoParams = _geoParamFactory.CreateGeoParameters<T>(id, SpatialQueryNames.UpdateGeo);
+                var shapeParam = _geoParamFactory.CreatePointParam(coords, srid);
+                Session.DbClient.ExecuteNonQuery(geoParams.Sql, geoParams.SidParam, shapeParam);
             });
         }
 
@@ -129,11 +121,9 @@ namespace SisoDb.Spatial
         {
             await ExecutionContext.TryAsync(async () =>
             {
-                var schema = Session.GetStructureSchema<T>();
-                var sidParam = CreateStructureIdParam<T>(id);
-                var geoParam = CreatePointParam(coords, srid);
-                var sql = SqlStatements.GetSql("UpdateGeo").Inject(schema.GetSpatialTableName());
-                await Session.DbClient.ExecuteNonQueryAsync(sql, sidParam, geoParam);
+                var geoParams = _geoParamFactory.CreateGeoParameters<T>(id, SpatialQueryNames.UpdateGeo);
+                var shapeParam = _geoParamFactory.CreatePointParam(coords, srid);
+                await Session.DbClient.ExecuteNonQueryAsync(geoParams.Sql, geoParams.SidParam, shapeParam);
             });
         }
 
@@ -141,11 +131,9 @@ namespace SisoDb.Spatial
         {
             ExecutionContext.Try(() =>
             {
-                var schema = Session.GetStructureSchema<T>();
-                var sidParam = CreateStructureIdParam<T>(id);
-                var geoParam = CreatePointParam(coords, srid);
-                var sql = SqlStatements.GetSql("SetGeo").Inject(schema.GetSpatialTableName());
-                Session.DbClient.ExecuteNonQuery(sql, sidParam, geoParam);
+                var geoParams = _geoParamFactory.CreateGeoParameters<T>(id, SpatialQueryNames.SetGeo);
+                var shapeParam = _geoParamFactory.CreatePointParam(coords, srid);
+                Session.DbClient.ExecuteNonQuery(geoParams.Sql, geoParams.SidParam, shapeParam);
             });
         }
 
@@ -153,11 +141,9 @@ namespace SisoDb.Spatial
         {
             await ExecutionContext.TryAsync(async () =>
             {
-                var schema = Session.GetStructureSchema<T>();
-                var sidParam = CreateStructureIdParam<T>(id);
-                var geoParam = CreatePointParam(coords, srid);
-                var sql = SqlStatements.GetSql("SetGeo").Inject(schema.GetSpatialTableName());
-                await Session.DbClient.ExecuteNonQueryAsync(sql, sidParam, geoParam);
+                var geoParams = _geoParamFactory.CreateGeoParameters<T>(id, SpatialQueryNames.SetGeo);
+                var shapeParam = _geoParamFactory.CreatePointParam(coords, srid);
+                await Session.DbClient.ExecuteNonQueryAsync(geoParams.Sql, geoParams.SidParam, shapeParam);
             });
         }
 
@@ -165,11 +151,9 @@ namespace SisoDb.Spatial
         {
             ExecutionContext.Try(() =>
             {
-                var schema = Session.GetStructureSchema<T>();
-                var sidParam = CreateStructureIdParam<T>(id);
-                var geoParam = CreateCirlceParam(center, radiusInMetres, srid);
-                var sql = SqlStatements.GetSql("InsertGeo").Inject(schema.GetSpatialTableName());
-                Session.DbClient.ExecuteNonQuery(sql, sidParam, geoParam);
+                var geoParams = _geoParamFactory.CreateGeoParameters<T>(id, SpatialQueryNames.InsertGeo);
+                var shapeParam = _geoParamFactory.CreateCirlceParam(center, radiusInMetres, srid);
+                Session.DbClient.ExecuteNonQuery(geoParams.Sql, geoParams.SidParam, shapeParam);
             });
         }
 
@@ -177,11 +161,9 @@ namespace SisoDb.Spatial
         {
             await ExecutionContext.TryAsync(async () =>
             {
-                var schema = Session.GetStructureSchema<T>();
-                var sidParam = CreateStructureIdParam<T>(id);
-                var geoParam = CreateCirlceParam(center, radiusInMetres, srid);
-                var sql = SqlStatements.GetSql("InsertGeo").Inject(schema.GetSpatialTableName());
-                await Session.DbClient.ExecuteNonQueryAsync(sql, sidParam, geoParam);
+                var geoParams = _geoParamFactory.CreateGeoParameters<T>(id, SpatialQueryNames.InsertGeo);
+                var shapeParam = _geoParamFactory.CreateCirlceParam(center, radiusInMetres, srid);
+                await Session.DbClient.ExecuteNonQueryAsync(geoParams.Sql, geoParams.SidParam, shapeParam);
             });
         }
 
@@ -189,11 +171,9 @@ namespace SisoDb.Spatial
         {
             ExecutionContext.Try(() =>
             {
-                var schema = Session.GetStructureSchema<T>();
-                var sidParam = CreateStructureIdParam<T>(id);
-                var geoParam = CreateCirlceParam(center, radiusInMetres, srid);
-                var sql = SqlStatements.GetSql("UpdateGeo").Inject(schema.GetSpatialTableName());
-                Session.DbClient.ExecuteNonQuery(sql, sidParam, geoParam);
+                var geoParams = _geoParamFactory.CreateGeoParameters<T>(id, SpatialQueryNames.UpdateGeo);
+                var shapeParam = _geoParamFactory.CreateCirlceParam(center, radiusInMetres, srid);
+                Session.DbClient.ExecuteNonQuery(geoParams.Sql, geoParams.SidParam, shapeParam);
             });
         }
 
@@ -201,11 +181,9 @@ namespace SisoDb.Spatial
         {
             await ExecutionContext.TryAsync(async() =>
             {
-                var schema = Session.GetStructureSchema<T>();
-                var sidParam = CreateStructureIdParam<T>(id);
-                var geoParam = CreateCirlceParam(center, radiusInMetres, srid);
-                var sql = SqlStatements.GetSql("UpdateGeo").Inject(schema.GetSpatialTableName());
-                await Session.DbClient.ExecuteNonQueryAsync(sql, sidParam, geoParam);
+                var geoParams = _geoParamFactory.CreateGeoParameters<T>(id, SpatialQueryNames.UpdateGeo);
+                var shapeParam = _geoParamFactory.CreateCirlceParam(center, radiusInMetres, srid);
+                await Session.DbClient.ExecuteNonQueryAsync(geoParams.Sql, geoParams.SidParam, shapeParam);
             });
         }
 
@@ -213,11 +191,9 @@ namespace SisoDb.Spatial
         {
             ExecutionContext.Try(() =>
             {
-                var schema = Session.GetStructureSchema<T>();
-                var sidParam = CreateStructureIdParam<T>(id);
-                var geoParam = CreateCirlceParam(center, radiusInMetres, srid);
-                var sql = SqlStatements.GetSql("SetGeo").Inject(schema.GetSpatialTableName());
-                Session.DbClient.ExecuteNonQuery(sql, sidParam, geoParam);
+                var geoParams = _geoParamFactory.CreateGeoParameters<T>(id, SpatialQueryNames.SetGeo);
+                var shapeParam = _geoParamFactory.CreateCirlceParam(center, radiusInMetres, srid);
+                Session.DbClient.ExecuteNonQuery(geoParams.Sql, geoParams.SidParam, shapeParam);
             });
         }
 
@@ -225,11 +201,9 @@ namespace SisoDb.Spatial
         {
             await ExecutionContext.TryAsync(async () =>
             {
-                var schema = Session.GetStructureSchema<T>();
-                var sidParam = CreateStructureIdParam<T>(id);
-                var geoParam = CreateCirlceParam(center, radiusInMetres, srid);
-                var sql = SqlStatements.GetSql("SetGeo").Inject(schema.GetSpatialTableName());
-                await Session.DbClient.ExecuteNonQueryAsync(sql, sidParam, geoParam);
+                var geoParams = _geoParamFactory.CreateGeoParameters<T>(id, SpatialQueryNames.SetGeo);
+                var shapeParam = _geoParamFactory.CreateCirlceParam(center, radiusInMetres, srid);
+                await Session.DbClient.ExecuteNonQueryAsync(geoParams.Sql, geoParams.SidParam, shapeParam);
             });
         }
 
@@ -237,11 +211,9 @@ namespace SisoDb.Spatial
         {
             ExecutionContext.Try(() =>
             {
-                var geoParam = CreatePolygonParam(coords, srid);
-                var schema = Session.GetStructureSchema<T>();
-                var sidParam = CreateStructureIdParam<T>(id);
-                var sql = SqlStatements.GetSql("InsertGeo").Inject(schema.GetSpatialTableName());
-                Session.DbClient.ExecuteNonQuery(sql, sidParam, geoParam);
+                var geoParams = _geoParamFactory.CreateGeoParameters<T>(id, SpatialQueryNames.InsertGeo);
+                var shapeParam = _geoParamFactory.CreatePolygonParam(coords, srid);
+                Session.DbClient.ExecuteNonQuery(geoParams.Sql, geoParams.SidParam, shapeParam);
             });
         }
 
@@ -249,11 +221,9 @@ namespace SisoDb.Spatial
         {
             await ExecutionContext.TryAsync(async () =>
             {
-                var geoParam = CreatePolygonParam(coords, srid);
-                var schema = Session.GetStructureSchema<T>();
-                var sidParam = CreateStructureIdParam<T>(id);
-                var sql = SqlStatements.GetSql("InsertGeo").Inject(schema.GetSpatialTableName());
-                await Session.DbClient.ExecuteNonQueryAsync(sql, sidParam, geoParam);
+                var geoParams = _geoParamFactory.CreateGeoParameters<T>(id, SpatialQueryNames.InsertGeo);
+                var shapeParam = _geoParamFactory.CreatePolygonParam(coords, srid);
+                await Session.DbClient.ExecuteNonQueryAsync(geoParams.Sql, geoParams.SidParam, shapeParam);
             });
         }
 
@@ -261,11 +231,9 @@ namespace SisoDb.Spatial
         {
             ExecutionContext.Try(() =>
             {
-                var geoParam = CreatePolygonParam(coords, srid);
-                var schema = Session.GetStructureSchema<T>();
-                var sidParam = CreateStructureIdParam<T>(id);
-                var sql = SqlStatements.GetSql("UpdateGeo").Inject(schema.GetSpatialTableName());
-                Session.DbClient.ExecuteNonQuery(sql, sidParam, geoParam);
+                var geoParams = _geoParamFactory.CreateGeoParameters<T>(id, SpatialQueryNames.UpdateGeo);
+                var shapeParam = _geoParamFactory.CreatePolygonParam(coords, srid);
+                Session.DbClient.ExecuteNonQuery(geoParams.Sql, geoParams.SidParam, shapeParam);
             });
         }
 
@@ -273,11 +241,9 @@ namespace SisoDb.Spatial
         {
             await ExecutionContext.TryAsync(async () =>
             {
-                var geoParam = CreatePolygonParam(coords, srid);
-                var schema = Session.GetStructureSchema<T>();
-                var sidParam = CreateStructureIdParam<T>(id);
-                var sql = SqlStatements.GetSql("UpdateGeo").Inject(schema.GetSpatialTableName());
-                await Session.DbClient.ExecuteNonQueryAsync(sql, sidParam, geoParam);
+                var geoParams = _geoParamFactory.CreateGeoParameters<T>(id, SpatialQueryNames.UpdateGeo);
+                var shapeParam = _geoParamFactory.CreatePolygonParam(coords, srid);
+                await Session.DbClient.ExecuteNonQueryAsync(geoParams.Sql, geoParams.SidParam, shapeParam);
             });
         }
 
@@ -285,11 +251,9 @@ namespace SisoDb.Spatial
         {
             ExecutionContext.Try(() =>
             {
-                var geoParam = CreatePolygonParam(coords, srid);
-                var schema = Session.GetStructureSchema<T>();
-                var sidParam = CreateStructureIdParam<T>(id);
-                var sql = SqlStatements.GetSql("SetGeo").Inject(schema.GetSpatialTableName());
-                Session.DbClient.ExecuteNonQuery(sql, sidParam, geoParam);
+                var geoParams = _geoParamFactory.CreateGeoParameters<T>(id, SpatialQueryNames.SetGeo);
+                var shapeParam = _geoParamFactory.CreatePolygonParam(coords, srid);
+                Session.DbClient.ExecuteNonQuery(geoParams.Sql, geoParams.SidParam, shapeParam);
             });
         }
 
@@ -297,11 +261,9 @@ namespace SisoDb.Spatial
         {
             await ExecutionContext.TryAsync(async () =>
             {
-                var geoParam = CreatePolygonParam(coords, srid);
-                var schema = Session.GetStructureSchema<T>();
-                var sidParam = CreateStructureIdParam<T>(id);
-                var sql = SqlStatements.GetSql("SetGeo").Inject(schema.GetSpatialTableName());
-                await Session.DbClient.ExecuteNonQueryAsync(sql, sidParam, geoParam);
+                var geoParams = _geoParamFactory.CreateGeoParameters<T>(id, SpatialQueryNames.SetGeo);
+                var shapeParam = _geoParamFactory.CreatePolygonParam(coords, srid);
+                await Session.DbClient.ExecuteNonQueryAsync(geoParams.Sql, geoParams.SidParam, shapeParam);
             });
         }
 
@@ -310,11 +272,25 @@ namespace SisoDb.Spatial
             ExecutionContext.Try(() =>
             {
                 var schema = Session.GetStructureSchema<T>();
-                var sidParam = CreateStructureIdParam<T>(id);
-                if(Session.Db.ConnectionInfo.ProviderType == StorageProviders.Sql2008)
-                    OnMakeGeoValid2008(schema, sidParam);
+                var sidParam = _geoParamFactory.CreateStructureIdParam<T>(id);
+                if (Session.Db.ConnectionInfo.ProviderType == StorageProviders.Sql2008)
+                {
+                    var sql = SqlStatements.GetSql(SpatialQueryNames.GetGeo).Inject(schema.GetSpatialTableName());
+                    var geo = ReadGeograpy(sql, sidParam);
+                    if (geo.STIsValid())
+                        return;
+
+                    geo = geo.MakeValid();
+
+                    var geoParam = _geoParamFactory.CreateSqlGeoParam(geo);
+                    sql = SqlStatements.GetSql(SpatialQueryNames.UpdateGeo).Inject(schema.GetSpatialTableName());
+                    Session.DbClient.ExecuteNonQuery(sql, sidParam, geoParam);
+                }
                 else
-                    OnMakeGeoValid(schema, sidParam);
+                {
+                    var sql = SqlStatements.GetSql(SpatialQueryNames.MakeGeoValid).Inject(schema.GetSpatialTableName());
+                    Session.DbClient.ExecuteNonQuery(sql, sidParam);
+                }
             });
         }
 
@@ -323,63 +299,36 @@ namespace SisoDb.Spatial
             await ExecutionContext.TryAsync(async () =>
             {
                 var schema = Session.GetStructureSchema<T>();
-                var sidParam = CreateStructureIdParam<T>(id);
+                var sidParam = _geoParamFactory.CreateStructureIdParam<T>(id);
                 if (Session.Db.ConnectionInfo.ProviderType == StorageProviders.Sql2008)
-                    await OnMakeGeoValid2008Async(schema, sidParam);
+                {
+                    var sql = SqlStatements.GetSql(SpatialQueryNames.GetGeo).Inject(schema.GetSpatialTableName());
+                    var geo = await ReadGeograpyAsync(sql, sidParam);
+                    if (geo.STIsValid())
+                        return;
+
+                    geo = geo.MakeValid();
+
+                    var geoParam = _geoParamFactory.CreateSqlGeoParam(geo);
+                    sql = SqlStatements.GetSql(SpatialQueryNames.UpdateGeo).Inject(schema.GetSpatialTableName());
+                    await Session.DbClient.ExecuteNonQueryAsync(sql, sidParam, geoParam);
+                }
                 else
-                    await OnMakeGeoValidAsync(schema, sidParam);
+                {
+                    var sql = SqlStatements.GetSql(SpatialQueryNames.MakeGeoValid).Inject(schema.GetSpatialTableName());
+                    await Session.DbClient.ExecuteNonQueryAsync(sql, sidParam);
+                }
             });
         }
 
-        protected virtual void OnMakeGeoValid2008(IStructureSchema schema, IDacParameter sidParam)
-        {
-            var sql = SqlStatements.GetSql("GetGeo").Inject(schema.GetSpatialTableName());
-            var geo = ReadGeograpy(sql, sidParam);
-            if(geo.STIsValid())
-                return;
-
-            geo = geo.MakeValid();
-            
-            var geoParam = new GeographyDacParameter(GeoParamName, geo);
-            sql = SqlStatements.GetSql("UpdateGeo").Inject(schema.GetSpatialTableName());
-            Session.DbClient.ExecuteNonQuery(sql, sidParam, geoParam);
-        }
-
-        protected virtual async Task OnMakeGeoValid2008Async(IStructureSchema schema, IDacParameter sidParam)
-        {
-            var sql = SqlStatements.GetSql("GetGeo").Inject(schema.GetSpatialTableName());
-            var geo = await ReadGeograpyAsync(sql, sidParam);
-            if (geo.STIsValid())
-                return;
-
-            geo = geo.MakeValid();
-
-            var geoParam = new GeographyDacParameter(GeoParamName, geo);
-            sql = SqlStatements.GetSql("UpdateGeo").Inject(schema.GetSpatialTableName());
-            await Session.DbClient.ExecuteNonQueryAsync(sql, sidParam, geoParam);
-        }
-
-        protected virtual void OnMakeGeoValid(IStructureSchema schema, IDacParameter sidParam)
-        {
-            var sql = SqlStatements.GetSql("MakeGeoValid").Inject(schema.GetSpatialTableName());
-            Session.DbClient.ExecuteNonQuery(sql, sidParam);
-        }
-
-        protected virtual async Task OnMakeGeoValidAsync(IStructureSchema schema, IDacParameter sidParam)
-        {
-            var sql = SqlStatements.GetSql("MakeGeoValid").Inject(schema.GetSpatialTableName());
-            await Session.DbClient.ExecuteNonQueryAsync(sql, sidParam);
-        }
 
         public virtual Coordinates[] GetCoordinatesIn<T>(object id) where T : class
         {
             return ExecutionContext.Try(() =>
             {
-                var schema = Session.GetStructureSchema<T>();
-                var sidParam = CreateStructureIdParam<T>(id);
-                var sql = SqlStatements.GetSql("GetGeo").Inject(schema.GetSpatialTableName());
-                
-                return ExtractPoints(ReadGeograpy(sql, sidParam)).Select(p => new Coordinates
+                GeoParameters geoParams = _geoParamFactory.CreateGeoParameters<T>(id, SpatialQueryNames.GetGeo);
+
+                return ExtractPoints(ReadGeograpy(geoParams.Sql, geoParams.SidParam)).Select(p => new Coordinates
                 {
                     Latitude = p.Lat.Value,
                     Longitude = p.Long.Value
@@ -391,11 +340,9 @@ namespace SisoDb.Spatial
         {
             return await ExecutionContext.TryAsync(async () =>
             {
-                var schema = Session.GetStructureSchema<T>();
-                var sidParam = CreateStructureIdParam<T>(id);
-                var sql = SqlStatements.GetSql("GetGeo").Inject(schema.GetSpatialTableName());
+                GeoParameters geoParams = _geoParamFactory.CreateGeoParameters<T>(id, SpatialQueryNames.GetGeo);
 
-                return ExtractPoints(await ReadGeograpyAsync(sql, sidParam)).Select(p => new Coordinates
+                return ExtractPoints(await ReadGeograpyAsync(geoParams.Sql, geoParams.SidParam)).Select(p => new Coordinates
                 {
                     Latitude = p.Lat.Value,
                     Longitude = p.Long.Value
@@ -448,12 +395,12 @@ namespace SisoDb.Spatial
             return ExecutionContext.Try(() =>
             {
                 var schema = Session.GetStructureSchema<T>();
-                var sidParam = CreateStructureIdParam<T>(id);
-                var geoParam = CreatePointParam(coords, srid);
+                var sidParam = _geoParamFactory.CreateStructureIdParam<T>(id);
+                var geoParam = _geoParamFactory.CreatePointParam(coords, srid);
 
-                var sql = (Session.Db.ConnectionInfo.ProviderType == StorageProviders.Sql2008) 
-                    ? SqlStatements.GetSql("ContainsPoint2008").Inject(schema.GetSpatialTableName())
-                    : SqlStatements.GetSql("ContainsPoint").Inject(schema.GetSpatialTableName());
+                var sql = (Session.Db.ConnectionInfo.ProviderType == StorageProviders.Sql2008)
+                    ? SqlStatements.GetSql(SpatialQueryNames.ContainsPoint2008).Inject(schema.GetSpatialTableName())
+                    : SqlStatements.GetSql(SpatialQueryNames.ContainsPoint).Inject(schema.GetSpatialTableName());
 
                 return Session.DbClient.ExecuteScalar<bool>(sql, sidParam, geoParam);
             });
@@ -464,12 +411,12 @@ namespace SisoDb.Spatial
             return await ExecutionContext.TryAsync(async () =>
             {
                 var schema = Session.GetStructureSchema<T>();
-                var sidParam = CreateStructureIdParam<T>(id);
-                var geoParam = CreatePointParam(coords, srid);
+                var sidParam = _geoParamFactory.CreateStructureIdParam<T>(id);
+                var geoParam = _geoParamFactory.CreatePointParam(coords, srid);
 
                 var sql = (Session.Db.ConnectionInfo.ProviderType == StorageProviders.Sql2008)
-                    ? SqlStatements.GetSql("ContainsPoint2008").Inject(schema.GetSpatialTableName())
-                    : SqlStatements.GetSql("ContainsPoint").Inject(schema.GetSpatialTableName());
+                    ? SqlStatements.GetSql(SpatialQueryNames.ContainsPoint2008).Inject(schema.GetSpatialTableName())
+                    : SqlStatements.GetSql(SpatialQueryNames.ContainsPoint).Inject(schema.GetSpatialTableName());
 
                 return await Session.DbClient.ExecuteScalarAsync<bool>(sql, sidParam, geoParam);
             });
@@ -480,12 +427,12 @@ namespace SisoDb.Spatial
             return ExecutionContext.Try(() =>
             {
                 var schema = Session.GetStructureSchema<T>();
-                var sidParam = CreateStructureIdParam<T>(id);
-                var geoParam = CreatePointParam(coords, srid);
-                var bufferParam = CreateBufferParam(expandWithMetres);
+                var sidParam = _geoParamFactory.CreateStructureIdParam<T>(id);
+                var geoParam = _geoParamFactory.CreatePointParam(coords, srid);
+                var bufferParam = _geoParamFactory.CreateBufferParam(expandWithMetres);
                 var sql = (Session.Db.ConnectionInfo.ProviderType == StorageProviders.Sql2008)
-                    ? SqlStatements.GetSql("ContainsPointWithBuffer2008").Inject(schema.GetSpatialTableName())
-                    : SqlStatements.GetSql("ContainsPointWithBuffer").Inject(schema.GetSpatialTableName());
+                    ? SqlStatements.GetSql(SpatialQueryNames.ContainsPointWithBuffer2008).Inject(schema.GetSpatialTableName())
+                    : SqlStatements.GetSql(SpatialQueryNames.ContainsPointWithBuffer).Inject(schema.GetSpatialTableName());
 
                 return Session.DbClient.ExecuteScalar<bool>(sql, sidParam, geoParam, bufferParam);
             });
@@ -496,12 +443,12 @@ namespace SisoDb.Spatial
             return await ExecutionContext.TryAsync(async() =>
             {
                 var schema = Session.GetStructureSchema<T>();
-                var sidParam = CreateStructureIdParam<T>(id);
-                var geoParam = CreatePointParam(coords, srid);
-                var bufferParam = CreateBufferParam(expandWithMetres);
+                var sidParam = _geoParamFactory.CreateStructureIdParam<T>(id);
+                var geoParam = _geoParamFactory.CreatePointParam(coords, srid);
+                var bufferParam = _geoParamFactory.CreateBufferParam(expandWithMetres);
                 var sql = (Session.Db.ConnectionInfo.ProviderType == StorageProviders.Sql2008)
-                    ? SqlStatements.GetSql("ContainsPointWithBuffer2008").Inject(schema.GetSpatialTableName())
-                    : SqlStatements.GetSql("ContainsPointWithBuffer").Inject(schema.GetSpatialTableName());
+                    ? SqlStatements.GetSql(SpatialQueryNames.ContainsPointWithBuffer2008).Inject(schema.GetSpatialTableName())
+                    : SqlStatements.GetSql(SpatialQueryNames.ContainsPointWithBuffer).Inject(schema.GetSpatialTableName());
 
                 return await Session.DbClient.ExecuteScalarAsync<bool>(sql, sidParam, geoParam, bufferParam);
             });
@@ -513,40 +460,17 @@ namespace SisoDb.Spatial
             var structureTableName = structureSchema.GetStructureTableName();
 
             if (structureSchema.IdAccessor.IdType.IsIdentity())
-                return SqlStatements.GetSql("UpsertSpatialTableWithIdentity").Inject(tableName, structureTableName);
+                return SqlStatements.GetSql(SpatialQueryNames.UpsertSpatialTableWithIdentity).Inject(tableName, structureTableName);
 
             if (structureSchema.IdAccessor.IdType.IsGuid())
-                return SqlStatements.GetSql("UpsertSpatialTableWithGuid").Inject(tableName, structureTableName);
+                return SqlStatements.GetSql(SpatialQueryNames.UpsertSpatialTableWithGuid).Inject(tableName, structureTableName);
 
             if (structureSchema.IdAccessor.IdType.IsString())
-                return SqlStatements.GetSql("UpsertSpatialTableWithString").Inject(tableName, structureTableName);
+                return SqlStatements.GetSql(SpatialQueryNames.UpsertSpatialTableWithString).Inject(tableName, structureTableName);
 
             throw new SisoDbException(ExceptionMessages.IdTypeNotSupported.Inject(structureSchema.IdAccessor.IdType));
         }
 
-        protected virtual IDacParameter CreateStructureIdParam<T>(object id) where T : class
-        {
-            return new DacParameter("id", id);
-        }
 
-        protected virtual IDacParameter CreateBufferParam(double metres)
-        {
-            return new DacParameter("buffer", metres);
-        }
-
-        protected virtual GeographyDacParameter CreatePointParam(Coordinates coords, int srid)
-        {
-            return new GeographyDacParameter(GeoParamName, SqlGeography.Point(coords.Latitude, coords.Longitude, srid));
-        }
-
-        protected virtual GeographyDacParameter CreateCirlceParam(Coordinates coords, double radiusInMetres, int srid)
-        {
-            return new GeographyDacParameter(GeoParamName, SqlGeography.Point(coords.Latitude, coords.Longitude, srid).STBuffer(radiusInMetres));
-        }
-
-        protected virtual GeographyDacParameter CreatePolygonParam(Coordinates[] coords, int srid)
-        {
-            return new GeographyDacParameter(GeoParamName, GeographyFactory.CreatePolygon(coords, srid));
-        }
     }
 }

@@ -35,5 +35,6 @@ namespace SisoDb.Spatial
 
             return g;
         }
+
     }
 }
