@@ -157,6 +157,12 @@ namespace SisoDb
             return QueryEngine.Any<T>();
         }
 
+        public virtual Task<bool> AnyAsync<T>() where T : class
+        {
+            //OK, to not be wrapped in Try, since QueryEngine does this
+            return QueryEngine.Any<T>();
+        }
+
         public virtual bool Any(Type structureType)
         {
             //OK, to not be wrapped in Try, since QueryEngine does this

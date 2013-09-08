@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data.Common;
+using System.Threading.Tasks;
 using SisoDb.Dac;
 using SisoDb.DbSchema;
 using SisoDb.EnsureThat;
@@ -34,9 +35,7 @@ namespace SisoDb.SqlServer
 
         public override void DeleteAllExceptIds(IEnumerable<IStructureId> structureIds, IStructureSchema structureSchema)
         {
-            Ensure.That(structureSchema, "structureSchema").IsNotNull();
-
-            var sql = SqlStatements.GetSql("DeleteAllExceptIds").Inject(structureSchema.GetStructureTableName());
+            var sql = CreateDeleteAllExceptionIdsSql(structureSchema);
 
             using (var cmd = CreateCommand(sql))
             {
@@ -49,11 +48,32 @@ namespace SisoDb.SqlServer
             }
         }
 
-        public override void DeleteByIds(IEnumerable<IStructureId> ids, IStructureSchema structureSchema)
+        public override async Task DeleteAllExceptIdsAsync(IEnumerable<IStructureId> structureIds, IStructureSchema structureSchema)
+        {
+            var sql = CreateDeleteAllExceptionIdsSql(structureSchema);
+
+            using (var cmd = CreateCommand(sql))
+            {
+                foreach (var idBatch in structureIds.Batch(MaxBatchedIdsSize))
+                {
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.Add(SqlServerIdsTableParam.CreateIdsTableParam(structureSchema.IdAccessor.IdType, idBatch));
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        private string CreateDeleteAllExceptionIdsSql(IStructureSchema structureSchema)
         {
             Ensure.That(structureSchema, "structureSchema").IsNotNull();
 
-            var sql = SqlStatements.GetSql("DeleteByIds").Inject(structureSchema.GetStructureTableName());
+            var sql = SqlStatements.GetSql("DeleteAllExceptIds").Inject(structureSchema.GetStructureTableName());
+            return sql;
+        }
+
+        public override void DeleteByIds(IEnumerable<IStructureId> ids, IStructureSchema structureSchema)
+        {
+            var sql = CreateDeleteByIdsSql(structureSchema);
 
             using (var cmd = CreateCommand(sql))
             {
@@ -66,11 +86,32 @@ namespace SisoDb.SqlServer
             }
         }
 
-        public override IEnumerable<string> GetJsonByIds(IEnumerable<IStructureId> ids, IStructureSchema structureSchema)
+        public override async Task DeleteByIdsAsync(IEnumerable<IStructureId> ids, IStructureSchema structureSchema)
+        {
+            var sql = CreateDeleteByIdsSql(structureSchema);
+
+            using (var cmd = CreateCommand(sql))
+            {
+                foreach (var idBatch in ids.Batch(MaxBatchedIdsSize))
+                {
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.Add(SqlServerIdsTableParam.CreateIdsTableParam(structureSchema.IdAccessor.IdType, idBatch));
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        private string CreateDeleteByIdsSql(IStructureSchema structureSchema)
         {
             Ensure.That(structureSchema, "structureSchema").IsNotNull();
 
-            var sql = SqlStatements.GetSql("GetJsonByIds").Inject(structureSchema.GetStructureTableName());
+            var sql = SqlStatements.GetSql(DacCommandNames.DeleteByIds).Inject(structureSchema.GetStructureTableName());
+            return sql;
+        }
+
+        public override IEnumerable<string> GetJsonByIds(IEnumerable<IStructureId> ids, IStructureSchema structureSchema)
+        {
+            var sql = GetJsonByIdsSql(structureSchema);
 
             using (var cmd = CreateCommand(sql))
             {
@@ -79,10 +120,39 @@ namespace SisoDb.SqlServer
 					cmd.Parameters.Clear();
                     cmd.Parameters.Add(SqlServerIdsTableParam.CreateIdsTableParam(structureSchema.IdAccessor.IdType, idBatch));
 
-				    foreach (var data in YieldJson(structureSchema, cmd))
+				    foreach (var data in RetreiveJson(structureSchema, cmd))
 				        yield return data;
 				}
             }
+        }
+
+        public override async Task<IEnumerable<string>> GetJsonByIdsAsync(IEnumerable<IStructureId> ids, IStructureSchema structureSchema)
+        {
+            var sql = GetJsonByIdsSql(structureSchema);
+
+            var returnJson = new List<string>();
+
+            using (var cmd = CreateCommand(sql))
+            {
+                foreach (var idBatch in ids.Batch(MaxBatchedIdsSize))
+                {
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.Add(SqlServerIdsTableParam.CreateIdsTableParam(structureSchema.IdAccessor.IdType, idBatch));
+
+                    returnJson.AddRange(await RetreiveJsonAsync(structureSchema, cmd));
+
+                }
+            }
+
+            return returnJson;
+        }
+
+        private string GetJsonByIdsSql(IStructureSchema structureSchema)
+        {
+            Ensure.That(structureSchema, "structureSchema").IsNotNull();
+
+            var sql = SqlStatements.GetSql(DacCommandNames.GetJsonByIds).Inject(structureSchema.GetStructureTableName());
+            return sql;
         }
     }
 }

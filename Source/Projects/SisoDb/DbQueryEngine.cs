@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using SisoDb.Caching;
 using SisoDb.Dac;
 using SisoDb.EnsureThat;
@@ -30,6 +31,11 @@ namespace SisoDb
             return ExecutionContext.Try(action);
         }
 
+        protected virtual async Task<T> TryAsync<T>(Func<Task<T>> function)
+        {
+            return await ExecutionContext.TryAsync(function);
+        }
+
         protected virtual IStructureSchema OnUpsertStructureSchema<T>() where T : class
         {
             return OnUpsertStructureSchema(typeof(T));
@@ -48,9 +54,19 @@ namespace SisoDb
             return Try(() => OnAny(typeof(T)));
         }
 
+        public virtual async Task<bool> AnyAsync<T>() where T : class
+        {
+            return await TryAsync(async () => await OnAnyAsync(typeof(T)));
+        }
+
         public virtual bool Any(Type structureType)
         {
             return Try(() => OnAny(structureType));
+        }
+
+        public virtual async Task<bool> AnyAsync(Type structureType)
+        {
+            return await TryAsync(async () => await OnAnyAsync(structureType));
         }
 
         protected virtual bool OnAny(Type structureType)
@@ -60,6 +76,15 @@ namespace SisoDb
             var structureSchema = OnUpsertStructureSchema(structureType);
 
             return DbClient.Any(structureSchema);
+        }
+
+        protected virtual async Task<bool> OnAnyAsync(Type structureType)
+        {
+            Ensure.That(structureType, "structureType").IsNotNull();
+
+            var structureSchema = OnUpsertStructureSchema(structureType);
+
+            return await DbClient.AnyAsync(structureSchema);
         }
 
         public virtual bool Any<T>(IQuery query) where T : class

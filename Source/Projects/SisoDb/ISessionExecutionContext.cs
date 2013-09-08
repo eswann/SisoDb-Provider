@@ -12,10 +12,12 @@ namespace SisoDb
     public interface ISessionExecutionContext
     {
         ISession Session { get; }
-        void Try(Action action);
-        T Try<T>(Func<T> action);
 
+        void Try(Action action);
         Task TryAsync(Func<Task> action);
-        Task<T> TryAsync<T>(Func<Task<T>> action);
+
+        T Try<T>(Func<T> function);
+        Task<T> TryAsync<T>(Func<Task<T>> function);
+
     }
 }

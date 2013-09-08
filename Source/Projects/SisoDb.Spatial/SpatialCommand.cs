@@ -3,7 +3,7 @@
 namespace SisoDb.Spatial
 {
 
-    public struct GeoParameters
+    public struct SpatialCommand
     {
         public IDacParameter SidParam { get; set; }
         public string Sql { get; set; }

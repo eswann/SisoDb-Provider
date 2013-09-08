@@ -1,6 +1,8 @@
 using System;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
+using System.Threading.Tasks;
 using SisoDb.Dac;
 using SisoDb.Dac.Profiling;
 using SisoDb.EnsureThat;
@@ -58,10 +60,16 @@ namespace SisoDb.SqlServer
             _innerBulkCopy.ColumnMappings.Add(sourceFieldName, destinationFieldName);
         }
 
-        public void Write(IDataReader reader)
+        public void Write(DbDataReader reader)
         {
             _dbClient.ExecuteNonQuery("SET XACT_ABORT ON;");
             _innerBulkCopy.WriteToServer(reader);
+        }
+
+        public async Task WriteAsync(DbDataReader reader)
+        {
+            await _dbClient.ExecuteNonQueryAsync("SET XACT_ABORT ON;");
+            await _innerBulkCopy.WriteToServerAsync(reader);
         }
     }
 }

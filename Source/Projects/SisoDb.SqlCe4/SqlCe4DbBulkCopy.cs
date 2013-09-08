@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlServerCe;
+using System.Threading.Tasks;
 using SisoDb.Dac;
 using SisoDb.EnsureThat;
 using SisoDb.SqlCe4.Profiling;
@@ -42,7 +44,7 @@ namespace SisoDb.SqlCe4
 			_columnMappings.Add(sourceFieldName, destinationFieldName);
         }
 
-        public void Write(IDataReader reader)
+        public void Write(DbDataReader reader)
         {
         	var columnsCount = _columnMappings.Count;
             const int rowIdIndex = 0;
@@ -68,6 +70,34 @@ namespace SisoDb.SqlCe4
 					}
 				}
 			}
+        }
+
+        public async Task WriteAsync(DbDataReader reader)
+        {
+            var columnsCount = _columnMappings.Count;
+            const int rowIdIndex = 0;
+            const int offsetCausedByRowId = rowIdIndex + 1;
+
+            using (var cmd = _connection.CreateCommand())
+            {
+                if (_transaction != null)
+                    cmd.Transaction = _transaction;
+
+                cmd.CommandText = DestinationTableName;
+                cmd.CommandType = CommandType.TableDirect;
+                using (var rsIn = cmd.ExecuteResultSet(ResultSetOptions.Updatable))
+                {
+                    var newRecord = rsIn.CreateRecord();
+                    while (await reader.ReadAsync())
+                    {
+                        for (var i = offsetCausedByRowId; i <= columnsCount; i++)
+                        {
+                            newRecord.SetValue(i, reader.GetValue(i));
+                        }
+                        rsIn.Insert(newRecord);
+                    }
+                }
+            }
         }
     }
 }

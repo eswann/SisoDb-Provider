@@ -1,6 +1,6 @@
 ﻿namespace SisoDb.Spatial
 {
-    public static class SpatialQueryNames
+    public static class SpatialCommandNames
     {
         public const string InsertGeo = "InsertGeo";
         public const string UpdateGeo = "UpdateGeo";

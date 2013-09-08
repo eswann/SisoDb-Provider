@@ -1,5 +1,6 @@
 using System;
-using System.Data;
+using System.Data.Common;
+using System.Threading.Tasks;
 
 namespace SisoDb.Dac
 {
@@ -8,6 +9,8 @@ namespace SisoDb.Dac
         string DestinationTableName { set; }
         int BatchSize { set; }
         void AddColumnMapping(string sourceFieldName, string destinationFieldName);
-        void Write(IDataReader reader);
+
+        void Write(DbDataReader reader);
+        Task WriteAsync(DbDataReader reader);
     }
 }

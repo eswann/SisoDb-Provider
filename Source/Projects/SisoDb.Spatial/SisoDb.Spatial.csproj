@@ -52,9 +52,9 @@
     </Compile>
     <Compile Include="Coordinates.cs" />
     <Compile Include="GeographyFactory.cs" />
-    <Compile Include="GeoParameterFactory.cs" />
-    <Compile Include="GeoParameters.cs" />
-    <Compile Include="IGeoParameterFactory.cs" />
+    <Compile Include="SpatialCommandFactory.cs" />
+    <Compile Include="SpatialCommand.cs" />
+    <Compile Include="ISpatialCommandFactory.cs" />
     <Compile Include="ISisoSpatial.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\ExceptionMessages.Designer.cs">
@@ -63,7 +63,7 @@
       <DependentUpon>ExceptionMessages.resx</DependentUpon>
     </Compile>
     <Compile Include="SessionExtensions.cs" />
-    <Compile Include="SpatialQueryNames.cs" />
+    <Compile Include="SpatialCommandNames.cs" />
     <Compile Include="SqlServerSisoSpatial.cs" />
     <Compile Include="SpatialReferenceId.cs" />
     <Compile Include="SpatialSqlStatements.cs" />

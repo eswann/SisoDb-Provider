@@ -5,34 +5,34 @@ using SisoDb.NCore;
 
 namespace SisoDb.Spatial
 {
-    public class GeoParameterFactory : IGeoParameterFactory
+    public class SpatialCommandFactory : ISpatialCommandFactory
     {
         private const string _geoParamName = "geo";
         private readonly ISession _session;
         private readonly ISqlStatements _sqlStatements = SpatialSqlStatements.Instance;
 
-        public GeoParameterFactory(ISession session)
+        public SpatialCommandFactory(ISession session)
         {
             _session = session;
         }
 
-        public GeoParameters CreateGeoParameters<T>(object id, string queryName) where T : class
+        public SpatialCommand CreateQuery<T>(object id, string queryName) where T : class
         {
             var sid = CreateStructureIdParam<T>(id);
 
-            return CreateGeoParameters<T>(sid, queryName);
+            return CreateQuery<T>(sid, queryName);
         }
 
-        public GeoParameters CreateGeoParameters<T>(string queryName) where T : class
+        public SpatialCommand CreateQuery<T>(string queryName) where T : class
         {
-            return CreateGeoParameters<T>(null, queryName);
+            return CreateQuery<T>(null, queryName);
         }
 
-        public GeoParameters CreateGeoParameters<T>(IDacParameter sid, string queryName) where T : class
+        public SpatialCommand CreateQuery<T>(IDacParameter sid, string queryName) where T : class
         {
             var schema = _session.GetStructureSchema<T>();
 
-            return new GeoParameters
+            return new SpatialCommand
             {
                 SidParam = sid,
                 Sql = _sqlStatements.GetSql(queryName).Inject(schema.GetSpatialTableName())
