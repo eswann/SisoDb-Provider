@@ -45,7 +45,7 @@ namespace SisoDb.Querying
             return new DbQuery(formatter.Format(SqlStatements.GetSql("Query")), parameters, query.IsCacheable);
         }
 
-        public virtual IDbQuery GenerateQueryReturningStrutureIds(IQuery query)
+        public virtual IDbQuery GenerateQueryReturningStructureIds(IQuery query)
         {
             EnsureQueryContainsOnlyWhereExpression(query);
 

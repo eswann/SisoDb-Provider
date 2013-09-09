@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using SisoDb.NCore.Collections;
 using SisoDb.Querying.Sql;
 using SisoDb.Structures;
@@ -74,12 +75,28 @@ namespace SisoDb.Caching
             return cacheProvider[structureSchema.Type.Type].Count() > 0 || nonCacheQuery.Invoke(structureSchema);
         }
 
+        public static async Task<bool> AnyAsync(this ICacheProvider cacheProvider, IStructureSchema structureSchema, Func<IStructureSchema, Task<bool>> nonCacheQuery)
+        {
+            if (!cacheProvider.IsEnabledFor(structureSchema))
+                return await nonCacheQuery(structureSchema);
+
+            return cacheProvider[structureSchema.Type.Type].Count() > 0 || await nonCacheQuery(structureSchema);
+        }
+
         public static bool Exists(this ICacheProvider cacheProvider, IStructureSchema structureSchema, IStructureId structureId, Func<IStructureId, bool> nonCacheQuery)
         {
             if (!cacheProvider.IsEnabledFor(structureSchema))
                 return nonCacheQuery.Invoke(structureId);
 
             return cacheProvider[structureSchema.Type.Type].Exists(structureId) || nonCacheQuery.Invoke(structureId);
+        }
+
+        public static async Task<bool> ExistsAsync(this ICacheProvider cacheProvider, IStructureSchema structureSchema, IStructureId structureId, Func<IStructureId, Task<bool>> nonCacheQuery)
+        {
+            if (!cacheProvider.IsEnabledFor(structureSchema))
+                return await nonCacheQuery(structureId);
+
+            return cacheProvider[structureSchema.Type.Type].Exists(structureId) || await nonCacheQuery(structureId);
         }
 
         public static T Consume<T>(this ICacheProvider cacheProvider, IStructureSchema structureSchema, Expression<Func<T, bool>> predicate, Func<Expression<Func<T, bool>>, T> nonCacheQuery, CacheConsumeModes consumeMode) where T : class
@@ -116,6 +133,23 @@ namespace SisoDb.Caching
             return cache.Put(structureId, structure);
         }
 
+        public async static Task<T> ConsumeAsync<T>(this ICacheProvider cacheProvider, IStructureSchema structureSchema, IStructureId structureId, Func<IStructureId, Task<T>> nonCacheQuery, CacheConsumeModes consumeMode) where T : class
+        {
+            if (!cacheProvider.IsEnabledFor(structureSchema))
+                return await nonCacheQuery(structureId);
+
+            var cache = cacheProvider[structureSchema.Type.Type];
+            var structure = cache.GetById<T>(structureId);
+            if (structure != null)
+                return structure;
+
+            structure = await nonCacheQuery(structureId);
+            if (structure == null || consumeMode == CacheConsumeModes.DoNotUpdateCacheWithDbResult)
+                return structure;
+
+            return cache.Put(structureId, structure);
+        }
+
         public static IEnumerable<T> Consume<T>(this ICacheProvider cacheProvider, IStructureSchema structureSchema, IStructureId[] structureIds, Func<IStructureId[], IEnumerable<T>> nonCacheQuery, CacheConsumeModes consumeMode) where T : class
         {
             if (!cacheProvider.IsEnabledFor(structureSchema))
@@ -145,6 +179,40 @@ namespace SisoDb.Caching
 
             return cachedResult.Values.MergeWith(cache.Put(nonCacheQuery.Invoke(deltaIds).Select(s => new KeyValuePair<IStructureId, T>(structureSchema.IdAccessor.GetValue(s), s))));
         }
+
+        public static async Task<IEnumerable<T>> ConsumeAsync<T>(this ICacheProvider cacheProvider, IStructureSchema structureSchema, IStructureId[] structureIds, Func<IStructureId[], Task<IEnumerable<T>>> nonCacheQuery, CacheConsumeModes consumeMode) where T : class
+        {
+            if (!cacheProvider.IsEnabledFor(structureSchema))
+                return await nonCacheQuery(structureIds);
+
+            var cache = cacheProvider[structureSchema.Type.Type];
+            var cachedResult = cache.GetByIds<T>(structureIds).ToDictionary(kv => kv.Key, kv => kv.Value); //Ok to turn it to in-mem rep and not yield. GetByIds, should not be enormous resultset.
+
+            if (!cachedResult.Any())
+            {
+                if (consumeMode == CacheConsumeModes.DoNotUpdateCacheWithDbResult)
+                    return await nonCacheQuery(structureIds);
+
+                var results = await nonCacheQuery(structureIds);
+
+                return cache.Put(results.Select(s => new KeyValuePair<IStructureId, T>(structureSchema.IdAccessor.GetValue(s), s)));
+            }
+
+            var allWasCached = cachedResult.Count == structureIds.Length;
+            if (allWasCached)
+                return cachedResult.Values;
+
+            var deltaIds = structureIds.Where(sid => !cachedResult.ContainsKey(sid)).ToArray();
+            if (!deltaIds.Any())
+                return cachedResult.Values;
+
+            if (consumeMode == CacheConsumeModes.DoNotUpdateCacheWithDbResult)
+                return cachedResult.Values.MergeWith(await nonCacheQuery(deltaIds));
+
+            var results2 = await nonCacheQuery(structureIds);
+
+            return cachedResult.Values.MergeWith(cache.Put(results2.Select(s => new KeyValuePair<IStructureId, T>(structureSchema.IdAccessor.GetValue(s), s))));
+        }
         
         public static IEnumerable<T> Consume<T>(this ICacheProvider cacheProvider, IStructureSchema structureSchema, IDbQuery query, Func<IDbQuery, IEnumerable<T>> nonCacheQuery, CacheConsumeModes consumeMode) where T : class
         {
@@ -162,6 +230,26 @@ namespace SisoDb.Caching
             return cache.Put(
                 queryChecksum, 
                 nonCacheQuery.Invoke(query).Select(s => new KeyValuePair<IStructureId, T>(structureSchema.IdAccessor.GetValue(s), s)));
+        }
+
+        public static async Task<IEnumerable<T>> ConsumeAsync<T>(this ICacheProvider cacheProvider, IStructureSchema structureSchema, IDbQuery query, 
+            Func<IDbQuery, Task<IEnumerable<T>>> nonCacheQuery, CacheConsumeModes consumeMode) where T : class
+        {
+            if (!cacheProvider.IsEnabledFor(structureSchema))
+                return await nonCacheQuery(query);
+
+            var queryChecksum = DbQueryChecksumGenerator.Instance.Generate(query);
+            var cache = cacheProvider[structureSchema.Type.Type];
+            if (cache.HasQuery(queryChecksum))
+                return cache.GetByQuery<T>(queryChecksum);
+
+            var results = await nonCacheQuery(query);
+
+            if (query.IsCacheable && consumeMode != CacheConsumeModes.DoNotUpdateCacheWithDbResult)
+                cache.Put(queryChecksum,
+                          results.Select(s => new KeyValuePair<IStructureId, T>(structureSchema.IdAccessor.GetValue(s), s)));
+
+            return results;
         }
     }
 }

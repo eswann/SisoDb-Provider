@@ -123,7 +123,20 @@ namespace SisoDb
             return OnUpsertStructureSchema(typeof(T));
         }
 
+        protected virtual async Task<IStructureSchema> OnUpsertStructureSchemaAsync<T>() where T : class
+        {
+            return await OnUpsertStructureSchemaAsync(typeof(T));
+        }
+
         protected virtual IStructureSchema OnUpsertStructureSchema(Type structuretype)
+        {
+            var structureSchema = Db.StructureSchemas.GetSchema(structuretype);
+            Db.DbSchemas.Upsert(structureSchema, DbClient);
+
+            return structureSchema;
+        }
+
+        protected virtual async Task<IStructureSchema> OnUpsertStructureSchemaAsync(Type structuretype)
         {
             var structureSchema = Db.StructureSchemas.GetSchema(structuretype);
             Db.DbSchemas.Upsert(structureSchema, DbClient);
@@ -157,10 +170,10 @@ namespace SisoDb
             return QueryEngine.Any<T>();
         }
 
-        public virtual Task<bool> AnyAsync<T>() where T : class
+        public virtual async Task<bool> AnyAsync<T>() where T : class
         {
             //OK, to not be wrapped in Try, since QueryEngine does this
-            return QueryEngine.Any<T>();
+            return await QueryEngine.AnyAsync<T>();
         }
 
         public virtual bool Any(Type structureType)
@@ -169,10 +182,22 @@ namespace SisoDb
             return QueryEngine.Any(structureType);
         }
 
+        public virtual async Task<bool> AnyAsync(Type structureType)
+        {
+            //OK, to not be wrapped in Try, since QueryEngine does this
+            return await QueryEngine.AnyAsync(structureType);
+        }
+
         public virtual int Count<T>() where T : class
         {
             //OK, to not be wrapped in Try, since QueryEngine does this
             return QueryEngine.Count<T>();
+        }
+
+        public virtual async Task<int> CountAsync<T>() where T : class
+        {
+            //OK, to not be wrapped in Try, since QueryEngine does this
+            return await QueryEngine.CountAsync<T>();
         }
 
         public virtual int Count(Type structureType)
@@ -181,10 +206,22 @@ namespace SisoDb
             return QueryEngine.Count(structureType);
         }
 
+        public virtual async Task<int> CountAsync(Type structureType)
+        {
+            //OK, to not be wrapped in Try, since QueryEngine does this
+            return await QueryEngine.CountAsync(structureType);
+        }
+
         public virtual bool Exists<T>(object id) where T : class
         {
             //OK, to not be wrapped in Try, since QueryEngine does this
             return QueryEngine.Exists<T>(id);
+        }
+
+        public virtual async Task<bool> ExistsAsync<T>(object id) where T : class
+        {
+            //OK, to not be wrapped in Try, since QueryEngine does this
+            return await QueryEngine.ExistsAsync<T>(id);
         }
 
         public virtual bool Exists(Type structureType, object id)
@@ -193,12 +230,37 @@ namespace SisoDb
             return QueryEngine.Exists(structureType, id);
         }
 
+        public virtual async Task<bool> ExistsAsync(Type structureType, object id)
+        {
+            //OK, to not be wrapped in Try, since QueryEngine does this
+            return await QueryEngine.ExistsAsync(structureType, id);
+        }
+
         public virtual T CheckoutById<T>(object id) where T : class
         {
             return Try(() => OnCheckoutById<T>(id));
         }
 
+        public virtual async Task<T> CheckoutByIdAsync<T>(object id) where T : class
+        {
+            return TryAsync(async () => await OnCheckoutByIdAsync<T>(id));
+        }
+
         protected virtual T OnCheckoutById<T>(object id) where T : class
+        {
+            Ensure.That(id, "id").IsNotNull();
+
+            var structureId = StructureId.ConvertFrom(id);
+            var structureSchema = OnUpsertStructureSchema<T>();
+
+            return Db.CacheProvider.Consume(
+                structureSchema,
+                structureId,
+                sid => Db.Serializer.Deserialize<T>(DbClient.GetJsonByIdWithLock(sid, structureSchema)),
+                CacheConsumeMode);
+        }
+
+        protected virtual async Task<T> OnCheckoutByIdAsync<T>(object id) where T : class
         {
             Ensure.That(id, "id").IsNotNull();
 
@@ -217,9 +279,19 @@ namespace SisoDb
             return Try(() => OnGetIds<T, TId>(predicate));
         }
 
+        public virtual async Task<IEnumerable<TId>> GetIdsAsync<T, TId>(Expression<Func<T, bool>> predicate) where T : class
+        {
+            return await TryAsync(async () => await OnGetIdsAsync<T, TId>(predicate));
+        }
+
         public virtual IEnumerable<object> GetIds<T>(Expression<Func<T, bool>> predicate) where T : class
         {
             return Try(() => OnGetIds<T, object>(predicate));
+        }
+
+        public virtual async Task<IEnumerable<object>> GetIdsAsync<T>(Expression<Func<T, bool>> predicate) where T : class
+        {
+            return await TryAsync(async () => await OnGetIdsAsync<T, object>(predicate));
         }
 
         protected virtual IEnumerable<TId> OnGetIds<T, TId>(Expression<Func<T, bool>> predicate) where T : class
@@ -231,9 +303,23 @@ namespace SisoDb
             queryBuilder.Where(predicate);
 
             var query = queryBuilder.Build();
-            var sql = QueryGenerator.GenerateQueryReturningStrutureIds(query);
+            var sql = QueryGenerator.GenerateQueryReturningStructureIds(query);
 
             return DbClient.GetStructureIds<TId>(structureSchema, sql);
+        }
+
+        protected virtual async Task<IEnumerable<TId>> OnGetIdsAsync<T, TId>(Expression<Func<T, bool>> predicate) where T : class
+        {
+            Ensure.That(predicate, "predicate").IsNotNull();
+            var structureSchema = OnUpsertStructureSchema<T>();
+
+            var queryBuilder = Db.ProviderFactory.GetQueryBuilder<T>(Db.StructureSchemas);
+            queryBuilder.Where(predicate);
+
+            var query = queryBuilder.Build();
+            var sql = QueryGenerator.GenerateQueryReturningStructureIds(query);
+
+            return await DbClient.GetStructureIdsAsync<TId>(structureSchema, sql);
         }
 
         public virtual T GetByQuery<T>(Expression<Func<T, bool>> predicate) where T : class
@@ -924,7 +1010,7 @@ namespace SisoDb
             queryBuilder.Where(predicate);
 
             var query = queryBuilder.Build();
-            var sql = QueryGenerator.GenerateQueryReturningStrutureIds(query);
+            var sql = QueryGenerator.GenerateQueryReturningStructureIds(query);
             DbClient.DeleteByQuery(sql, structureSchema);
             InternalEvents.NotifyDeleted(this, structureSchema, query);
         }

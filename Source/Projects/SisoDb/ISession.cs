@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using SisoDb.Caching;
 using SisoDb.Dac;
 using SisoDb.Structures.Schemas;
@@ -113,6 +114,18 @@ namespace SisoDb
         ISisoQueryable<T> Query<T>() where T : class;
 
         /// <summary>
+        /// Lets you perform a Query defining things like
+        /// <see cref="ISisoQueryable{T}.Take"/>
+        /// <see cref="ISisoQueryable{T}.Where"/>
+        /// <see cref="ISisoQueryable{T}.OrderBy"/>
+        /// <see cref="ISisoQueryable{T}.Page"/>
+        /// </summary>
+        /// <typeparam name="T">Structure type, used as a contract defining the scheme.</typeparam>
+        /// <returns></returns>
+        /// <remarks>Does not consume any <see cref="ICacheProvider"/>.</remarks>
+        Task<ISisoQueryable<T>> QueryAsync<T>() where T : class;
+
+        /// <summary>
         /// Returns bool indicating if the specified structure <typeparamref name="T"/>,
         /// has any items at all.
         /// </summary>
@@ -121,12 +134,28 @@ namespace SisoDb
         bool Any<T>() where T : class;
 
         /// <summary>
+        /// Returns bool indicating if the specified structure <typeparamref name="T"/>,
+        /// has any items at all.
+        /// </summary>
+        /// <typeparam name="T">Structure type, used as a contract defining the scheme.</typeparam>
+        /// <returns>Number of structures.</returns>
+        Task<bool> AnyAsync<T>() where T : class;
+
+        /// <summary>
         /// Returns bool indicating if the specified structure <paramref name="structureType" />,
         /// has any items at all.
         /// </summary>
         /// <param name="structureType">Structure type, used as a contract defining the scheme.</param>
         /// <returns>Number of structures.</returns>
         bool Any(Type structureType);
+
+        /// <summary>
+        /// Returns bool indicating if the specified structure <paramref name="structureType" />,
+        /// has any items at all.
+        /// </summary>
+        /// <param name="structureType">Structure type, used as a contract defining the scheme.</param>
+        /// <returns>Number of structures.</returns>
+        Task<bool> AnyAsync(Type structureType);
 
         /// <summary>
         /// Issues a simple count for how many structures there
@@ -138,11 +167,27 @@ namespace SisoDb
 
         /// <summary>
         /// Issues a simple count for how many structures there
+        /// are in the specified structure <typeparamref name="T"/>.
+        /// </summary>
+        /// <typeparam name="T">Structure type, used as a contract defining the scheme.</typeparam>
+        /// <returns></returns>
+        Task<int> CountAsync<T>() where T : class;
+
+        /// <summary>
+        /// Issues a simple count for how many structures there
         /// are in the specified structure <paramref name="structureType"/>.
         /// </summary>
         /// <param name="structureType">Structure type, used as a contract defining the scheme.</param>
         /// <returns></returns>
         int Count(Type structureType);
+
+        /// <summary>
+        /// Issues a simple count for how many structures there
+        /// are in the specified structure <paramref name="structureType"/>.
+        /// </summary>
+        /// <param name="structureType">Structure type, used as a contract defining the scheme.</param>
+        /// <returns></returns>
+        Task<int> CountAsync(Type structureType);
 
         /// <summary>
         /// Returns (true) if there is a structure matching the sent <paramref name="id"/>.
@@ -155,10 +200,26 @@ namespace SisoDb
         /// <summary>
         /// Returns (true) if there is a structure matching the sent <paramref name="id"/>.
         /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<bool> ExistsAsync<T>(object id) where T : class;
+
+        /// <summary>
+        /// Returns (true) if there is a structure matching the sent <paramref name="id"/>.
+        /// </summary>
         /// <param name="structureType"></param>
         /// <param name="id"></param>
         /// <returns></returns>
         bool Exists(Type structureType, object id);
+
+        /// <summary>
+        /// Returns (true) if there is a structure matching the sent <paramref name="id"/>.
+        /// </summary>
+        /// <param name="structureType"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<bool> ExistsAsync(Type structureType, object id);
 
         /// <summary>
         /// Returns the structure or NULL representing the sent <paramref name="id"/>.
@@ -169,6 +230,16 @@ namespace SisoDb
         /// <param name="id"></param>
         /// <returns></returns>
         T CheckoutById<T>(object id) where T : class;
+
+        /// <summary>
+        /// Returns the structure or NULL representing the sent <paramref name="id"/>.
+        /// The item returned is fetched with exclusive row locks, hence keep the
+        /// scope of the session as small as possible.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<T> CheckoutByIdAsync<T>(object id) where T : class;
 
         /// <summary>
         /// Returns the StructureIds for <typeparamref name="T"/> as <typeparamref name="TId"/> withoout
@@ -182,6 +253,17 @@ namespace SisoDb
         IEnumerable<TId> GetIds<T, TId>(Expression<Func<T, bool>> predicate) where T : class;
 
         /// <summary>
+        /// Returns the StructureIds for <typeparamref name="T"/> as <typeparamref name="TId"/> withoout
+        /// having to deserialize the structure. Hence this is more effective then getting the structure
+        /// and then extracting the id.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="TId"></typeparam>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        Task<IEnumerable<TId>> GetIdsAsync<T, TId>(Expression<Func<T, bool>> predicate) where T : class;
+
+        /// <summary>
         /// Returns the StructureIds for <typeparamref name="T"/> as <see cref="object"/> withoout
         /// having to deserialize the structure. Hence this is more effective then getting the structure
         /// and then extracting the id.
@@ -192,6 +274,16 @@ namespace SisoDb
         IEnumerable<object> GetIds<T>(Expression<Func<T, bool>> predicate) where T : class;
 
         /// <summary>
+        /// Returns the StructureIds for <typeparamref name="T"/> as <see cref="object"/> withoout
+        /// having to deserialize the structure. Hence this is more effective then getting the structure
+        /// and then extracting the id.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        Task<IEnumerable<object>> GetIdsAsync<T>(Expression<Func<T, bool>> predicate) where T : class;
+
+        /// <summary>
         /// Used to find one single instance or NULL or <typeparamref name="T"/>. The benefits over <see cref="Query{T}"/>,
         /// is that <see cref="GetByQuery{T}"/> consumes any present <see cref="ICacheProvider"/>, which <see cref="Query{T}"/> does not.
         /// </summary>
@@ -199,6 +291,15 @@ namespace SisoDb
         /// <param name="predicate"></param>
         /// <returns></returns>
         T GetByQuery<T>(Expression<Func<T, bool>> predicate) where T : class;
+
+        /// <summary>
+        /// Used to find one single instance or NULL or <typeparamref name="T"/>. The benefits over <see cref="Query{T}"/>,
+        /// is that <see cref="GetByQuery{T}"/> consumes any present <see cref="ICacheProvider"/>, which <see cref="Query{T}"/> does not.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        Task<T> GetByQueryAsync<T>(Expression<Func<T, bool>> predicate) where T : class;
 
         /// <summary>
         /// Returns one single structure identified
@@ -211,12 +312,30 @@ namespace SisoDb
         T GetById<T>(object id) where T : class;
 
         /// <summary>
+        /// Returns one single structure identified
+        /// by an id.
+        /// </summary>
+        /// <typeparam name="T">
+        /// Structure type, used as a contract defining the scheme.</typeparam>
+        /// <param name="id"></param>
+        /// <returns>Structure (<typeparamref name="T"/>) or Null</returns>
+        Task<T> GetByIdAsync<T>(object id) where T : class;
+
+        /// <summary>
         /// Returns one single structure identified by an id.
         /// </summary>
         /// <param name="structureType"></param>
         /// <param name="id"></param>
         /// <returns>Structure for (<paramref name="structureType"/>) matching <paramref name="id"/> or NULL.</returns>
         object GetById(Type structureType, object id);
+
+        /// <summary>
+        /// Returns one single structure identified by an id.
+        /// </summary>
+        /// <param name="structureType"></param>
+        /// <param name="id"></param>
+        /// <returns>Structure for (<paramref name="structureType"/>) matching <paramref name="id"/> or NULL.</returns>
+        Task<object> GetByIdAsync(Type structureType, object id);
 
         /// <summary>
         /// Returns one single structure identified
@@ -236,12 +355,38 @@ namespace SisoDb
         /// Returns one single structure identified
         /// by an id. 
         /// </summary>
+        /// <typeparam name="TContract">
+        /// Structure type, used as a contract defining the scheme.</typeparam>
+        /// <typeparam name="TOut">
+        /// Determines the type you want your structure deserialized to and returned as.</typeparam>
+        /// <param name="id"></param>
+        /// <returns>Structure (<typeparamref name="TOut"/>) or null.</returns>
+        Task<TOut> GetByIdAsAsync<TContract, TOut>(object id)
+            where TContract : class
+            where TOut : class;
+
+        /// <summary>
+        /// Returns one single structure identified
+        /// by an id. 
+        /// </summary>
         /// <typeparam name="TOut">
         /// Determines the type you want your structure deserialized to and returned as.</typeparam>
         /// <param name="structureType"></param>
         /// <param name="id"></param>
         /// <returns>Structure for (<paramref name="structureType"/>) as (<typeparamref name="TOut"/>) or null.</returns>
         TOut GetByIdAs<TOut>(Type structureType, object id)
+            where TOut : class;
+
+        /// <summary>
+        /// Returns one single structure identified
+        /// by an id. 
+        /// </summary>
+        /// <typeparam name="TOut">
+        /// Determines the type you want your structure deserialized to and returned as.</typeparam>
+        /// <param name="structureType"></param>
+        /// <param name="id"></param>
+        /// <returns>Structure for (<paramref name="structureType"/>) as (<typeparamref name="TOut"/>) or null.</returns>
+        Task<TOut> GetByIdAsAsync<TOut>(Type structureType, object id)
             where TOut : class;
 
         /// <summary>
@@ -264,11 +409,37 @@ namespace SisoDb
         /// is stored in the database, no deserialization
         /// will take place.  
         /// </summary>
+        /// <typeparam name="T">
+        /// Structure type, used as a contract defining the scheme.</typeparam>
+        /// <param name="id"></param>
+        /// <returns>Json representation of (<typeparamref name="T"/>) or Null</returns>
+        Task<string> GetByIdAsJsonAsync<T>(object id) where T : class;
+
+        /// <summary>
+        /// Returns one single structure identified
+        /// by an id, as Json. This is the most
+        /// effective return type, since the Json
+        /// is stored in the database, no deserialization
+        /// will take place.  
+        /// </summary>
         /// <param name="structureType">
         /// Structure type, used as a contract defining the scheme.</param>
         /// <param name="id"></param>
         /// <returns>Json representation of (<paramref name="structureType"/>) or Null</returns>
         string GetByIdAsJson(Type structureType, object id);
+
+        /// <summary>
+        /// Returns one single structure identified
+        /// by an id, as Json. This is the most
+        /// effective return type, since the Json
+        /// is stored in the database, no deserialization
+        /// will take place.  
+        /// </summary>
+        /// <param name="structureType">
+        /// Structure type, used as a contract defining the scheme.</param>
+        /// <param name="id"></param>
+        /// <returns>Json representation of (<paramref name="structureType"/>) or Null</returns>
+        Task<string> GetByIdAsJsonAsync(Type structureType, object id);
 
         /// <summary>
         /// Returns all structures for the defined structure <typeparamref name="T"/>
@@ -280,6 +451,15 @@ namespace SisoDb
         IEnumerable<T> GetByIds<T>(params object[] ids) where T : class;
 
         /// <summary>
+        /// Returns all structures for the defined structure <typeparamref name="T"/>
+        /// matching passed ids.
+        /// </summary>
+        /// <typeparam name="T">Structure type, used as a contract defining the scheme.</typeparam>
+        /// <param name="ids">Ids used for matching the structures to return.</param>
+        /// <returns>IEnumerable of <typeparamref name="T"/>.</returns>
+        Task<IEnumerable<T>> GetByIdsAsync<T>(params object[] ids) where T : class;
+
+        /// <summary>
         /// Returns all structures for the defined structure type <paramref name="structureType"/>
         /// that matches passed ids.
         /// </summary>
@@ -287,6 +467,15 @@ namespace SisoDb
         /// <param name="ids"></param>
         /// <returns></returns>
         IEnumerable<object> GetByIds(Type structureType, params object[] ids);
+
+        /// <summary>
+        /// Returns all structures for the defined structure type <paramref name="structureType"/>
+        /// that matches passed ids.
+        /// </summary>
+        /// <param name="structureType"></param>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        Task<IEnumerable<object>> GetByIdsAsync(Type structureType, params object[] ids);
 
         /// <summary>
         /// Returns all structures for the defined structure <typeparamref name="TContract"/>
@@ -303,6 +492,20 @@ namespace SisoDb
             where TOut : class;
 
         /// <summary>
+        /// Returns all structures for the defined structure <typeparamref name="TContract"/>
+        /// matching passed ids.
+        /// </summary>
+        /// <typeparam name="TContract">
+        /// Structure type, used as a contract defining the scheme.</typeparam>
+        /// <typeparam name="TOut">
+        /// Determines the type you want your structure deserialized to and returned as.</typeparam>
+        /// <param name="ids">Ids used for matching the structures to return.</param>
+        /// <returns>Structures for (<typeparamref name="TContract"/>) as (Enumerable of <typeparamref name="TOut"/>).</returns>
+        Task<IEnumerable<TOut>> GetByIdsAsAsync<TContract, TOut>(params object[] ids)
+            where TContract : class
+            where TOut : class;
+
+        /// <summary>
         /// Returns all structures for the defined structure <paramref name="structureType"/>
         /// matching passed ids.
         /// </summary>
@@ -315,6 +518,18 @@ namespace SisoDb
             where TOut : class;
 
         /// <summary>
+        /// Returns all structures for the defined structure <paramref name="structureType"/>
+        /// matching passed ids.
+        /// </summary>
+        /// <typeparam name="TOut">
+        /// Determines the type you want your structure deserialized to and returned as.</typeparam>
+        /// <param name="structureType"></param>
+        /// <param name="ids">Ids used for matching the structures to return.</param>
+        /// <returns>Structures for (<paramref name="structureType"/>) as (Enumerable of <typeparamref name="TOut"/>).</returns>
+        Task<IEnumerable<TOut>> GetByIdsAsAsync<TOut>(Type structureType, params object[] ids)
+            where TOut : class;
+
+        /// <summary>
         /// Returns Json representation for all structures for the defined structure <typeparamref name="T"/>
         /// matching passed ids.
         /// </summary>
@@ -322,6 +537,15 @@ namespace SisoDb
         /// <param name="ids">Ids used for matching the structures to return.</param>
         /// <returns>IEnumerable Json representation of <typeparamref name="T"/>.</returns>
         IEnumerable<string> GetByIdsAsJson<T>(params object[] ids) where T : class;
+
+        /// <summary>
+        /// Returns Json representation for all structures for the defined structure <typeparamref name="T"/>
+        /// matching passed ids.
+        /// </summary>
+        /// <typeparam name="T">Structure type, used as a contract defining the scheme.</typeparam>
+        /// <param name="ids">Ids used for matching the structures to return.</param>
+        /// <returns>IEnumerable Json representation of <typeparamref name="T"/>.</returns>
+        Task<IEnumerable<string>> GetByIdsAsJsonAsync<T>(params object[] ids) where T : class;
 
         /// <summary>
         /// Returns Json representation for all structures for the defined structure <paramref name="structureType"/>
@@ -333,6 +557,15 @@ namespace SisoDb
         IEnumerable<string> GetByIdsAsJson(Type structureType, params object[] ids);
 
         /// <summary>
+        /// Returns Json representation for all structures for the defined structure <paramref name="structureType"/>
+        /// matching passed ids.
+        /// </summary>
+        /// <param name="structureType">Structure type, used as a contract defining the scheme.</param>
+        /// <param name="ids">Ids used for matching the structures to return.</param>
+        /// <returns>IEnumerable Json representation of <paramref name="structureType"/>.</returns>
+        Task<IEnumerable<string>> GetByIdsAsJsonAsync(Type structureType, params object[] ids);
+
+        /// <summary>
         /// Inserts a single structure using the <typeparamref name="T"/> as
         /// the contract for the structure being inserted.
         /// </summary>
@@ -340,6 +573,15 @@ namespace SisoDb
         /// Structure type, used as a contract defining the scheme.</typeparam>
         /// <param name="item"></param>
         ISession Insert<T>(T item) where T : class;
+
+        /// <summary>
+        /// Inserts a single structure using the <typeparamref name="T"/> as
+        /// the contract for the structure being inserted.
+        /// </summary>
+        /// <typeparam name="T">
+        /// Structure type, used as a contract defining the scheme.</typeparam>
+        /// <param name="item"></param>
+        Task<ISession> InsertAsync<T>(T item) where T : class;
 
         /// <summary>
         /// Inserts a single structure using the <paramref name="structureType" /> as
@@ -351,6 +593,15 @@ namespace SisoDb
         ISession Insert(Type structureType, object item);
 
         /// <summary>
+        /// Inserts a single structure using the <paramref name="structureType" /> as
+        /// the contract for the structure being inserted.
+        /// </summary>
+        /// <param name="structureType"></param>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        Task<ISession> InsertAsync(Type structureType, object item);
+
+        /// <summary>
         /// Inserts a single structure using the <typeparamref name="T"/> as
         /// the contract for the structure being inserted. As item, you can pass
         /// any type that has partial or full match of the contract, without extending it.
@@ -359,6 +610,16 @@ namespace SisoDb
         /// <typeparam name="T"></typeparam>
         /// <param name="item"></param>
         ISession InsertAs<T>(object item) where T : class;
+
+        /// <summary>
+        /// Inserts a single structure using the <typeparamref name="T"/> as
+        /// the contract for the structure being inserted. As item, you can pass
+        /// any type that has partial or full match of the contract, without extending it.
+        /// E.g An anonymous type.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="item"></param>
+        Task<ISession> InsertAsAsync<T>(object item) where T : class;
 
         /// <summary>
         /// Inserts a single structure using the <paramref name="structureType"/> as
@@ -372,6 +633,17 @@ namespace SisoDb
         ISession InsertAs(Type structureType, object item);
 
         /// <summary>
+        /// Inserts a single structure using the <paramref name="structureType"/> as
+        /// the contract for the structure being inserted. As item, you can pass
+        /// any type that has partial or full match of the contract, without extending it.
+        /// E.g An anonymous type.
+        /// </summary>
+        /// <param name="structureType"></param>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        Task<ISession> InsertAsAsync(Type structureType, object item);
+
+        /// <summary>
         /// Inserts Json strcutures using the <typeparamref name="T"/> as
         /// the contract for the structure being inserted.
         /// </summary>
@@ -381,6 +653,17 @@ namespace SisoDb
         /// <param name="json"></param>
         /// <returns>The Json for the item being inserted, but after insert so that the Id is included.</returns>
         string InsertJson<T>(string json) where T : class;
+
+        /// <summary>
+        /// Inserts Json strcutures using the <typeparamref name="T"/> as
+        /// the contract for the structure being inserted.
+        /// </summary>
+        /// <remarks>Deserialization of the Json structure will take place, 
+        /// so If you do have the instace pass that instead using other overload!</remarks>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="json"></param>
+        /// <returns>The Json for the item being inserted, but after insert so that the Id is included.</returns>
+        Task<string> InsertJsonAsync<T>(string json) where T : class;
 
         /// <summary>
         /// Inserts Json strcutures using the <paramref name="structureType"/> as
@@ -394,6 +677,17 @@ namespace SisoDb
         string InsertJson(Type structureType, string json);
 
         /// <summary>
+        /// Inserts Json strcutures using the <paramref name="structureType"/> as
+        /// the contract for the structure being inserted.
+        /// </summary>
+        /// <remarks>Deserialization of the Json structure will take place, 
+        /// so If you do have the instace pass that instead using other overload!</remarks>
+        /// <param name="structureType"></param>
+        /// <param name="json"></param>
+        /// <returns>The Json for the item being inserted, but after insert so that the Id is included.</returns>
+        Task<string> InsertJsonAsync(Type structureType, string json);
+
+        /// <summary>
         /// Inserts multiple structures using the <typeparamref name="T"/> as
         /// the contract for the structures being inserted. 
         /// </summary>
@@ -403,6 +697,15 @@ namespace SisoDb
         ISession InsertMany<T>(IEnumerable<T> items) where T : class;
 
         /// <summary>
+        /// Inserts multiple structures using the <typeparamref name="T"/> as
+        /// the contract for the structures being inserted. 
+        /// </summary>
+        /// <typeparam name="T">
+        /// Structure type, used as a contract defining the scheme.</typeparam>
+        /// <param name="items"></param>
+        Task<ISession> InsertManyAsync<T>(IEnumerable<T> items) where T : class;
+
+        /// <summary>
         /// Inserts multiple structures using the <paramref name="structureType" /> as
         /// the contract for the structures being inserted. 
         /// </summary>
@@ -410,6 +713,15 @@ namespace SisoDb
         /// <param name="items"></param>
         /// <returns></returns>
         ISession InsertMany(Type structureType, IEnumerable<object> items);
+
+        /// <summary>
+        /// Inserts multiple structures using the <paramref name="structureType" /> as
+        /// the contract for the structures being inserted. 
+        /// </summary>
+        /// <param name="structureType"></param>
+        /// <param name="items"></param>
+        /// <returns></returns>
+        Task<ISession> InsertManyAsync(Type structureType, IEnumerable<object> items);
 
         /// <summary>
         /// Inserts multiple Json strcutures using the <typeparamref name="T"/> as
@@ -422,6 +734,16 @@ namespace SisoDb
         void InsertManyJson<T>(IEnumerable<string> json) where T : class;
 
         /// <summary>
+        /// Inserts multiple Json strcutures using the <typeparamref name="T"/> as
+        /// the contract for the structures being inserted.
+        /// </summary>
+        /// <remarks>Deserialization of the Json structures will take place, 
+        /// so If you do have the instace pass that instead using other overload!</remarks>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="json"></param>
+        Task InsertManyJsonAsync<T>(IEnumerable<string> json) where T : class;
+
+        /// <summary>
         /// Inserts multiple Json strcutures using the <paramref name="structureType" /> as
         /// the contract for the structures being inserted.
         /// </summary>
@@ -430,6 +752,16 @@ namespace SisoDb
         /// <param name="structureType"></param>
         /// <param name="json"></param>
         void InsertManyJson(Type structureType, IEnumerable<string> json);
+
+        /// <summary>
+        /// Inserts multiple Json strcutures using the <paramref name="structureType" /> as
+        /// the contract for the structures being inserted.
+        /// </summary>
+        /// <remarks>Deserialization of the Json structures will take place, 
+        /// so If you do have the instace pass that instead using other overload!</remarks>
+        /// <param name="structureType"></param>
+        /// <param name="json"></param>
+        Task InsertManyJsonAsync(Type structureType, IEnumerable<string> json);
 
         /// <summary>
         /// Updates the sent structure. If it
@@ -446,10 +778,30 @@ namespace SisoDb
         /// does not exist, an <see cref="SisoDbException"/> will be
         /// thrown.
         /// </summary>
+        /// <typeparam name="T">
+        /// Structure type, used as a contract defining the scheme.</typeparam>
+        /// <param name="item"></param>
+        Task<ISession> UpdateAsync<T>(T item) where T : class;
+
+        /// <summary>
+        /// Updates the sent structure. If it
+        /// does not exist, an <see cref="SisoDbException"/> will be
+        /// thrown.
+        /// </summary>
         /// <param name="structureType">
         /// Structure type, used as a contract defining the scheme.</param>
         /// <param name="item"></param>
         ISession Update(Type structureType, object item);
+
+        /// <summary>
+        /// Updates the sent structure. If it
+        /// does not exist, an <see cref="SisoDbException"/> will be
+        /// thrown.
+        /// </summary>
+        /// <param name="structureType">
+        /// Structure type, used as a contract defining the scheme.</param>
+        /// <param name="item"></param>
+        Task<ISession> UpdateAsync(Type structureType, object item);
 
         /// <summary>
         /// Uses sent id to locate a structure and then calls sent <paramref name="modifier"/>
@@ -468,6 +820,18 @@ namespace SisoDb
         /// to apply the changes. Will also place an rowlock, which makes it highly
         /// useful in a concurrent environment like in an event denormalizer.
         /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="id"></param>
+        /// <param name="modifier"></param>
+        /// <param name="proceed">True to continue with update;False to abort</param>
+        /// <returns></returns>
+        Task<ISession> UpdateAsync<T>(object id, Action<T> modifier, Func<T, bool> proceed = null) where T : class;
+
+        /// <summary>
+        /// Uses sent id to locate a structure and then calls sent <paramref name="modifier"/>
+        /// to apply the changes. Will also place an rowlock, which makes it highly
+        /// useful in a concurrent environment like in an event denormalizer.
+        /// </summary>
         /// <typeparam name="TContract">Structure type, used as a contract defining the scheme.</typeparam>
         /// <typeparam name="TImpl"></typeparam>
         /// <param name="id"></param>
@@ -475,6 +839,21 @@ namespace SisoDb
         /// <param name="proceed">True to continue with update;False to abort</param>
         /// <returns></returns>
         ISession Update<TContract, TImpl>(object id, Action<TImpl> modifier, Func<TImpl, bool> proceed = null)
+            where TContract : class
+            where TImpl : class;
+
+        /// <summary>
+        /// Uses sent id to locate a structure and then calls sent <paramref name="modifier"/>
+        /// to apply the changes. Will also place an rowlock, which makes it highly
+        /// useful in a concurrent environment like in an event denormalizer.
+        /// </summary>
+        /// <typeparam name="TContract">Structure type, used as a contract defining the scheme.</typeparam>
+        /// <typeparam name="TImpl"></typeparam>
+        /// <param name="id"></param>
+        /// <param name="modifier"></param>
+        /// <param name="proceed">True to continue with update;False to abort</param>
+        /// <returns></returns>
+        Task<ISession> UpdateAsync<TContract, TImpl>(object id, Action<TImpl> modifier, Func<TImpl, bool> proceed = null)
             where TContract : class
             where TImpl : class;
 
@@ -489,6 +868,16 @@ namespace SisoDb
         ISession UpdateMany<T>(Expression<Func<T, bool>> predicate, Action<T> modifier) where T : class;
 
         /// <summary>
+        /// Traverses every structure in the set and lets you apply changes to each yielded structure.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="predicate"></param>
+        /// <param name="modifier"></param>
+        /// <remarks>Does not support Concurrency tokens</remarks>
+        /// <returns></returns>
+        Task<ISession> UpdateManyAsync<T>(Expression<Func<T, bool>> predicate, Action<T> modifier) where T : class;
+
+        /// <summary>
         /// Clears all stored structures of type <typeparamref name="T"/>.
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -496,11 +885,25 @@ namespace SisoDb
         ISession Clear<T>() where T : class;
 
         /// <summary>
+        /// Clears all stored structures of type <typeparamref name="T"/>.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        Task<ISession> ClearAsync<T>() where T : class;
+
+        /// <summary>
         /// Clears all stored structures of type specified by <paramref name="structureType"/>.
         /// </summary>
         /// <param name="structureType"></param>
         /// <returns></returns>
         ISession Clear(Type structureType);
+
+        /// <summary>
+        /// Clears all stored structures of type specified by <paramref name="structureType"/>.
+        /// </summary>
+        /// <param name="structureType"></param>
+        /// <returns></returns>
+        Task<ISession> ClearAsync(Type structureType);
 
         /// <summary>
         /// Deletes all items except items having an id present in <paramref name="ids"/>.
@@ -513,10 +916,26 @@ namespace SisoDb
         /// <summary>
         /// Deletes all items except items having an id present in <paramref name="ids"/>.
         /// </summary>
+        /// <typeparam name="T">Structure type, used as a contract defining the scheme.</typeparam>
+        /// <param name="ids">Ids for the structures to keep.</param>
+        /// <returns></returns>
+        Task<ISession> DeleteAllExceptIdsAsync<T>(params object[] ids) where T : class;
+
+        /// <summary>
+        /// Deletes all items except items having an id present in <paramref name="ids"/>.
+        /// </summary>
         /// <param name="structureType">Structure type, used as a contract defining the scheme.</param>
         /// <param name="ids"></param>
         /// <returns></returns>
         ISession DeleteAllExceptIds(Type structureType, params object[] ids);
+
+        /// <summary>
+        /// Deletes all items except items having an id present in <paramref name="ids"/>.
+        /// </summary>
+        /// <param name="structureType">Structure type, used as a contract defining the scheme.</param>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        Task<ISession> DeleteAllExceptIdsAsync(Type structureType, params object[] ids);
 
         /// <summary>
         /// Deletes structure by id.
@@ -529,9 +948,24 @@ namespace SisoDb
         /// <summary>
         /// Deletes structure by id.
         /// </summary>
+        /// <typeparam name="T">
+        /// Structure type, used as a contract defining the scheme.</typeparam>
+        /// <param name="id"></param>
+        Task<ISession> DeleteByIdAsync<T>(object id) where T : class;
+
+        /// <summary>
+        /// Deletes structure by id.
+        /// </summary>
         /// <param name="structureType">Structure type, used as a contract defining the scheme.</param>
         /// <param name="id"></param>
         ISession DeleteById(Type structureType, object id);
+
+        /// <summary>
+        /// Deletes structure by id.
+        /// </summary>
+        /// <param name="structureType">Structure type, used as a contract defining the scheme.</param>
+        /// <param name="id"></param>
+        Task<ISession> DeleteByIdAsync(Type structureType, object id);
 
         /// <summary>
         /// Deletes all structures for the defined structure <typeparamref name="T"/>
@@ -540,6 +974,14 @@ namespace SisoDb
         /// <typeparam name="T">Structure type, used as a contract defining the scheme.</typeparam>
         /// <param name="ids">Ids used for matching the structures to delete.</param>
         ISession DeleteByIds<T>(params object[] ids) where T : class;
+
+        /// <summary>
+        /// Deletes all structures for the defined structure <typeparamref name="T"/>
+        /// matching passed ids.
+        /// </summary>
+        /// <typeparam name="T">Structure type, used as a contract defining the scheme.</typeparam>
+        /// <param name="ids">Ids used for matching the structures to delete.</param>
+        Task<ISession> DeleteByIdsAsync<T>(params object[] ids) where T : class;
 
         /// <summary>
         /// Deletes all structures for the defined structure <paramref name="structureType"/>
@@ -551,6 +993,15 @@ namespace SisoDb
         ISession DeleteByIds(Type structureType, params object[] ids);
 
         /// <summary>
+        /// Deletes all structures for the defined structure <paramref name="structureType"/>
+        /// matching passed ids.
+        /// </summary>
+        /// <param name="structureType">
+        /// Structure type, used as a contract defining the scheme.</param>
+        /// <param name="ids">Ids used for matching the structures to delete.</param>
+        Task<ISession> DeleteByIdsAsync(Type structureType, params object[] ids);
+
+        /// <summary>
         /// Deletes one or more structures matchings the sent
         /// predicate.
         /// </summary>
@@ -558,5 +1009,14 @@ namespace SisoDb
         /// Structure type, used as a contract defining the scheme.</typeparam>
         /// <param name="predicate"></param>
         ISession DeleteByQuery<T>(Expression<Func<T, bool>> predicate) where T : class;
+
+        /// <summary>
+        /// Deletes one or more structures matchings the sent
+        /// predicate.
+        /// </summary>
+        /// <typeparam name="T">
+        /// Structure type, used as a contract defining the scheme.</typeparam>
+        /// <param name="predicate"></param>
+        Task<ISession> DeleteByQueryAsync<T>(Expression<Func<T, bool>> predicate) where T : class;
     }
 }
