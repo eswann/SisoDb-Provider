@@ -114,18 +114,6 @@ namespace SisoDb
         ISisoQueryable<T> Query<T>() where T : class;
 
         /// <summary>
-        /// Lets you perform a Query defining things like
-        /// <see cref="ISisoQueryable{T}.Take"/>
-        /// <see cref="ISisoQueryable{T}.Where"/>
-        /// <see cref="ISisoQueryable{T}.OrderBy"/>
-        /// <see cref="ISisoQueryable{T}.Page"/>
-        /// </summary>
-        /// <typeparam name="T">Structure type, used as a contract defining the scheme.</typeparam>
-        /// <returns></returns>
-        /// <remarks>Does not consume any <see cref="ICacheProvider"/>.</remarks>
-        Task<ISisoQueryable<T>> QueryAsync<T>() where T : class;
-
-        /// <summary>
         /// Returns bool indicating if the specified structure <typeparamref name="T"/>,
         /// has any items at all.
         /// </summary>

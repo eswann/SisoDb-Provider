@@ -116,6 +116,24 @@ namespace SisoDb.Caching
             return cacheProvider[structureSchema.Type.Type].Put(structureSchema.IdAccessor.GetValue(structure), structure);
         }
 
+        public static async Task<T> ConsumeAsync<T>(this ICacheProvider cacheProvider, IStructureSchema structureSchema, Expression<Func<T, bool>> predicate, 
+            Func<Expression<Func<T, bool>>, Task<T>> nonCacheQuery, CacheConsumeModes consumeMode) where T : class
+        {
+            if (!cacheProvider.IsEnabledFor(structureSchema))
+                return await nonCacheQuery(predicate);
+
+            var cache = cacheProvider[structureSchema.Type.Type];
+            var structure = cache.Query(predicate).SingleOrDefault();
+            if (structure != null)
+                return structure;
+
+            structure = await nonCacheQuery(predicate);
+            if (structure == null || consumeMode == CacheConsumeModes.DoNotUpdateCacheWithDbResult)
+                return structure;
+
+            return cacheProvider[structureSchema.Type.Type].Put(structureSchema.IdAccessor.GetValue(structure), structure);
+        }
+
         public static T Consume<T>(this ICacheProvider cacheProvider, IStructureSchema structureSchema, IStructureId structureId, Func<IStructureId, T> nonCacheQuery, CacheConsumeModes consumeMode) where T : class
         {
             if (!cacheProvider.IsEnabledFor(structureSchema))

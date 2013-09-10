@@ -1,17 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using SisoDb.Caching;
 using SisoDb.Dac;
+using SisoDb.DbSessionHelpers;
 using SisoDb.EnsureThat;
 using SisoDb.NCore;
-using SisoDb.NCore.Collections;
 using SisoDb.Querying;
 using SisoDb.Querying.Sql;
 using SisoDb.Resources;
-using SisoDb.Structures;
 using SisoDb.Structures.Schemas;
 
 namespace SisoDb
@@ -118,31 +116,7 @@ namespace SisoDb
             return await ExecutionContext.TryAsync(function);
         }
 
-        protected virtual IStructureSchema OnUpsertStructureSchema<T>() where T : class
-        {
-            return OnUpsertStructureSchema(typeof(T));
-        }
-
-        protected virtual async Task<IStructureSchema> OnUpsertStructureSchemaAsync<T>() where T : class
-        {
-            return await OnUpsertStructureSchemaAsync(typeof(T));
-        }
-
-        protected virtual IStructureSchema OnUpsertStructureSchema(Type structuretype)
-        {
-            var structureSchema = Db.StructureSchemas.GetSchema(structuretype);
-            Db.DbSchemas.Upsert(structureSchema, DbClient);
-
-            return structureSchema;
-        }
-
-        protected virtual async Task<IStructureSchema> OnUpsertStructureSchemaAsync(Type structuretype)
-        {
-            var structureSchema = Db.StructureSchemas.GetSchema(structuretype);
-            Db.DbSchemas.Upsert(structureSchema, DbClient);
-
-            return structureSchema;
-        }
+       
 
         public virtual IStructureSchema GetStructureSchema<T>() where T : class
         {
@@ -238,491 +212,339 @@ namespace SisoDb
 
         public virtual T CheckoutById<T>(object id) where T : class
         {
-            return Try(() => OnCheckoutById<T>(id));
+            return Try(() => new CheckoutByIdHelper(Db, DbClient).CheckoutById<T>(id));
         }
 
         public virtual async Task<T> CheckoutByIdAsync<T>(object id) where T : class
         {
-            return TryAsync(async () => await OnCheckoutByIdAsync<T>(id));
-        }
-
-        protected virtual T OnCheckoutById<T>(object id) where T : class
-        {
-            Ensure.That(id, "id").IsNotNull();
-
-            var structureId = StructureId.ConvertFrom(id);
-            var structureSchema = OnUpsertStructureSchema<T>();
-
-            return Db.CacheProvider.Consume(
-                structureSchema,
-                structureId,
-                sid => Db.Serializer.Deserialize<T>(DbClient.GetJsonByIdWithLock(sid, structureSchema)),
-                CacheConsumeMode);
-        }
-
-        protected virtual async Task<T> OnCheckoutByIdAsync<T>(object id) where T : class
-        {
-            Ensure.That(id, "id").IsNotNull();
-
-            var structureId = StructureId.ConvertFrom(id);
-            var structureSchema = OnUpsertStructureSchema<T>();
-
-            return Db.CacheProvider.Consume(
-                structureSchema,
-                structureId,
-                sid => Db.Serializer.Deserialize<T>(DbClient.GetJsonByIdWithLock(sid, structureSchema)),
-                CacheConsumeMode);
+            return await TryAsync(async () => await new CheckoutByIdHelper(Db, DbClient).CheckoutByIdAsync<T>(id));
         }
 
         public virtual IEnumerable<TId> GetIds<T, TId>(Expression<Func<T, bool>> predicate) where T : class
         {
-            return Try(() => OnGetIds<T, TId>(predicate));
+            return Try(() => new GetIdsHelper(Db, DbClient, QueryGenerator).GetIds<T, TId>(predicate));
         }
 
         public virtual async Task<IEnumerable<TId>> GetIdsAsync<T, TId>(Expression<Func<T, bool>> predicate) where T : class
         {
-            return await TryAsync(async () => await OnGetIdsAsync<T, TId>(predicate));
+            return await TryAsync(async () => await new GetIdsHelper(Db, DbClient, QueryGenerator).GetIdsAsync<T, TId>(predicate));
         }
 
         public virtual IEnumerable<object> GetIds<T>(Expression<Func<T, bool>> predicate) where T : class
         {
-            return Try(() => OnGetIds<T, object>(predicate));
+            return Try(() => new GetIdsHelper(Db, DbClient, QueryGenerator).GetIds<T, object>(predicate));
         }
 
         public virtual async Task<IEnumerable<object>> GetIdsAsync<T>(Expression<Func<T, bool>> predicate) where T : class
         {
-            return await TryAsync(async () => await OnGetIdsAsync<T, object>(predicate));
-        }
-
-        protected virtual IEnumerable<TId> OnGetIds<T, TId>(Expression<Func<T, bool>> predicate) where T : class
-        {
-            Ensure.That(predicate, "predicate").IsNotNull();
-            var structureSchema = OnUpsertStructureSchema<T>();
-
-            var queryBuilder = Db.ProviderFactory.GetQueryBuilder<T>(Db.StructureSchemas);
-            queryBuilder.Where(predicate);
-
-            var query = queryBuilder.Build();
-            var sql = QueryGenerator.GenerateQueryReturningStructureIds(query);
-
-            return DbClient.GetStructureIds<TId>(structureSchema, sql);
-        }
-
-        protected virtual async Task<IEnumerable<TId>> OnGetIdsAsync<T, TId>(Expression<Func<T, bool>> predicate) where T : class
-        {
-            Ensure.That(predicate, "predicate").IsNotNull();
-            var structureSchema = OnUpsertStructureSchema<T>();
-
-            var queryBuilder = Db.ProviderFactory.GetQueryBuilder<T>(Db.StructureSchemas);
-            queryBuilder.Where(predicate);
-
-            var query = queryBuilder.Build();
-            var sql = QueryGenerator.GenerateQueryReturningStructureIds(query);
-
-            return await DbClient.GetStructureIdsAsync<TId>(structureSchema, sql);
+            return await TryAsync(async () => await new GetIdsHelper(Db, DbClient, QueryGenerator).GetIdsAsync<T, object>(predicate));
         }
 
         public virtual T GetByQuery<T>(Expression<Func<T, bool>> predicate) where T : class
         {
-            return Try(() => OnGetByQueryAs(typeof(T), predicate));
+            return Try(() => new GetByQueryHelper(Db, DbClient, QueryGenerator).GetByQueryAs(typeof(T), predicate));
         }
 
-        protected virtual TOut OnGetByQueryAs<TOut>(Type structureType, Expression<Func<TOut, bool>> predicate)
-            where TOut : class
+        public virtual async Task<T> GetByQueryAsync<T>(Expression<Func<T, bool>> predicate) where T : class
         {
-            Ensure.That(structureType, "structureType").IsNotNull();
-            Ensure.That(predicate, "predicate").IsNotNull();
-
-            var structureSchema = OnUpsertStructureSchema(structureType);
-
-            return Db.CacheProvider.Consume(
-                structureSchema,
-                predicate,
-                e =>
-                {
-                    var queryBuilder = Db.ProviderFactory.GetQueryBuilder<TOut>(Db.StructureSchemas);
-                    queryBuilder.Where(predicate);
-                    var query = queryBuilder.Build();
-
-                    var sqlQuery = QueryGenerator.GenerateQuery(query);
-                    var sourceData = DbClient.ReadJson(structureSchema, sqlQuery.Sql, sqlQuery.Parameters).SingleOrDefault();
-
-                    return Db.Serializer.Deserialize<TOut>(sourceData);
-                },
-                CacheConsumeMode);
+            return await TryAsync(async () => await new GetByQueryHelper(Db, DbClient, QueryGenerator).GetByQueryAsAsync(typeof(T), predicate));
         }
 
         public virtual T GetById<T>(object id) where T : class
         {
-            return Try(() => OnGetByIdAs<T>(typeof(T), id));
+            return Try(() => new GetByIdHelper(Db, DbClient, QueryGenerator).GetByIdAs<T>(typeof(T), id));
+        }
+
+        public virtual async Task<T> GetByIdAsync<T>(object id) where T : class
+        {
+            return await TryAsync(async () => await new GetByIdHelper(Db, DbClient, QueryGenerator).GetByIdAsAsync<T>(typeof(T), id));
         }
 
         public virtual object GetById(Type structureType, object id)
         {
-            return Try(() => OnGetById(structureType, id));
+            return Try(() => new GetByIdHelper(Db, DbClient, QueryGenerator).GetById(structureType, id));
         }
 
-        protected virtual object OnGetById(Type structureType, object id)
+        public virtual async Task<object> GetByIdAsync(Type structureType, object id)
         {
-            Ensure.That(structureType, "structureType").IsNotNull();
-            Ensure.That(id, "id").IsNotNull();
-
-            var structureId = StructureId.ConvertFrom(id);
-            var structureSchema = OnUpsertStructureSchema(structureType);
-
-            return Db.CacheProvider.Consume(
-                structureSchema,
-                structureId,
-                sid => Db.Serializer.Deserialize(DbClient.GetJsonById(sid, structureSchema), structureType),
-                CacheConsumeMode);
+            return await TryAsync(async () => await new GetByIdHelper(Db, DbClient, QueryGenerator).GetByIdAsync(structureType, id));
         }
 
+       
         public virtual TOut GetByIdAs<TContract, TOut>(object id)
             where TContract : class
             where TOut : class
         {
-            return Try(() => OnGetByIdAs<TOut>(typeof(TContract), id));
+            return Try(() => new GetByIdHelper(Db, DbClient, QueryGenerator).GetByIdAs<TOut>(typeof(TContract), id));
+        }
+
+        public virtual async Task<TOut> GetByIdAsAsync<TContract, TOut>(object id)
+            where TContract : class
+            where TOut : class
+        {
+            return await TryAsync(async () => await new GetByIdHelper(Db, DbClient, QueryGenerator).GetByIdAsAsync<TOut>(typeof(TContract), id));
         }
 
         public TOut GetByIdAs<TOut>(Type structureType, object id) where TOut : class
         {
-            return Try(() => OnGetByIdAs<TOut>(structureType, id));
+            return Try(() => new GetByIdHelper(Db, DbClient, QueryGenerator).GetByIdAs<TOut>(structureType, id));
         }
 
-        protected virtual TOut OnGetByIdAs<TOut>(Type structureType, object id)
-            where TOut : class
+        public async Task<TOut> GetByIdAsAsync<TOut>(Type structureType, object id) where TOut : class
         {
-            Ensure.That(structureType, "structureType").IsNotNull();
-            Ensure.That(id, "id").IsNotNull();
-
-            var structureId = StructureId.ConvertFrom(id);
-            var structureSchema = OnUpsertStructureSchema(structureType);
-
-            return Db.CacheProvider.Consume(
-                structureSchema,
-                structureId,
-                sid => Db.Serializer.Deserialize<TOut>(DbClient.GetJsonById(sid, structureSchema)),
-                CacheConsumeMode);
+            return await TryAsync(async () => await new GetByIdHelper(Db, DbClient, QueryGenerator).GetByIdAsAsync<TOut>(structureType, id));
         }
 
         public virtual IEnumerable<T> GetByIds<T>(params object[] ids) where T : class
         {
-            return Try(() => OnGetByIdsAs<T>(typeof(T), ids));
+            return Try(() => new GetByIdsHelper(Db, DbClient, QueryGenerator).GetByIdsAs<T>(typeof(T), ids));
+        }
+
+        public virtual async Task<IEnumerable<T>> GetByIdsAsync<T>(params object[] ids) where T : class
+        {
+            return await TryAsync(async () => await new GetByIdsHelper(Db, DbClient, QueryGenerator).GetByIdsAsAsync<T>(typeof(T), ids));
         }
 
         public virtual IEnumerable<object> GetByIds(Type structureType, params object[] ids)
         {
-            return Try(() => OnGetByIds(structureType, ids));
+            return Try(() => new GetByIdsHelper(Db, DbClient, QueryGenerator).GetByIds(structureType, ids));
         }
 
-        protected virtual IEnumerable<object> OnGetByIds(Type structureType, params object[] ids)
+        public virtual async Task<IEnumerable<object>> GetByIdsAsync(Type structureType, params object[] ids)
         {
-            Ensure.That(ids, "ids").HasItems();
-
-            var structureIds = ids.Yield().Select(StructureId.ConvertFrom).ToArray();
-            var structureSchema = OnUpsertStructureSchema(structureType);
-
-            return Db.CacheProvider.Consume(
-                structureSchema,
-                structureIds,
-                sids => Db.Serializer.DeserializeMany(DbClient.GetJsonByIds(sids, structureSchema).Where(s => s != null), structureType),
-                CacheConsumeMode);
+            return await TryAsync(async () => await new GetByIdsHelper(Db, DbClient, QueryGenerator).GetByIdsAsync(structureType, ids));
         }
+
+
 
         public virtual IEnumerable<TOut> GetByIdsAs<TContract, TOut>(params object[] ids)
             where TContract : class
             where TOut : class
         {
-            return Try(() => OnGetByIdsAs<TOut>(typeof(TContract), ids));
+            return Try(() => new GetByIdsHelper(Db, DbClient, QueryGenerator).GetByIdsAs<TOut>(typeof(TContract), ids));
+        }
+
+        public virtual async Task<IEnumerable<TOut>> GetByIdsAsAsync<TContract, TOut>(params object[] ids)
+            where TContract : class
+            where TOut : class
+        {
+            return await TryAsync(async () => await new GetByIdsHelper(Db, DbClient, QueryGenerator).GetByIdsAsAsync<TOut>(typeof(TContract), ids));
         }
 
         public virtual IEnumerable<TOut> GetByIdsAs<TOut>(Type structureType, params object[] ids)
             where TOut : class
         {
-            return Try(() => OnGetByIdsAs<TOut>(structureType, ids));
+            return Try(() => new GetByIdsHelper(Db, DbClient, QueryGenerator).GetByIdsAs<TOut>(structureType, ids));
         }
 
-        protected virtual IEnumerable<TOut> OnGetByIdsAs<TOut>(Type structureType, params object[] ids)
+        public virtual async Task<IEnumerable<TOut>> GetByIdsAsAsync<TOut>(Type structureType, params object[] ids)
             where TOut : class
         {
-            Ensure.That(structureType, "structureType").IsNotNull();
-            Ensure.That(ids, "ids").HasItems();
-
-            var structureIds = ids.Yield().Select(StructureId.ConvertFrom).ToArray();
-            var structureSchema = OnUpsertStructureSchema(structureType);
-
-            return Db.CacheProvider.Consume(
-                structureSchema,
-                structureIds,
-                sids => Db.Serializer.DeserializeMany<TOut>(DbClient.GetJsonByIds(sids, structureSchema).Where(s => s != null)),
-                CacheConsumeMode);
+            return await TryAsync(async () => await new GetByIdsHelper(Db, DbClient, QueryGenerator).GetByIdsAsAsync<TOut>(structureType, ids));
         }
 
         public virtual string GetByIdAsJson<T>(object id) where T : class
         {
-            return Try(() => OnGetByIdAsJson(typeof(T), id));
+            return Try(() => new GetByIdHelper(Db, DbClient, QueryGenerator).GetByIdAsJson(typeof(T), id));
+        }
+
+        public virtual async Task<string> GetByIdAsJsonAsync<T>(object id) where T : class
+        {
+            return await TryAsync(async () => await new GetByIdHelper(Db, DbClient, QueryGenerator).GetByIdAsJsonAsync(typeof(T), id));
         }
 
         public virtual string GetByIdAsJson(Type structureType, object id)
         {
-            return Try(() => OnGetByIdAsJson(structureType, id));
+            return Try(() => new GetByIdHelper(Db, DbClient, QueryGenerator).GetByIdAsJson(structureType, id));
         }
 
-        protected virtual string OnGetByIdAsJson(Type structureType, object id)
+        public virtual async Task<string> GetByIdAsJsonAsync(Type structureType, object id)
         {
-            Ensure.That(structureType, "structureType").IsNotNull();
-            Ensure.That(id, "id").IsNotNull();
-
-            var structureId = StructureId.ConvertFrom(id);
-            var structureSchema = OnUpsertStructureSchema(structureType);
-
-            if (!Db.CacheProvider.IsEnabledFor(structureSchema))
-                return DbClient.GetJsonById(structureId, structureSchema);
-
-            var item = Db.CacheProvider.Consume(
-                structureSchema,
-                structureId,
-                sid => Db.Serializer.Deserialize(
-                    DbClient.GetJsonById(sid, structureSchema),
-                    structureSchema.Type.Type),
-                CacheConsumeMode);
-
-            return Db.Serializer.Serialize(item);
+            return await TryAsync(async () => await new GetByIdHelper(Db, DbClient, QueryGenerator).GetByIdAsJsonAsync(structureType, id));
         }
 
         public virtual IEnumerable<string> GetByIdsAsJson<T>(params object[] ids) where T : class
         {
-            return Try(() => OnGetByIdsAsJson(typeof(T), ids));
+            return Try(() => new GetByIdsHelper(Db, DbClient, QueryGenerator).GetByIdsAsJson(typeof(T), ids));
+        }
+
+        public virtual async Task<IEnumerable<string>> GetByIdsAsJsonAsync<T>(params object[] ids) where T : class
+        {
+            return await TryAsync(async () => await new GetByIdsHelper(Db, DbClient, QueryGenerator).GetByIdsAsJsonAsync(typeof(T), ids));
         }
 
         public virtual IEnumerable<string> GetByIdsAsJson(Type structureType, params object[] ids)
         {
-            return Try(() => OnGetByIdsAsJson(structureType, ids));
+            return Try(() => new GetByIdsHelper(Db, DbClient, QueryGenerator).GetByIdsAsJson(structureType, ids));
         }
 
-        protected virtual IEnumerable<string> OnGetByIdsAsJson(Type structureType, params object[] ids)
+        public virtual async Task<IEnumerable<string>> GetByIdsAsJsonAsync(Type structureType, params object[] ids)
         {
-            Ensure.That(ids, "ids").HasItems();
-
-            var structureIds = ids.Yield().Select(StructureId.ConvertFrom).ToArray();
-            var structureSchema = OnUpsertStructureSchema(structureType);
-
-            if (!Db.CacheProvider.IsEnabledFor(structureSchema))
-                return DbClient.GetJsonByIds(structureIds, structureSchema).Where(s => s != null);
-
-            var items = Db.CacheProvider.Consume(
-                structureSchema,
-                structureIds,
-                sids => Db.Serializer.DeserializeMany(
-                    DbClient.GetJsonByIds(sids, structureSchema),
-                    structureSchema.Type.Type).Where(s => s != null),
-                CacheConsumeMode);
-
-            return Db.Serializer.SerializeMany(items);
+            return await TryAsync(async () => await new GetByIdsHelper(Db, DbClient, QueryGenerator).GetByIdsAsJsonAsync(structureType, ids));
         }
 
         public virtual ISession Insert<T>(T item) where T : class
         {
-            Try(() => OnInsert(typeof(T), item));
+            Try(() => new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).Insert(typeof(T), item));
+
+            return this;
+        }
+
+        public virtual async Task<ISession> InsertAsync<T>(T item) where T : class
+        {
+            await TryAsync(async() => await new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertAsync(typeof(T), item));
 
             return this;
         }
 
         public virtual ISession Insert(Type structureType, object item)
         {
-            Try(() => OnInsert(structureType, item));
+            Try(() => new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).Insert(structureType, item));
 
             return this;
         }
 
-        protected virtual void OnInsert(Type structureType, object item)
+        public virtual async Task<ISession> InsertAsync(Type structureType, object item)
         {
-            Ensure.That(structureType, "structureType").IsNotNull();
-            Ensure.That(item, "item").IsNotNull();
+            await TryAsync(async () => await new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertAsync(structureType, item));
 
-            var structureSchema = OnUpsertStructureSchema(structureType);
-            CacheConsumeMode = CacheConsumeModes.DoNotUpdateCacheWithDbResult;
-            Db.CacheProvider.CleanQueriesFor(structureSchema);
-
-            var structureBuilder = Db.StructureBuilders.ResolveBuilderForInsert(structureSchema, DbClient);
-            var structure = structureBuilder.CreateStructure(item, structureSchema);
-
-            var structureInserter = Db.ProviderFactory.GetStructureInserter(DbClient);
-            structureInserter.Insert(structureSchema, new[] { structure });
-            InternalEvents.NotifyInserted(this, structureSchema, structure, item);
+            return this;
         }
 
+    
         public virtual ISession InsertAs<T>(object item) where T : class
         {
-            Try(() => OnInsertAs(typeof(T), item));
+            Try(() => new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertAs(typeof(T), item));
+
+            return this;
+        }
+
+        public virtual async Task<ISession> InsertAsAsync<T>(object item) where T : class
+        {
+            await TryAsync(async () => await new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertAsAsync(typeof(T), item));
 
             return this;
         }
 
         public virtual ISession InsertAs(Type structureType, object item)
         {
-            Try(() => OnInsertAs(structureType, item));
+            Try(() => new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertAs(structureType, item));
 
             return this;
         }
 
-        protected virtual void OnInsertAs(Type structureType, object item)
+        public virtual async Task<ISession> InsertAsAsync(Type structureType, object item)
         {
-            Ensure.That(structureType, "structureType").IsNotNull();
-            Ensure.That(item, "item").IsNotNull();
+            await TryAsync(async () => await new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertAsAsync(structureType, item));
 
-            var structureSchema = OnUpsertStructureSchema(structureType);
-            CacheConsumeMode = CacheConsumeModes.DoNotUpdateCacheWithDbResult;
-            Db.CacheProvider.CleanQueriesFor(structureSchema);
-
-            var json = Db.Serializer.Serialize(item);
-            var realItem = Db.Serializer.Deserialize(json, structureType);
-
-            var structureBuilder = Db.StructureBuilders.ResolveBuilderForInsert(structureSchema, DbClient);
-            var structure = structureBuilder.CreateStructure(realItem, structureSchema);
-
-            var structureInserter = Db.ProviderFactory.GetStructureInserter(DbClient);
-            structureInserter.Insert(structureSchema, new[] { structure });
-            InternalEvents.NotifyInserted(this, structureSchema, structure, item);
+            return this;
         }
 
         public virtual string InsertJson<T>(string json) where T : class
         {
-            return Try(() => OnInsertJson(typeof(T), json));
+            return Try(() => new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertJson(typeof(T), json));
+        }
+
+        public virtual async Task<string> InsertJsonAsync<T>(string json) where T : class
+        {
+            return await TryAsync(async () => await new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertJsonAsync(typeof(T), json));
         }
 
         public virtual string InsertJson(Type structureType, string json)
         {
-            return Try(() => OnInsertJson(structureType, json));
+            return Try(() => new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertJson(structureType, json));
         }
 
-        protected virtual string OnInsertJson(Type structureType, string json)
+        public virtual async Task<string> InsertJsonAsync(Type structureType, string json)
         {
-            Ensure.That(json, "json").IsNotNullOrWhiteSpace();
-
-            var structureSchema = OnUpsertStructureSchema(structureType);
-            CacheConsumeMode = CacheConsumeModes.DoNotUpdateCacheWithDbResult;
-            Db.CacheProvider.CleanQueriesFor(structureSchema);
-
-            var item = Db.Serializer.Deserialize(json, structureType);
-            var structureBuilder = Db.StructureBuilders.ResolveBuilderForInsert(structureSchema, DbClient);
-            var structure = structureBuilder.CreateStructure(item, structureSchema);
-
-            var structureInserter = Db.ProviderFactory.GetStructureInserter(DbClient);
-            structureInserter.Insert(structureSchema, new[] { structure });
-            InternalEvents.NotifyInserted(this, structureSchema, structure, item);
-
-            return structure.Data;
+            return await TryAsync(async () => await new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertJsonAsync(structureType, json));
         }
 
         public virtual ISession InsertMany<T>(IEnumerable<T> items) where T : class
         {
-            Try(() => OnInsertMany(typeof(T), items));
+            Try(() => new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertMany(typeof(T), items));
+            return this;
+        }
+
+        public virtual async Task<ISession> InsertManyAsync<T>(IEnumerable<T> items) where T : class
+        {
+            await TryAsync(async() => await new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertManyAsync(typeof(T), items));
             return this;
         }
 
         public virtual ISession InsertMany(Type structureType, IEnumerable<object> items)
         {
-            Try(() => OnInsertMany(structureType, items));
+            Try(() => new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertMany(structureType, items));
             return this;
         }
 
-        protected virtual void OnInsertMany(Type structureType, IEnumerable<object> items)
+        public virtual async Task<ISession> InsertManyAsync(Type structureType, IEnumerable<object> items)
         {
-            Ensure.That(structureType, "structureType").IsNotNull();
-            Ensure.That(items, "items").IsNotNull();
-
-            var structureSchema = OnUpsertStructureSchema(structureType);
-            CacheConsumeMode = CacheConsumeModes.DoNotUpdateCacheWithDbResult;
-            Db.CacheProvider.CleanQueriesFor(structureSchema);
-
-            var structureBuilder = Db.StructureBuilders.ResolveBuilderForInsert(structureSchema, DbClient);
-            var structureInserter = Db.ProviderFactory.GetStructureInserter(DbClient);
-
-            foreach (var itemsBatch in items.Batch(Db.Settings.MaxInsertManyBatchSize))
-            {
-                var structures = structureBuilder.CreateStructures(itemsBatch, structureSchema);
-                structureInserter.Insert(structureSchema, structures);
-                InternalEvents.NotifyInserted(this, structureSchema, structures, itemsBatch);
-            }
+            await TryAsync(async() => await new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertManyAsync(structureType, items));
+            return this;
         }
+        
 
         public virtual void InsertManyJson<T>(IEnumerable<string> json) where T : class
         {
-            Try(() => OnInsertManyJson(typeof(T), json));
+            Try(() => new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertManyJson(typeof(T), json));
+        }
+
+        public virtual async Task InsertManyJsonAsync<T>(IEnumerable<string> json) where T : class
+        {
+            await TryAsync(async () => await new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertManyJsonAsync(typeof(T), json));
         }
 
         public virtual void InsertManyJson(Type structureType, IEnumerable<string> json)
         {
-            Try(() => OnInsertManyJson(structureType, json));
+            Try(() => new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertManyJson(structureType, json));
         }
 
-        protected virtual void OnInsertManyJson(Type structureType, IEnumerable<string> json)
+        public virtual async Task InsertManyJsonAsync(Type structureType, IEnumerable<string> json)
         {
-            Ensure.That(json, "json").IsNotNull();
-
-            var structureSchema = OnUpsertStructureSchema(structureType);
-            CacheConsumeMode = CacheConsumeModes.DoNotUpdateCacheWithDbResult;
-            Db.CacheProvider.CleanQueriesFor(structureSchema);
-
-            var structureBuilder = Db.StructureBuilders.ResolveBuilderForInsert(structureSchema, DbClient);
-            var structureInserter = Db.ProviderFactory.GetStructureInserter(DbClient);
-
-            foreach (var itemsBatch in Db.Serializer.DeserializeMany(json, structureSchema.Type.Type).Batch(Db.Settings.MaxInsertManyBatchSize))
-            {
-                var structures = structureBuilder.CreateStructures(itemsBatch, structureSchema);
-                structureInserter.Insert(structureSchema, structures);
-                InternalEvents.NotifyInserted(this, structureSchema, structures, itemsBatch);
-            }
+            await TryAsync(async() => await new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertManyJsonAsync(structureType, json));
         }
+
 
         public virtual ISession Update<T>(T item) where T : class
         {
-            Try(() => OnUpdate(typeof(T), item));
+            Try(() => new UpdateHelper(Db, DbClient, QueryGenerator, this, InternalEvents).Update(typeof(T), item));
+
+            return this;
+        }
+
+        public virtual async Task<ISession> UpdateAsync<T>(T item) where T : class
+        {
+            await TryAsync(async () => await new UpdateHelper(Db, DbClient, QueryGenerator, this, InternalEvents).UpdateAsync(typeof(T), item));
 
             return this;
         }
 
         public virtual ISession Update(Type structureType, object item)
         {
-            Try(() => OnUpdate(structureType, item));
+            Try(() => new UpdateHelper(Db, DbClient, QueryGenerator, this, InternalEvents).Update(structureType, item));
 
             return this;
         }
 
-        protected virtual void OnUpdate(Type structureType, object item)
+        public virtual async Task<ISession> UpdateAsync(Type structureType, object item)
         {
-            Ensure.That(item, "item").IsNotNull();
+            await TryAsync(async () => await new UpdateHelper(Db, DbClient, QueryGenerator, this, InternalEvents).UpdateAsync(structureType, item));
 
-            var implType = item.GetType();
-            var structureSchema = OnUpsertStructureSchema(structureType);
-            var structureId = structureSchema.IdAccessor.GetValue(item);
-
-            if (!structureSchema.HasConcurrencyToken)
-            {
-                var exists = DbClient.Exists(structureSchema, structureId);
-                if (!exists)
-                    throw new SisoDbException(ExceptionMessages.WriteSession_NoItemExistsForUpdate.Inject(structureSchema.Name, structureId.Value));
-            }
-            else
-                OnEnsureConcurrencyTokenIsValid(structureSchema, structureId, item, implType);
-
-            CacheConsumeMode = CacheConsumeModes.DoNotUpdateCacheWithDbResult;
-            Db.CacheProvider.CleanQueriesFor(structureSchema);
-            Db.CacheProvider.Remove(structureSchema, structureId);
-            DbClient.DeleteIndexesAndUniquesById(structureId, structureSchema);
-
-            var structureBuilder = Db.StructureBuilders.ResolveBuilderForUpdate(structureSchema);
-            var updatedStructure = structureBuilder.CreateStructure(item, structureSchema);
-
-            var bulkInserter = Db.ProviderFactory.GetStructureInserter(DbClient);
-            bulkInserter.Replace(structureSchema, updatedStructure);
-            InternalEvents.NotifyUpdated(this, structureSchema, updatedStructure, item);
+            return this;
         }
 
+        
         public virtual ISession Update<T>(object id, Action<T> modifier, Func<T, bool> proceed = null) where T : class
         {
-            Try(() => OnUpdate<T, T>(id, modifier, proceed));
+            Try(() => new UpdateHelper(Db, DbClient, QueryGenerator, this, InternalEvents).Update<T, T>(id, modifier, proceed));
+
+            return this;
+        }
+
+        public virtual async Task<ISession> UpdateAsync<T>(object id, Action<T> modifier, Func<T, bool> proceed = null) where T : class
+        {
+            await TryAsync(async () => await new UpdateHelper(Db, DbClient, QueryGenerator, this, InternalEvents).UpdateAsync<T, T>(id, modifier, proceed));
 
             return this;
         }
@@ -731,288 +553,162 @@ namespace SisoDb
             where TContract : class
             where TImpl : class
         {
-            Try(() => OnUpdate<TContract, TImpl>(id, modifier, proceed));
+            Try(() => new UpdateHelper(Db, DbClient, QueryGenerator, this, InternalEvents).Update<TContract, TImpl>(id, modifier, proceed));
 
             return this;
         }
 
-        protected virtual ISession OnUpdate<TContract, TImpl>(object id, Action<TImpl> modifier, Func<TImpl, bool> proceed = null)
+        public virtual async Task<ISession> UpdateAsync<TContract, TImpl>(object id, Action<TImpl> modifier, Func<TImpl, bool> proceed = null)
             where TContract : class
             where TImpl : class
         {
-            Try(() =>
-            {
-                Ensure.That(id, "id").IsNotNull();
-                Ensure.That(modifier, "modifier").IsNotNull();
-
-                var structureSchema = OnUpsertStructureSchema<TContract>();
-                var structureId = StructureId.ConvertFrom(id);
-
-                var existingJson = DbClient.GetJsonByIdWithLock(structureId, structureSchema);
-
-                if (string.IsNullOrWhiteSpace(existingJson))
-                    throw new SisoDbException(ExceptionMessages.WriteSession_NoItemExistsForUpdate.Inject(structureSchema.Name, structureId.Value));
-
-                var item = Db.Serializer.Deserialize<TImpl>(existingJson);
-
-                modifier.Invoke(item);
-                if (proceed != null && !proceed.Invoke(item))
-                    return;
-
-                if (structureSchema.HasConcurrencyToken)
-                    OnEnsureConcurrencyTokenIsValid(structureSchema, structureId, item, typeof(TImpl));
-
-                CacheConsumeMode = CacheConsumeModes.DoNotUpdateCacheWithDbResult;
-                Db.CacheProvider.CleanQueriesFor(structureSchema);
-                Db.CacheProvider.Remove(structureSchema, structureId);
-                DbClient.DeleteIndexesAndUniquesById(structureId, structureSchema);
-
-                var structureBuilder = Db.StructureBuilders.ResolveBuilderForUpdate(structureSchema);
-                var updatedStructure = structureBuilder.CreateStructure(item, structureSchema);
-
-                var bulkInserter = Db.ProviderFactory.GetStructureInserter(DbClient);
-                bulkInserter.Replace(structureSchema, updatedStructure);
-                InternalEvents.NotifyUpdated(this, structureSchema, updatedStructure, item);
-            });
+            await TryAsync(async () => await new UpdateHelper(Db, DbClient, QueryGenerator, this, InternalEvents).UpdateAsync<TContract, TImpl>(id, modifier, proceed));
 
             return this;
         }
 
-        protected virtual void OnEnsureConcurrencyTokenIsValid(IStructureSchema structureSchema, IStructureId structureId, object newItem, Type typeForDeserialization)
-        {
-            var existingJson = DbClient.GetJsonById(structureId, structureSchema);
-
-            if (string.IsNullOrWhiteSpace(existingJson))
-                throw new SisoDbException(ExceptionMessages.WriteSession_NoItemExistsForUpdate.Inject(structureSchema.Name, structureId.Value));
-
-            var existingItem = Db.Serializer.Deserialize(existingJson, typeForDeserialization);
-            var existingToken = structureSchema.ConcurrencyTokenAccessor.GetValue(existingItem);
-            var updatingToken = structureSchema.ConcurrencyTokenAccessor.GetValue(newItem);
-
-            if (!Equals(updatingToken, existingToken))
-                throw new SisoDbConcurrencyException(structureId.Value, structureSchema.Name, ExceptionMessages.ConcurrencyException);
-
-            if (existingToken is Guid)
-            {
-                structureSchema.ConcurrencyTokenAccessor.SetValue(newItem, Guid.NewGuid());
-                return;
-            }
-
-            if (existingToken is int)
-            {
-                var existingNumericToken = (int)existingToken;
-                structureSchema.ConcurrencyTokenAccessor.SetValue(newItem, existingNumericToken + 1);
-                return;
-            }
-
-            if (existingToken is long)
-            {
-                var existingNumericToken = (long)existingToken;
-                structureSchema.ConcurrencyTokenAccessor.SetValue(newItem, existingNumericToken + 1);
-                return;
-            }
-
-            throw new SisoDbException(ExceptionMessages.ConcurrencyTokenIsOfWrongType);
-        }
+        
 
         public virtual ISession UpdateMany<T>(Expression<Func<T, bool>> predicate, Action<T> modifier) where T : class
         {
-            Try(() =>
-            {
-                Ensure.That(predicate, "predicate").IsNotNull();
-                Ensure.That(modifier, "modifier").IsNotNull();
+            Try(() => new UpdateHelper(Db, DbClient, QueryGenerator, this, InternalEvents).UpdateMany(predicate, modifier));
 
-                var structureSchema = OnUpsertStructureSchema<T>();
-                CacheConsumeMode = CacheConsumeModes.DoNotUpdateCacheWithDbResult;
-                Db.CacheProvider.CleanQueriesFor(structureSchema);
+            return this;
+        }
 
-                var deleteIds = new HashSet<IStructureId>();
-                var keepQueue = new List<T>(Db.Settings.MaxUpdateManyBatchSize);
-                var structureBuilder = Db.StructureBuilders.ResolveBuilderForUpdate(structureSchema);
-                var structureInserter = Db.ProviderFactory.GetStructureInserter(DbClient);
-                var queryBuilder = Db.ProviderFactory.GetQueryBuilder<T>(Db.StructureSchemas);
-                var query = queryBuilder.Where(predicate).Build();
-                var sqlQuery = QueryGenerator.GenerateQuery(query);
-
-                foreach (var structure in Db.Serializer.DeserializeMany<T>(
-                    DbClient.ReadJson(structureSchema, sqlQuery.Sql, sqlQuery.Parameters)))
-                {
-                    var structureIdBefore = structureSchema.IdAccessor.GetValue(structure);
-                    modifier.Invoke(structure);
-                    var structureIdAfter = structureSchema.IdAccessor.GetValue(structure);
-
-                    if (!structureIdBefore.Value.Equals(structureIdAfter.Value))
-                        throw new SisoDbException(ExceptionMessages.WriteSession_UpdateMany_NewIdDoesNotMatchOldId.Inject(
-                                structureIdAfter.Value, structureIdBefore.Value));
-
-                    deleteIds.Add(structureIdBefore);
-
-                    keepQueue.Add(structure);
-                    if (keepQueue.Count < Db.Settings.MaxUpdateManyBatchSize)
-                        continue;
-
-                    Db.CacheProvider.Remove(structureSchema, deleteIds);
-                    DbClient.DeleteByIds(deleteIds, structureSchema);
-                    deleteIds.Clear();
-
-                    var items = keepQueue.ToArray();
-                    var structures = structureBuilder.CreateStructures(items, structureSchema);
-                    structureInserter.Insert(structureSchema, structures);
-                    keepQueue.Clear();
-                    InternalEvents.NotifyUpdated(this, structureSchema, structures, items);
-                }
-
-                if (keepQueue.Count > 0)
-                {
-                    Db.CacheProvider.Remove(structureSchema, deleteIds);
-                    DbClient.DeleteByIds(deleteIds, structureSchema);
-                    deleteIds.Clear();
-
-                    var items = keepQueue.ToArray();
-                    var structures = structureBuilder.CreateStructures(items, structureSchema);
-                    structureInserter.Insert(structureSchema, structures);
-                    keepQueue.Clear();
-                    InternalEvents.NotifyUpdated(this, structureSchema, structures, items);
-                }
-            });
+        public virtual async Task<ISession> UpdateManyAsync<T>(Expression<Func<T, bool>> predicate, Action<T> modifier) where T : class
+        {
+            await TryAsync(async () => await new UpdateHelper(Db, DbClient, QueryGenerator, this, InternalEvents).UpdateManyAsync(predicate, modifier));
 
             return this;
         }
 
         public virtual ISession Clear<T>() where T : class
         {
-            Try(() => OnClear(typeof(T)));
+            Try(() => new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).Clear(typeof(T)));
+
+            return this;
+        }
+
+        public virtual async Task<ISession> ClearAsync<T>() where T : class
+        {
+            await TryAsync(async() => await new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).ClearAsync(typeof(T)));
 
             return this;
         }
 
         public virtual ISession Clear(Type structureType)
         {
-            Try(() => OnClear(structureType));
+            Try(() => new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).Clear(structureType));
 
             return this;
         }
 
-        protected virtual void OnClear(Type structureType)
+        public virtual async Task<ISession> ClearAsync(Type structureType)
         {
-            Ensure.That(structureType, "structureType").IsNotNull();
+            await TryAsync(async() => await new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).ClearAsync(structureType));
 
-            var structureSchema = OnUpsertStructureSchema(structureType);
-
-            CacheConsumeMode = CacheConsumeModes.DoNotUpdateCacheWithDbResult;
-            Db.CacheProvider.ClearByType(structureType);
-
-            DbClient.DeleteAll(structureSchema);
+            return this;
         }
 
         public virtual ISession DeleteAllExceptIds<T>(params object[] ids) where T : class
         {
-            Try(() => OnDeleteAllExceptIds(typeof(T), ids));
+            Try(() => new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).DeleteAllExceptIds(typeof(T), ids));
+
+            return this;
+        }
+
+        public virtual async Task<ISession> DeleteAllExceptIdsAsync<T>(params object[] ids) where T : class
+        {
+            await TryAsync(async () => await new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).DeleteAllExceptIdsAsync(typeof(T), ids));
 
             return this;
         }
 
         public virtual ISession DeleteAllExceptIds(Type structureType, params object[] ids)
         {
-            Try(() => OnDeleteAllExceptIds(structureType, ids));
+            Try(() => new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).DeleteAllExceptIds(structureType, ids));
 
             return this;
         }
 
-        protected virtual void OnDeleteAllExceptIds(Type structureType, params object[] ids)
+        public virtual async Task<ISession> DeleteAllExceptIdsAsync(Type structureType, params object[] ids)
         {
-            Ensure.That(ids, "ids").HasItems();
-            Ensure.That(structureType, "structureType").IsNotNull();
+            await TryAsync(async () => await new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).DeleteAllExceptIdsAsync(structureType, ids));
 
-            var structureIds = ids.Yield().Select(StructureId.ConvertFrom).ToArray();
-            var structureSchema = OnUpsertStructureSchema(structureType);
-
-            CacheConsumeMode = CacheConsumeModes.DoNotUpdateCacheWithDbResult;
-            Db.CacheProvider.ClearByType(structureType);
-
-            DbClient.DeleteAllExceptIds(structureIds, structureSchema);
+            return this;
         }
 
         public virtual ISession DeleteById<T>(object id) where T : class
         {
-            Try(() => OnDeleteById(typeof(T), id));
+            Try(() => new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).DeleteById(typeof(T), id));
+
+            return this;
+        }
+
+        public virtual async Task<ISession> DeleteByIdAsync<T>(object id) where T : class
+        {
+            await TryAsync(async () => await new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).DeleteByIdAsync(typeof(T), id));
 
             return this;
         }
 
         public virtual ISession DeleteById(Type structureType, object id)
         {
-            Try(() => OnDeleteById(structureType, id));
+            Try(() => new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).DeleteById(structureType, id));
 
             return this;
         }
 
-        protected virtual void OnDeleteById(Type structureType, object id)
+        public virtual async Task<ISession> DeleteByIdAsync(Type structureType, object id)
         {
-            Ensure.That(id, "id").IsNotNull();
+            await TryAsync(async () => await new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).DeleteByIdAsync(structureType, id));
 
-            var structureId = StructureId.ConvertFrom(id);
-            var structureSchema = OnUpsertStructureSchema(structureType);
-
-            CacheConsumeMode = CacheConsumeModes.DoNotUpdateCacheWithDbResult;
-            Db.CacheProvider.Remove(structureSchema, structureId);
-
-            DbClient.DeleteById(structureId, structureSchema);
-            InternalEvents.NotifyDeleted(this, structureSchema, structureId);
+            return this;
         }
 
         public virtual ISession DeleteByIds<T>(params object[] ids) where T : class
         {
-            Try(() => OnDeleteByIds(typeof(T), ids));
+            Try(() => new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).DeleteByIds(typeof(T), ids));
+
+            return this;
+        }
+
+        public virtual async Task<ISession> DeleteByIdsAsync<T>(params object[] ids) where T : class
+        {
+            await TryAsync(async() => await new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).DeleteByIdsAsync(typeof(T), ids));
 
             return this;
         }
 
         public virtual ISession DeleteByIds(Type structureType, params object[] ids)
         {
-            Try(() => OnDeleteByIds(structureType, ids));
+            Try(() => new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).DeleteByIds(structureType, ids));
 
             return this;
         }
 
-        protected virtual void OnDeleteByIds(Type structureType, params object[] ids)
+        public virtual async Task<ISession> DeleteByIdsAsync(Type structureType, params object[] ids)
         {
-            Ensure.That(ids, "ids").HasItems();
-            Ensure.That(structureType, "structureType").IsNotNull();
+            await TryAsync(async() => await new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).DeleteByIdsAsync(structureType, ids));
 
-            var structureIds = ids.Yield().Select(StructureId.ConvertFrom).ToArray();
-            var structureSchema = OnUpsertStructureSchema(structureType);
-
-            CacheConsumeMode = CacheConsumeModes.DoNotUpdateCacheWithDbResult;
-            Db.CacheProvider.Remove(structureSchema, new HashSet<IStructureId>(structureIds));
-
-            DbClient.DeleteByIds(structureIds, structureSchema);
-            InternalEvents.NotifyDeleted(this, structureSchema, structureIds);
+            return this;
         }
+
 
         public virtual ISession DeleteByQuery<T>(Expression<Func<T, bool>> predicate) where T : class
         {
-            Try(() => OnDeleteByQuery(predicate));
+            Try(() => new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).DeleteByQuery(predicate));
 
             return this;
         }
 
-        protected virtual void OnDeleteByQuery<T>(Expression<Func<T, bool>> predicate) where T : class
+        public virtual async Task<ISession> DeleteByQueryAsync<T>(Expression<Func<T, bool>> predicate) where T : class
         {
-            Ensure.That(predicate, "predicate").IsNotNull();
+            await TryAsync(async() => await new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).DeleteByQueryAsync(predicate));
 
-            CacheConsumeMode = CacheConsumeModes.DoNotUpdateCacheWithDbResult;
-
-            var structureSchema = OnUpsertStructureSchema<T>();
-            Db.CacheProvider.ClearByType(structureSchema);
-
-            var queryBuilder = Db.ProviderFactory.GetQueryBuilder<T>(Db.StructureSchemas);
-            queryBuilder.Where(predicate);
-
-            var query = queryBuilder.Build();
-            var sql = QueryGenerator.GenerateQueryReturningStructureIds(query);
-            DbClient.DeleteByQuery(sql, structureSchema);
-            InternalEvents.NotifyDeleted(this, structureSchema, query);
+            return this;
         }
+
     }
 }
