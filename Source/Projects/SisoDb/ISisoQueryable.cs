@@ -19,7 +19,8 @@ namespace SisoDb
         Task<int> CountAsync(Expression<Func<T, bool>> expression);
         bool Exists(object id);
         Task<bool> ExistsAsync(object id);
-        
+
+        T First();
         Task<T> FirstAsync();
         TResult FirstAs<TResult>() where TResult : class;
         Task<TResult> FirstAsAsync<TResult>() where TResult : class;
