@@ -7,10 +7,10 @@ using SisoDb.Testing.TestModel;
 
 namespace SisoDb.Specifications.Session
 {
-	class InsertsOfJson
+	class InsertsOfJsonAsync
     {
         [Subject(typeof(ISession), "InsertJson (json)")]
-        public class when_json_is_inserted : SpecificationBase
+        public class when_json_is_inserted_async : SpecificationBase
         {
             Establish context = () =>
             {
@@ -22,7 +22,7 @@ namespace SisoDb.Specifications.Session
             {
                 using(var session = TestContext.Database.BeginSession())
                 {
-                    session.InsertJson<JsonItem>(_json);
+                    session.InsertJsonAsync<JsonItem>(_json).Wait();
                 }
             };
 
@@ -60,7 +60,7 @@ namespace SisoDb.Specifications.Session
         }
 
         [Subject(typeof(ISession), "InsertJson (type, json)")]
-        public class when_json_is_inserted_using_type : SpecificationBase
+        public class when_json_is_inserted_async_using_type : SpecificationBase
         {
             Establish context = () =>
             {
@@ -72,7 +72,7 @@ namespace SisoDb.Specifications.Session
             {
                 using (var session = TestContext.Database.BeginSession())
                 {
-                    session.InsertJson(typeof(JsonItem), _json);
+                    session.InsertJsonAsync(typeof(JsonItem), _json).Wait();
                 }
             };
 
@@ -110,7 +110,7 @@ namespace SisoDb.Specifications.Session
         }
 
         [Subject(typeof(ISession), "InsertJson (json)")]
-        public class when_json_with_value_for_id_is_inserted : SpecificationBase
+        public class when_json_with_value_for_id_is_inserted_async : SpecificationBase
         {
             Establish context = () =>
             {
@@ -123,7 +123,7 @@ namespace SisoDb.Specifications.Session
             {
                 using (var session = TestContext.Database.BeginSession())
                 {
-                    session.InsertJson<JsonItem>(_json);
+                    session.InsertJsonAsync<JsonItem>(_json).Wait();
                 }
             };
 
@@ -148,7 +148,7 @@ namespace SisoDb.Specifications.Session
         }
 
         [Subject(typeof(ISession), "InsertJson (json)")]
-        public class when_json_with_wrong_member_casing_is_inserted : SpecificationBase
+        public class when_json_with_wrong_member_casing_is_inserted_async : SpecificationBase
         {
             Establish context = () =>
             {
@@ -160,7 +160,7 @@ namespace SisoDb.Specifications.Session
             {
                 using (var session = TestContext.Database.BeginSession())
                 {
-                    session.InsertJson<JsonItem>(_json);
+                    session.InsertJsonAsync<JsonItem>(_json).Wait();
                 }
             };
 

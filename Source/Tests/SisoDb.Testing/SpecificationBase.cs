@@ -13,12 +13,8 @@ namespace SisoDb.Testing
 
         protected static string GetUtcOffset()
         {
-            var utcOffSet = DateTimeOffset.Now.Hour;
-            string stringUtcOffset = string.Empty;
-            if (utcOffSet >= 0)
-            {
-                stringUtcOffset = (utcOffSet >= 0) ? "+" : "-" + utcOffSet.ToString(CultureInfo.InvariantCulture).PadLeft(2, '0');
-            }
+            var utcOffSet = TimeZone.CurrentTimeZone.GetUtcOffset(new DateTime(2000, 01, 01)).Hours;
+            string stringUtcOffset = (utcOffSet >= 0) ? "+" : "-" + Math.Abs(utcOffSet).ToString(CultureInfo.InvariantCulture).PadLeft(2, '0');
 
             return stringUtcOffset;
         }

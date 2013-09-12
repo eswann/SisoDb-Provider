@@ -71,19 +71,19 @@ namespace SisoDb
 
         protected virtual bool OnAny(Type structureType)
         {
-            var structureSchema = PerformOnAnyPrechecks(structureType);
+            var structureSchema = PrepareOnAny(structureType);
 
             return DbClient.Any(structureSchema);
         }
 
         protected virtual async Task<bool> OnAnyAsync(Type structureType)
         {
-            var structureSchema = PerformOnAnyPrechecks(structureType);
+            var structureSchema = PrepareOnAny(structureType);
 
             return await DbClient.AnyAsync(structureSchema);
         }
 
-        private IStructureSchema PerformOnAnyPrechecks(Type structureType)
+        private IStructureSchema PrepareOnAny(Type structureType)
         {
             Ensure.That(structureType, "structureType").IsNotNull();
 
@@ -113,7 +113,7 @@ namespace SisoDb
 
         protected virtual bool OnAny(Type structureType, IQuery query)
         {
-            var structureSchema = PerformOnAnyPrechecks(structureType, query);
+            var structureSchema = PrepareOnAny(structureType, query);
 
             if (!query.HasWhere)
             {
@@ -126,7 +126,7 @@ namespace SisoDb
 
         protected virtual async Task<bool> OnAnyAsync(Type structureType, IQuery query)
         {
-            var structureSchema = PerformOnAnyPrechecks(structureType, query);
+            var structureSchema = PrepareOnAny(structureType, query);
 
             if (!query.HasWhere)
             {
@@ -139,7 +139,7 @@ namespace SisoDb
             return await DbClient.AnyAsync(structureSchema, whereSql);
         }
 
-        private IStructureSchema PerformOnAnyPrechecks(Type structureType, IQuery query)
+        private IStructureSchema PrepareOnAny(Type structureType, IQuery query)
         {
             Ensure.That(structureType, "structureType").IsNotNull();
             Ensure.That(query, "query").IsNotNull();
@@ -170,19 +170,19 @@ namespace SisoDb
 
         protected virtual int OnCount(Type structureType)
         {
-            var structureSchema = PerformOnCountPrechecks(structureType);
+            var structureSchema = PrepareOnCount(structureType);
 
             return DbClient.RowCount(structureSchema);
         }
 
         protected async virtual Task<int> OnCountAsync(Type structureType)
         {
-            var structureSchema = PerformOnCountPrechecks(structureType);
+            var structureSchema = PrepareOnCount(structureType);
 
             return await DbClient.RowCountAsync(structureSchema);
         }
 
-        private IStructureSchema PerformOnCountPrechecks(Type structureType)
+        private IStructureSchema PrepareOnCount(Type structureType)
         {
             Ensure.That(structureType, "structureType").IsNotNull();
 
@@ -212,7 +212,7 @@ namespace SisoDb
 
         protected virtual int OnCount(Type structureType, IQuery query)
         {
-            var structureSchema = PerformOnCountPrechecks(structureType, query);
+            var structureSchema = PrepareOnCount(structureType, query);
 
             if (!query.HasWhere)
                 return DbClient.RowCount(structureSchema);
@@ -223,7 +223,7 @@ namespace SisoDb
 
         protected virtual async Task<int> OnCountAsync(Type structureType, IQuery query)
         {
-            var structureSchema = PerformOnCountPrechecks(structureType, query);
+            var structureSchema = PrepareOnCount(structureType, query);
 
             if (!query.HasWhere)
                 return await DbClient.RowCountAsync(structureSchema);
@@ -232,7 +232,7 @@ namespace SisoDb
             return await DbClient.RowCountByQueryAsync(structureSchema, whereSql);
         }
 
-        private IStructureSchema PerformOnCountPrechecks(Type structureType, IQuery query)
+        private IStructureSchema PrepareOnCount(Type structureType, IQuery query)
         {
             Ensure.That(structureType, "structureType").IsNotNull();
             Ensure.That(query, "query").IsNotNull();
@@ -265,7 +265,7 @@ namespace SisoDb
         {
             return Try(() =>
             {
-                var structureSchema = PerformOnExistsPrechecks(structureType, id);
+                var structureSchema = PrepareOnExists(structureType, id);
                 var structureId = StructureId.ConvertFrom(id);
 
                 return Db.CacheProvider.Exists(structureSchema, structureId, sid => DbClient.Exists(structureSchema, sid));
@@ -276,14 +276,14 @@ namespace SisoDb
         {
             return await TryAsync( async () =>
             {
-                var structureSchema = PerformOnExistsPrechecks(structureType, id);
+                var structureSchema = PrepareOnExists(structureType, id);
                 var structureId = StructureId.ConvertFrom(id);
 
                 return await Db.CacheProvider.ExistsAsync(structureSchema, structureId, async sid => await DbClient.ExistsAsync(structureSchema, sid));
             });
         }
 
-        private IStructureSchema PerformOnExistsPrechecks(Type structureType, object id)
+        private IStructureSchema PrepareOnExists(Type structureType, object id)
         {
             Ensure.That(structureType, "structureType").IsNotNull();
             Ensure.That(id, "id").IsNotNull();
@@ -314,7 +314,7 @@ namespace SisoDb
 
         protected virtual IEnumerable<object> OnQuery(IQuery query, Type structureType)
         {
-            var structureSchema = PerformOnQueryPrechecks(query, structureType);
+            var structureSchema = PrepareOnQuery(query, structureType);
 
             if (query.IsEmpty)
                 return Db.Serializer.DeserializeMany(DbClient.GetJsonOrderedByStructureId(structureSchema), structureType);
@@ -334,7 +334,7 @@ namespace SisoDb
 
         protected virtual async Task<IEnumerable<object>> OnQueryAsync(IQuery query, Type structureType)
         {
-            var structureSchema = PerformOnQueryPrechecks(query, structureType);
+            var structureSchema = PrepareOnQuery(query, structureType);
 
             if (query.IsEmpty)
                 return Db.Serializer.DeserializeMany(DbClient.GetJsonOrderedByStructureId(structureSchema), structureType);
@@ -352,7 +352,7 @@ namespace SisoDb
                 ExecutionContext.Session.CacheConsumeMode);
         }
 
-        private IStructureSchema PerformOnQueryPrechecks(IQuery query, Type structureType)
+        private IStructureSchema PrepareOnQuery(IQuery query, Type structureType)
         {
             Ensure.That(structureType, "structureType").IsNotNull();
             Ensure.That(query, "query").IsNotNull();
@@ -387,7 +387,7 @@ namespace SisoDb
 
         protected virtual IEnumerable<object> OnQueryAs(IQuery query, Type structureType, Type resultType)
         {
-            var structureSchema = OnQueryAsPrechecks(query, structureType, resultType);
+            var structureSchema = PrepareOnQueryAs(query, structureType, resultType);
 
             if (query.IsEmpty)
                 return Db.Serializer.DeserializeMany(DbClient.GetJsonOrderedByStructureId(structureSchema), resultType);
@@ -407,7 +407,7 @@ namespace SisoDb
 
         protected virtual async Task<IEnumerable<object>> OnQueryAsAsync(IQuery query, Type structureType, Type resultType)
         {
-            var structureSchema = OnQueryAsPrechecks(query, structureType, resultType);
+            var structureSchema = PrepareOnQueryAs(query, structureType, resultType);
 
             if (query.IsEmpty)
                 return Db.Serializer.DeserializeMany(DbClient.GetJsonOrderedByStructureId(structureSchema), resultType);
@@ -425,7 +425,7 @@ namespace SisoDb
                 ExecutionContext.Session.CacheConsumeMode);
         }
 
-        private IStructureSchema OnQueryAsPrechecks(IQuery query, Type structureType, Type resultType)
+        private IStructureSchema PrepareOnQueryAs(IQuery query, Type structureType, Type resultType)
         {
             Ensure.That(query, "query").IsNotNull();
             Ensure.That(structureType, "structureType").IsNotNull();
@@ -439,7 +439,7 @@ namespace SisoDb
             where T : class
             where TResult : class
         {
-            var structureSchema = OnQueryAsPrechecks<T>(query);
+            var structureSchema = PrepareOnQueryAs<T>(query);
 
             if (query.IsEmpty)
                 return Db.Serializer.DeserializeMany<TResult>(DbClient.GetJsonOrderedByStructureId(structureSchema));
@@ -461,7 +461,7 @@ namespace SisoDb
             where T : class
             where TResult : class
         {
-            var structureSchema = OnQueryAsPrechecks<T>(query);
+            var structureSchema = PrepareOnQueryAs<T>(query);
 
             if (query.IsEmpty)
                 return Db.Serializer.DeserializeMany<TResult>(await DbClient.GetJsonOrderedByStructureIdAsync(structureSchema));
@@ -479,7 +479,7 @@ namespace SisoDb
                 ExecutionContext.Session.CacheConsumeMode);
         }
 
-        private IStructureSchema OnQueryAsPrechecks<T>(IQuery query) where T : class
+        private IStructureSchema PrepareOnQueryAs<T>(IQuery query) where T : class
         {
             Ensure.That(query, "query").IsNotNull();
 
@@ -509,7 +509,7 @@ namespace SisoDb
 
         protected virtual IEnumerable<string> OnQueryAsJson(Type structuretype, IQuery query)
         {
-            var structureSchema = QueryAsJsonPrechecks(structuretype, query);
+            var structureSchema = PrepareOnQueryAsJson(structuretype, query);
 
             if (query.IsEmpty)
                 return DbClient.GetJsonOrderedByStructureId(structureSchema);
@@ -521,7 +521,7 @@ namespace SisoDb
 
         protected virtual async Task<IEnumerable<string>> OnQueryAsJsonAsync(Type structuretype, IQuery query)
         {
-            var structureSchema = QueryAsJsonPrechecks(structuretype, query);
+            var structureSchema = PrepareOnQueryAsJson(structuretype, query);
 
             if (query.IsEmpty)
                 return await DbClient.GetJsonOrderedByStructureIdAsync(structureSchema);
@@ -531,7 +531,7 @@ namespace SisoDb
             return await DbClient.ReadJsonAsync(structureSchema, sqlQuery.Sql, sqlQuery.Parameters);
         }
 
-        private IStructureSchema QueryAsJsonPrechecks(Type structuretype, IQuery query)
+        private IStructureSchema PrepareOnQueryAsJson(Type structuretype, IQuery query)
         {
             Ensure.That(query, "query").IsNotNull();
 

@@ -73,7 +73,45 @@
     <Compile Include="Model\Spatial.cs" />
     <Compile Include="Session\Caching.cs" />
     <Compile Include="Session\Clear.cs" />
+    <Compile Include="Session\ClearAsync.cs" />
+    <Compile Include="Session\UpdatesOfSingleValuesAsync.cs" />
+    <Compile Include="Session\UpdatesHandlingConcurrenyAsync.cs" />
+    <Compile Include="Session\UpdatesAsync.cs" />
+    <Compile Include="Session\UpdateManyAsync.cs" />
+    <Compile Include="Session\DeletesAsync.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Session\InsertAsAsync.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Session\InsertBigStructures.cs" />
+    <Compile Include="Session\InsertBigStructuresAsync.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Session\InsertsAsync.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Session\InsertsCompleteAsync.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Session\InsertsIdBehaviorAsync.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Session\InsertsOfJsonAsync.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Session\InsertsOfUniquesAsync.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Session\InsertsUsingBaseClassesAsync.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Session\InsertsUsingInterfacesAsync.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Session\InsertsWithCustomStructureIdAsync.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Session\Querying\Any.cs" />
     <Compile Include="Session\Querying\CheckoutById.cs" />
     <Compile Include="Session\Querying\Dynamic\Any.cs" />
@@ -86,6 +124,9 @@
     <Compile Include="Session\Querying\Projection.cs" />
     <Compile Include="Session\Querying\StringFunctions\Contains.cs" />
     <Compile Include="Session\Querying\StringFunctions\QxIsExactly.cs" />
+    <Compile Include="Session\TransactionsAsync.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Session\UpdatesOfSingleValues.cs" />
     <Compile Include="Session\InsertAs.cs" />
     <Compile Include="Session\Inserts.cs" />
@@ -126,6 +167,7 @@
     <Compile Include="Model\QueryStringItem.cs" />
     <Compile Include="Model\QueryXItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Spatial\GeographicalOperationsAsync.cs" />
     <Compile Include="Spatial\GeographicalOperations.cs" />
     <Compile Include="Spatial\UpsertAndDrop.cs" />
     <Compile Include="TestContextFactory.cs" />

@@ -140,8 +140,14 @@
     <Compile Include="..\SisoDb.Specifications\Session\Clear.cs">
       <Link>Session\Clear.cs</Link>
     </Compile>
+    <Compile Include="..\SisoDb.Specifications\Session\ClearAsync.cs">
+      <Link>Session\ClearAsync.cs</Link>
+    </Compile>
     <Compile Include="..\SisoDb.Specifications\Session\Deletes.cs">
       <Link>Session\Deletes.cs</Link>
+    </Compile>
+    <Compile Include="..\SisoDb.Specifications\Session\DeletesAsync.cs">
+      <Link>Session\DeletesAsync.cs</Link>
     </Compile>
     <Compile Include="..\SisoDb.Specifications\Session\InsertAs.cs">
       <Link>Session\InsertAs.cs</Link>
@@ -278,14 +284,26 @@
     <Compile Include="..\SisoDb.Specifications\Session\UpdateMany.cs">
       <Link>Session\UpdateMany.cs</Link>
     </Compile>
+    <Compile Include="..\SisoDb.Specifications\Session\UpdateManyAsync.cs">
+      <Link>Session\UpdateManyAsync.cs</Link>
+    </Compile>
     <Compile Include="..\SisoDb.Specifications\Session\Updates.cs">
       <Link>Session\Updates.cs</Link>
+    </Compile>
+    <Compile Include="..\SisoDb.Specifications\Session\UpdatesAsync.cs">
+      <Link>Session\UpdatesAsync.cs</Link>
     </Compile>
     <Compile Include="..\SisoDb.Specifications\Session\UpdatesHandlingConcurreny.cs">
       <Link>Session\UpdatesHandlingConcurreny.cs</Link>
     </Compile>
+    <Compile Include="..\SisoDb.Specifications\Session\UpdatesHandlingConcurrenyAsync.cs">
+      <Link>Session\UpdatesHandlingConcurrenyAsync.cs</Link>
+    </Compile>
     <Compile Include="..\SisoDb.Specifications\Session\UpdatesOfSingleValues.cs">
       <Link>Session\UpdatesOfSingleValues.cs</Link>
+    </Compile>
+    <Compile Include="..\SisoDb.Specifications\Session\UpdatesOfSingleValuesAsync.cs">
+      <Link>Session\UpdatesOfSingleValuesAsync.cs</Link>
     </Compile>
     <Compile Include="..\SisoDb.Specifications\Spatial\GeographicalOperations.cs">
       <Link>Spatial\GeographicalOperations.cs</Link>
@@ -298,6 +316,16 @@
     </Compile>
     <Compile Include="AssemblyContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Session\InsertAsAsync.cs" />
+    <Compile Include="Session\InsertBigStructuresAsync.cs" />
+    <Compile Include="Session\InsertsAsync.cs" />
+    <Compile Include="Session\InsertsCompleteAsync.cs" />
+    <Compile Include="Session\InsertsIdBehaviorAsync.cs" />
+    <Compile Include="Session\InsertsOfJsonAsync.cs" />
+    <Compile Include="Session\InsertsOfUniquesAsync.cs" />
+    <Compile Include="Session\InsertsUsingBaseClassesAsync.cs" />
+    <Compile Include="Session\InsertsUsingInterfacesAsync.cs" />
+    <Compile Include="Session\InsertsWithCustomStructureIdAsync.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Projects\SisoDb.Dynamic\SisoDb.Dynamic.csproj">

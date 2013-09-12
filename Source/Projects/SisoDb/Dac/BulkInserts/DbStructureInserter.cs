@@ -63,11 +63,9 @@ namespace SisoDb.Dac.BulkInserts
             await InsertUniquesAsync(structureSchema, structures);
 
             var groupedIndexInsertActions = CreateGroupedIndexInsertActions(structureSchema, structures, true);
+            if (groupedIndexInsertActions.Length > 0)
+                await InsertIndexesAsync(groupedIndexInsertActions);
 
-            if (groupedIndexInsertActions.Length == 0)
-                return;
-
-            await InsertIndexesAsync(groupedIndexInsertActions);
         }
 
         public virtual void InsertIndexesOnly(IStructureSchema structureSchema, IStructure[] structures)

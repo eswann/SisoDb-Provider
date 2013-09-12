@@ -11,10 +11,11 @@ using SisoDb.Testing;
 namespace SisoDb.Specifications.Spatial
 {
 #if SqlAzureProvider || Sql2008Provider || Sql2012Provider
-    class GeographicalOperations
+    class GeographicalOperationsAsync
     {
+
         [Subject(typeof(ISisoSpatial), "SetPolygon")]
-        public class when_setting_polygon_and_none_exists_before : SpecificationBase
+        public class when_setting_polygon_async_and_none_exists_before : SpecificationBase
         {
             Establish context = () =>
             {
@@ -35,7 +36,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    s.SetPolygon<SpatialGuidItem>(_item.StructureId, _coordinates);
+                    s.SetPolygonAsync<SpatialGuidItem>(_item.StructureId, _coordinates).Wait();
                 }
             };
 
@@ -44,7 +45,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    s.GetCoordinatesIn<SpatialGuidItem>(_item.StructureId).ShouldBeValueEqualTo(_coordinates);
+                    s.GetCoordinatesInAsync<SpatialGuidItem>(_item.StructureId).Result.ShouldBeValueEqualTo(_coordinates);
                 }
             };
 
@@ -53,7 +54,7 @@ namespace SisoDb.Specifications.Spatial
         }
 
         [Subject(typeof(ISisoSpatial), "InsertPolygon")]
-        public class when_inserting_polygon_and_none_exists_before : SpecificationBase
+        public class when_inserting_polygon_async_and_none_exists_before : SpecificationBase
         {
             Establish context = () =>
             {
@@ -74,7 +75,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    s.InsertPolygon<SpatialGuidItem>(_item.StructureId, _coordinates);
+                    s.InsertPolygonAsync<SpatialGuidItem>(_item.StructureId, _coordinates).Wait();
                 }
             };
 
@@ -83,7 +84,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    s.GetCoordinatesIn<SpatialGuidItem>(_item.StructureId).ShouldBeValueEqualTo(_coordinates);
+                    s.GetCoordinatesInAsync<SpatialGuidItem>(_item.StructureId).Result.ShouldBeValueEqualTo(_coordinates);
                 }
             };
 
@@ -91,8 +92,9 @@ namespace SisoDb.Specifications.Spatial
             private static Coordinates[] _coordinates;
         }
 
+      
         [Subject(typeof(ISisoSpatial), "DeleteGeoFor")]
-        public class when_deleting_existing_polygon : SpecificationBase
+        public class when_deleting_existing_polygon_async : SpecificationBase
         {
             Establish context = () =>
             {
@@ -115,7 +117,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    s.DeleteGeoFor<SpatialGuidItem>(_item.StructureId);
+                    s.DeleteGeoForAsync<SpatialGuidItem>(_item.StructureId).Wait();
                 }
             };
 
@@ -127,7 +129,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    s.GetCoordinatesIn<SpatialGuidItem>(_item.StructureId).ShouldBeValueEqualTo(new Coordinates[0]);
+                    s.GetCoordinatesInAsync<SpatialGuidItem>(_item.StructureId).Result.ShouldBeValueEqualTo(new Coordinates[0]);
                 }
             };
 
@@ -136,7 +138,7 @@ namespace SisoDb.Specifications.Spatial
         }
 
         [Subject(typeof(ISisoSpatial), "DeleteGeoFor")]
-        public class when_deleting_non_existing_polygon : SpecificationBase
+        public class when_deleting_non_existing_polygon_async : SpecificationBase
         {
             Establish context = () =>
             {
@@ -157,7 +159,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    s.DeleteGeoFor<SpatialGuidItem>(_item.StructureId);
+                    s.DeleteGeoForAsync<SpatialGuidItem>(_item.StructureId).Wait();
                 }
             };
 
@@ -169,7 +171,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    s.GetCoordinatesIn<SpatialGuidItem>(_item.StructureId).ShouldBeValueEqualTo(new Coordinates[0]);
+                    s.GetCoordinatesInAsync<SpatialGuidItem>(_item.StructureId).Result.ShouldBeValueEqualTo(new Coordinates[0]);
                 }
             };
 
@@ -178,7 +180,7 @@ namespace SisoDb.Specifications.Spatial
         }
 
         [Subject(typeof(ISisoSpatial), "SetPolygon")]
-        public class when_setting_polygon_and_one_exists_before : SpecificationBase
+        public class when_setting_polygon_async_and_one_exists_before : SpecificationBase
         {
             Establish context = () =>
             {
@@ -201,7 +203,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    s.SetPolygon<SpatialGuidItem>(_item.StructureId, _newCoordinates);
+                    s.SetPolygonAsync<SpatialGuidItem>(_item.StructureId, _newCoordinates).Wait();
                 }
             };
 
@@ -210,7 +212,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    s.GetCoordinatesIn<SpatialGuidItem>(_item.StructureId).ShouldBeValueEqualTo(_newCoordinates);
+                    s.GetCoordinatesInAsync<SpatialGuidItem>(_item.StructureId).Result.ShouldBeValueEqualTo(_newCoordinates);
                 }
             };
 
@@ -219,7 +221,7 @@ namespace SisoDb.Specifications.Spatial
         }
 
         [Subject(typeof(ISisoSpatial), "UpdatePolygon")]
-        public class when_updating_an_existing_polygon : SpecificationBase
+        public class when_updating_an_existing_polygon_async : SpecificationBase
         {
             Establish context = () =>
             {
@@ -242,7 +244,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    s.UpdatePolygon<SpatialGuidItem>(_item.StructureId, _newCoordinates);
+                    s.UpdatePolygonAsync<SpatialGuidItem>(_item.StructureId, _newCoordinates).Wait();
                 }
             };
 
@@ -251,7 +253,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    s.GetCoordinatesIn<SpatialGuidItem>(_item.StructureId).ShouldBeValueEqualTo(_newCoordinates);
+                    s.GetCoordinatesInAsync<SpatialGuidItem>(_item.StructureId).Result.ShouldBeValueEqualTo(_newCoordinates);
                 }
             };
 
@@ -260,7 +262,7 @@ namespace SisoDb.Specifications.Spatial
         }
 
         [Subject(typeof(ISisoSpatial), "ContainsPoint")]
-        public class when_checking_if_polygon_contains_point_that_is_within_bounds : SpecificationBase
+        public class when_checking_if_polygon_contains_point_async_that_is_within_bounds : SpecificationBase
         {
             Establish context = () =>
             {
@@ -282,7 +284,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    _contains = s.ContainsPoint<SpatialGuidItem>(_item.StructureId, SpatialDataFactory.PointWithinDefaultPolygon);
+                    _contains = s.ContainsPointAsync<SpatialGuidItem>(_item.StructureId, SpatialDataFactory.PointWithinDefaultPolygon).Result;
                 }
             };
 
@@ -294,7 +296,7 @@ namespace SisoDb.Specifications.Spatial
         }
 
         [Subject(typeof(ISisoSpatial), "ContainsPoint")]
-        public class when_checking_if_polygon_contains_point_that_is_outside_bounds : SpecificationBase
+        public class when_checking_if_polygon_contains_point_async_that_is_outside_bounds : SpecificationBase
         {
             Establish context = () =>
             {
@@ -316,7 +318,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    _contains = s.ContainsPoint<SpatialGuidItem>(_item.StructureId, SpatialDataFactory.PointOutsideDefaultPolygon);
+                    _contains = s.ContainsPointAsync<SpatialGuidItem>(_item.StructureId, SpatialDataFactory.PointOutsideDefaultPolygon).Result;
                 }
             };
 
@@ -328,7 +330,7 @@ namespace SisoDb.Specifications.Spatial
         }
 
         [Subject(typeof(ISisoSpatial), "ContainsPointAfterExpand")]
-        public class when_checking_if_a_expanded_polygon_contains_point_that_normally_is_outside_bounds : SpecificationBase
+        public class when_checking_if_a_expanded_polygon_async_contains_point_that_normally_is_outside_bounds : SpecificationBase
         {
             Establish context = () =>
             {
@@ -350,7 +352,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    _contains = s.ContainsPointAfterExpand<SpatialGuidItem>(_item.StructureId, SpatialDataFactory.PointOutsideDefaultPolygon, 4000d);
+                    _contains = s.ContainsPointAfterExpandAsync<SpatialGuidItem>(_item.StructureId, SpatialDataFactory.PointOutsideDefaultPolygon, 4000d).Result;
                 }
             };
 
@@ -362,7 +364,7 @@ namespace SisoDb.Specifications.Spatial
         }
 
         [Subject(typeof(ISisoSpatial), "SetPoint")]
-        public class when_setting_point_and_none_exists_before : SpecificationBase
+        public class when_setting_point_async_and_none_exists_before : SpecificationBase
         {
             Establish context = () =>
             {
@@ -383,7 +385,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    s.SetPoint<SpatialGuidItem>(_item.StructureId, _coordinates);
+                    s.SetPointAsync<SpatialGuidItem>(_item.StructureId, _coordinates).Wait();
                 }
             };
 
@@ -392,7 +394,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    s.GetCoordinatesIn<SpatialGuidItem>(_item.StructureId).Single().ShouldBeValueEqualTo(_coordinates);
+                    s.GetCoordinatesInAsync<SpatialGuidItem>(_item.StructureId).Result.Single().ShouldBeValueEqualTo(_coordinates);
                 }
             };
 
@@ -401,7 +403,7 @@ namespace SisoDb.Specifications.Spatial
         }
 
         [Subject(typeof(ISisoSpatial), "InsertPoint")]
-        public class when_inserting_point_and_none_exists_before : SpecificationBase
+        public class when_inserting_point_async_and_none_exists_before : SpecificationBase
         {
             Establish context = () =>
             {
@@ -422,7 +424,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    s.InsertPoint<SpatialGuidItem>(_item.StructureId, _coordinates);
+                    s.InsertPointAsync<SpatialGuidItem>(_item.StructureId, _coordinates).Wait();
                 }
             };
 
@@ -431,7 +433,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    s.GetCoordinatesIn<SpatialGuidItem>(_item.StructureId).Single().ShouldBeValueEqualTo(_coordinates);
+                    s.GetCoordinatesInAsync<SpatialGuidItem>(_item.StructureId).Result.Single().ShouldBeValueEqualTo(_coordinates);
                 }
             };
 
@@ -440,7 +442,7 @@ namespace SisoDb.Specifications.Spatial
         }
 
         [Subject(typeof(ISisoSpatial), "SetPoint")]
-        public class when_setting_point_and_one_exists_before : SpecificationBase
+        public class when_setting_point_async_and_one_exists_before : SpecificationBase
         {
             Establish context = () =>
             {
@@ -462,7 +464,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    s.SetPoint<SpatialGuidItem>(_item.StructureId, _newCoordinates);
+                    s.SetPointAsync<SpatialGuidItem>(_item.StructureId, _newCoordinates).Wait();
                 }
             };
 
@@ -471,7 +473,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    s.GetCoordinatesIn<SpatialGuidItem>(_item.StructureId).Single().ShouldBeValueEqualTo(_newCoordinates);
+                    s.GetCoordinatesInAsync<SpatialGuidItem>(_item.StructureId).Result.Single().ShouldBeValueEqualTo(_newCoordinates);
                 }
             };
 
@@ -480,7 +482,7 @@ namespace SisoDb.Specifications.Spatial
         }
 
         [Subject(typeof(ISisoSpatial), "UpdatePoint")]
-        public class when_updating_an_existing_point : SpecificationBase
+        public class when_updating_an_existing_point_async : SpecificationBase
         {
             Establish context = () =>
             {
@@ -502,7 +504,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    s.UpdatePoint<SpatialGuidItem>(_item.StructureId, _newCoordinates);
+                    s.UpdatePointAsync<SpatialGuidItem>(_item.StructureId, _newCoordinates).Wait();
                 }
             };
 
@@ -511,7 +513,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    s.GetCoordinatesIn<SpatialGuidItem>(_item.StructureId).Single().ShouldBeValueEqualTo(_newCoordinates);
+                    s.GetCoordinatesInAsync<SpatialGuidItem>(_item.StructureId).Result.Single().ShouldBeValueEqualTo(_newCoordinates);
                 }
             };
 
@@ -520,7 +522,7 @@ namespace SisoDb.Specifications.Spatial
         }
 
         [Subject(typeof(ISisoSpatial), "SetCircle")]
-        public class when_setting_circle_and_none_exists_before : SpecificationBase
+        public class when_setting_circle_async_and_none_exists_before : SpecificationBase
         {
             Establish context = () =>
             {
@@ -541,7 +543,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    s.SetCircle<SpatialGuidItem>(_item.StructureId, _coordinates, 10d);
+                    s.SetCircleAsync<SpatialGuidItem>(_item.StructureId, _coordinates, 10d).Wait();
                 }
             };
 
@@ -550,7 +552,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    var c = s.GetCoordinatesIn<SpatialGuidItem>(_item.StructureId);
+                    var c = s.GetCoordinatesInAsync<SpatialGuidItem>(_item.StructureId).Result;
                     c.Length.ShouldEqual(129);
                     c[0].Latitude.ShouldEqual(47.653063500926457d);
                     c[0].Longitude.ShouldEqual(-122.35790573151685d);
@@ -566,7 +568,7 @@ namespace SisoDb.Specifications.Spatial
         }
 
         [Subject(typeof(ISisoSpatial), "InsertCircle")]
-        public class when_inserting_circle_and_none_exists_before : SpecificationBase
+        public class when_inserting_circle_async_and_none_exists_before : SpecificationBase
         {
             Establish context = () =>
             {
@@ -587,7 +589,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    s.InsertCircle<SpatialGuidItem>(_item.StructureId, _coordinates, 10d);
+                    s.InsertCircleAsync<SpatialGuidItem>(_item.StructureId, _coordinates, 10d).Wait();
                 }
             };
 
@@ -596,7 +598,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    var c = s.GetCoordinatesIn<SpatialGuidItem>(_item.StructureId);
+                    var c = s.GetCoordinatesInAsync<SpatialGuidItem>(_item.StructureId).Result;
                     c.Length.ShouldEqual(129);
                     c[0].Latitude.ShouldEqual(47.653063500926457d);
                     c[0].Longitude.ShouldEqual(-122.35790573151685d);
@@ -612,7 +614,7 @@ namespace SisoDb.Specifications.Spatial
         }
 
         [Subject(typeof(ISisoSpatial), "SetCircle")]
-        public class when_setting_circle_and_one_exists_before : SpecificationBase
+        public class when_setting_circle_async_and_one_exists_before : SpecificationBase
         {
             Establish context = () =>
             {
@@ -633,7 +635,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    s.SetCircle<SpatialGuidItem>(_item.StructureId, SpatialDataFactory.Circle1, 5d);
+                    s.SetCircleAsync<SpatialGuidItem>(_item.StructureId, SpatialDataFactory.Circle1, 5d).Wait();
                 }
             };
 
@@ -642,7 +644,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    var c = s.GetCoordinatesIn<SpatialGuidItem>(_item.StructureId);
+                    var c = s.GetCoordinatesInAsync<SpatialGuidItem>(_item.StructureId).Result;
                     c.Length.ShouldEqual(129);
                     c[0].Latitude.ShouldEqual(47.653031750472969d);
                     c[0].Longitude.ShouldEqual(-122.35795286578694d);
@@ -657,7 +659,7 @@ namespace SisoDb.Specifications.Spatial
         }
 
         [Subject(typeof(ISisoSpatial), "UpdateCircle")]
-        public class when_updating_an_existing_circle : SpecificationBase
+        public class when_updating_an_existing_circle_async : SpecificationBase
         {
             Establish context = () =>
             {
@@ -678,7 +680,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    s.UpdateCircle<SpatialGuidItem>(_item.StructureId, SpatialDataFactory.Circle1, 10d);
+                    s.UpdateCircleAsync<SpatialGuidItem>(_item.StructureId, SpatialDataFactory.Circle1, 10d).Wait();
                 }
             };
 
@@ -687,7 +689,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    var c = s.GetCoordinatesIn<SpatialGuidItem>(_item.StructureId);
+                    var c = s.GetCoordinatesInAsync<SpatialGuidItem>(_item.StructureId).Result;
                     c.Length.ShouldEqual(129);
                     c[0].Latitude.ShouldEqual(47.653063500926457d);
                     c[0].Longitude.ShouldEqual(-122.35790573151685d);
@@ -702,7 +704,7 @@ namespace SisoDb.Specifications.Spatial
         }
 
         [Subject(typeof(ISisoSpatial), "ContainsPoint")]
-        public class when_checking_if_circle_contains_point_that_is_within_bounds : SpecificationBase
+        public class when_checking_if_circle_contains_point_async_that_is_within_bounds : SpecificationBase
         {
             Establish context = () =>
             {
@@ -724,7 +726,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    _contains = s.ContainsPoint<SpatialGuidItem>(_item.StructureId, SpatialDataFactory.Circle1);
+                    _contains = s.ContainsPointAsync<SpatialGuidItem>(_item.StructureId, SpatialDataFactory.Circle1).Result;
                 }
             };
 
@@ -736,7 +738,7 @@ namespace SisoDb.Specifications.Spatial
         }
 
         [Subject(typeof(ISisoSpatial), "ContainsPoint")]
-        public class when_checking_if_circle_contains_point_that_is_outside_bounds : SpecificationBase
+        public class when_checking_if_circle_contains_point_async_that_is_outside_bounds : SpecificationBase
         {
             Establish context = () =>
             {
@@ -758,7 +760,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    _contains = s.ContainsPoint<SpatialGuidItem>(_item.StructureId, new Coordinates{Latitude = SpatialDataFactory.Circle1.Latitude + 0.05});
+                    _contains = s.ContainsPointAsync<SpatialGuidItem>(_item.StructureId, new Coordinates { Latitude = SpatialDataFactory.Circle1.Latitude + 0.05 }).Result;
                 }
             };
 
@@ -770,7 +772,7 @@ namespace SisoDb.Specifications.Spatial
         }
 
         [Subject(typeof(ISisoSpatial), "ContainsPointAfterExpand")]
-        public class when_checking_if_a_expanded_circle_contains_point_that_normally_is_outside_bounds : SpecificationBase
+        public class when_checking_if_a_expanded_circle_contains_point_async_that_normally_is_outside_bounds : SpecificationBase
         {
             Establish context = () =>
             {
@@ -792,11 +794,11 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    _contains = s.ContainsPointAfterExpand<SpatialGuidItem>(_item.StructureId, new Coordinates
+                    _contains = s.ContainsPointAfterExpandAsync<SpatialGuidItem>(_item.StructureId, new Coordinates
                     {
-                        Latitude = SpatialDataFactory.Circle1.Latitude + 0.05, 
+                        Latitude = SpatialDataFactory.Circle1.Latitude + 0.05,
                         Longitude = SpatialDataFactory.Circle1.Longitude
-                    }, 5600d);
+                    }, 5600d).Result;
                 }
             };
 
@@ -808,7 +810,7 @@ namespace SisoDb.Specifications.Spatial
         }
 
         [Subject(typeof(ISisoSpatial), "MakeValid")]
-        public class when_makevalid_on_correctly_inserted_polygon : SpecificationBase
+        public class when_makevalid_async_on_correctly_inserted_polygon : SpecificationBase
         {
             Establish context = () =>
             {
@@ -833,7 +835,7 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    s.MakeValid<SpatialGuidItem>(_item.StructureId);
+                    s.MakeValidAsync<SpatialGuidItem>(_item.StructureId).Wait();
                 }
             };
 
@@ -842,61 +844,60 @@ namespace SisoDb.Specifications.Spatial
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    s.GetCoordinatesIn<SpatialGuidItem>(_item.StructureId).ShouldBeValueEqualTo(SpatialDataFactory.DefaultPolygon());
+                    s.GetCoordinatesInAsync<SpatialGuidItem>(_item.StructureId).Result.ShouldBeValueEqualTo(SpatialDataFactory.DefaultPolygon());
                 }
             };
 
             private static SpatialGuidItem _item;
         }
 
-        [Subject(typeof(ISisoSpatial), "InsertPolygon")]
-        public class when_trying_to_insert_invalid_polygon : SpecificationBase
+    [Subject(typeof(ISisoSpatial), "InsertPolygon")]
+    public class when_trying_to_insert_invalid_polygon_async : SpecificationBase
+    {
+        Establish context = () =>
         {
-            Establish context = () =>
+            TestContext = TestContextFactory.Create();
+            using (var session = TestContext.Database.BeginSession())
             {
-                TestContext = TestContextFactory.Create();
-                using (var session = TestContext.Database.BeginSession())
-                {
-                    _item = new SpatialGuidItem();
-                    session.Insert(_item);
+                _item = new SpatialGuidItem();
+                session.Insert(_item);
 
-                    var s = session.Spatial();
-                    s.EnableFor<SpatialGuidItem>();
-                }
-            };
+                var s = session.Spatial();
+                s.EnableFor<SpatialGuidItem>();
+            }
+        };
 
-            Because of = () =>
-            {
-                CaughtException = Catch.Exception(() =>
-                {
-                    using (var session = TestContext.Database.BeginSession())
-                    {
-                        var s = session.Spatial();
-                        s.InsertPolygon<SpatialGuidItem>(_item.StructureId, SpatialDataFactory.InvalidPolygonCauseOfMultiPolygon());
-                    }
-                });
-            };
-
-            It should_have_caused_an_exception = () =>
-            {
-                CaughtException.ShouldNotBeNull();
-                CaughtException.ShouldBeOfType<SisoDbException>();
-                CaughtException.Message.ShouldStartWith(ExceptionMessages.NotAValidPolygon.Inject("24409: Not valid because some portion of polygon ring (1) lies in the interior of a polygon."));
-            };
-
-            It should_not_have_inserted_the_polygon = () =>
+        Because of = () =>
+        {
+            CaughtException = Catch.Exception(() =>
             {
                 using (var session = TestContext.Database.BeginSession())
                 {
                     var s = session.Spatial();
-                    s.GetCoordinatesIn<SpatialGuidItem>(_item.StructureId).ShouldBeEmpty();
+                    s.InsertPolygonAsync<SpatialGuidItem>(_item.StructureId, SpatialDataFactory.InvalidPolygonCauseOfMultiPolygon()).Wait();
                 }
-            };
+            });
+        };
 
-            private static SpatialGuidItem _item;
-        }
+        It should_have_caused_an_exception = () =>
+        {
+            CaughtException.ShouldNotBeNull();
+            CaughtException.ShouldBeOfType<AggregateException>();
+            CaughtException.InnerException.ShouldBeOfType<SisoDbException>();
+            CaughtException.InnerException.Message.ShouldStartWith(ExceptionMessages.NotAValidPolygon.Inject("24409: Not valid because some portion of polygon ring (1) lies in the interior of a polygon."));
+        };
+
+        It should_not_have_inserted_the_polygon = () =>
+        {
+            using (var session = TestContext.Database.BeginSession())
+            {
+                var s = session.Spatial();
+                s.GetCoordinatesIn<SpatialGuidItem>(_item.StructureId).ShouldBeEmpty();
+            }
+        };
+
+        private static SpatialGuidItem _item;
     }
-
     
 #endif
 }

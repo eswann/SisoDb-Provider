@@ -998,7 +998,7 @@ namespace SisoDb.Dac
             {
                 using (var bulkInserter = GetBulkCopy())
                 {
-                    bulkInserter.PrepForStructuresInsert(reader, structures);
+                    bulkInserter.PrepareStructuresInsert(reader, structures);
                     bulkInserter.Write(reader);
                 }
             }
@@ -1019,7 +1019,7 @@ namespace SisoDb.Dac
             {
                 using (var bulkInserter = GetBulkCopy())
                 {
-                    bulkInserter.PrepForStructuresInsert(reader, structures);
+                    bulkInserter.PrepareStructuresInsert(reader, structures);
                     await bulkInserter.WriteAsync(reader);
                 }
             }
@@ -1034,7 +1034,7 @@ namespace SisoDb.Dac
 
                 using (var bulkInserter = GetBulkCopy())
                 {
-                    bulkInserter.PrepForIndexesInsert(reader);
+                    bulkInserter.PrepareIndexesInsert(reader);
                     bulkInserter.Write(reader);
                 }
             }
@@ -1049,7 +1049,7 @@ namespace SisoDb.Dac
 
                 using (var bulkInserter = GetBulkCopy())
                 {
-                    bulkInserter.PrepForIndexesInsert(reader);
+                    bulkInserter.PrepareIndexesInsert(reader);
                     await bulkInserter.WriteAsync(reader);
                 }
             }
@@ -1065,7 +1065,7 @@ namespace SisoDb.Dac
             {
                 using (var bulkInserter = GetBulkCopy())
                 {
-                    bulkInserter.PrepForUniquesInsert(reader, uniques);
+                    bulkInserter.PrepareUniquesInsert(reader, uniques);
 
                     bulkInserter.Write(reader);
                 }
@@ -1081,7 +1081,7 @@ namespace SisoDb.Dac
             {
                 using (var bulkInserter = GetBulkCopy())
                 {
-                    bulkInserter.PrepForUniquesInsert(reader, uniques);
+                    bulkInserter.PrepareUniquesInsert(reader, uniques);
 
                     await bulkInserter.WriteAsync(reader);
                 }
