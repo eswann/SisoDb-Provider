@@ -182,11 +182,20 @@
     <Compile Include="..\SisoDb.Specifications\Session\Querying\Any.cs">
       <Link>Session\Querying\Any.cs</Link>
     </Compile>
+    <Compile Include="..\SisoDb.Specifications\Session\Querying\AnyAsync.cs">
+      <Link>Session\Querying\AnyAsync.cs</Link>
+    </Compile>
     <Compile Include="..\SisoDb.Specifications\Session\Querying\CheckoutById.cs">
       <Link>Session\Querying\CheckoutById.cs</Link>
     </Compile>
+    <Compile Include="..\SisoDb.Specifications\Session\Querying\CheckoutByIdAsync.cs">
+      <Link>Session\Querying\CheckoutByIdAsync.cs</Link>
+    </Compile>
     <Compile Include="..\SisoDb.Specifications\Session\Querying\Count.cs">
       <Link>Session\Querying\Count.cs</Link>
+    </Compile>
+    <Compile Include="..\SisoDb.Specifications\Session\Querying\CountAsync.cs">
+      <Link>Session\Querying\CountAsync.cs</Link>
     </Compile>
     <Compile Include="..\SisoDb.Specifications\Session\Querying\Dynamic\Any.cs">
       <Link>Session\Querying\Dynamic\Any.cs</Link>
@@ -203,17 +212,32 @@
     <Compile Include="..\SisoDb.Specifications\Session\Querying\Exists.cs">
       <Link>Session\Querying\Exists.cs</Link>
     </Compile>
+    <Compile Include="..\SisoDb.Specifications\Session\Querying\ExistsAsync.cs">
+      <Link>Session\Querying\ExistsAsync.cs</Link>
+    </Compile>
     <Compile Include="..\SisoDb.Specifications\Session\Querying\GetById.cs">
       <Link>Session\Querying\GetById.cs</Link>
+    </Compile>
+    <Compile Include="..\SisoDb.Specifications\Session\Querying\GetByIdAsync.cs">
+      <Link>Session\Querying\GetByIdAsync.cs</Link>
     </Compile>
     <Compile Include="..\SisoDb.Specifications\Session\Querying\GetByIds.cs">
       <Link>Session\Querying\GetByIds.cs</Link>
     </Compile>
+    <Compile Include="..\SisoDb.Specifications\Session\Querying\GetByIdsAsync.cs">
+      <Link>Session\Querying\GetByIdsAsync.cs</Link>
+    </Compile>
     <Compile Include="..\SisoDb.Specifications\Session\Querying\GetByQuery.cs">
       <Link>Session\Querying\GetByQuery.cs</Link>
     </Compile>
+    <Compile Include="..\SisoDb.Specifications\Session\Querying\GetByQueryAsync.cs">
+      <Link>Session\Querying\GetByQueryAsync.cs</Link>
+    </Compile>
     <Compile Include="..\SisoDb.Specifications\Session\Querying\GetIds.cs">
       <Link>Session\Querying\GetIds.cs</Link>
+    </Compile>
+    <Compile Include="..\SisoDb.Specifications\Session\Querying\GetIdsAsync.cs">
+      <Link>Session\Querying\GetIdsAsync.cs</Link>
     </Compile>
     <Compile Include="..\SisoDb.Specifications\Session\Querying\NamedQueries.cs">
       <Link>Session\Querying\NamedQueries.cs</Link>
@@ -221,11 +245,20 @@
     <Compile Include="..\SisoDb.Specifications\Session\Querying\Projection.cs">
       <Link>Session\Querying\Projection.cs</Link>
     </Compile>
+    <Compile Include="..\SisoDb.Specifications\Session\Querying\ProjectionAsync.cs">
+      <Link>Session\Querying\ProjectionAsync.cs</Link>
+    </Compile>
     <Compile Include="..\SisoDb.Specifications\Session\Querying\Query.cs">
       <Link>Session\Querying\Query.cs</Link>
     </Compile>
     <Compile Include="..\SisoDb.Specifications\Session\Querying\QueryAll.cs">
       <Link>Session\Querying\QueryAll.cs</Link>
+    </Compile>
+    <Compile Include="..\SisoDb.Specifications\Session\Querying\QueryAllAsync.cs">
+      <Link>Session\Querying\QueryAllAsync.cs</Link>
+    </Compile>
+    <Compile Include="..\SisoDb.Specifications\Session\Querying\QueryAsync.cs">
+      <Link>Session\Querying\QueryAsync.cs</Link>
     </Compile>
     <Compile Include="..\SisoDb.Specifications\Session\Querying\RawQueries.cs">
       <Link>Session\Querying\RawQueries.cs</Link>

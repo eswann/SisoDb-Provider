@@ -74,6 +74,39 @@
     <Compile Include="Session\Caching.cs" />
     <Compile Include="Session\Clear.cs" />
     <Compile Include="Session\ClearAsync.cs" />
+    <Compile Include="Session\Querying\AnyAsync.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Session\Querying\CheckoutByIdAsync.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Session\Querying\CountAsync.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Session\Querying\ExistsAsync.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Session\Querying\GetByIdAsync.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Session\Querying\GetByIdsAsync.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Session\Querying\GetByQueryAsync.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Session\Querying\GetIdsAsync.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Session\Querying\ProjectionAsync.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Session\Querying\QueryAllAsync.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Session\Querying\QueryAsync.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Session\UpdatesOfSingleValuesAsync.cs" />
     <Compile Include="Session\UpdatesHandlingConcurrenyAsync.cs" />
     <Compile Include="Session\UpdatesAsync.cs" />
