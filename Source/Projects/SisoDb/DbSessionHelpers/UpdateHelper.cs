@@ -60,7 +60,7 @@ namespace SisoDb.DbSessionHelpers
                     throw new SisoDbException(ExceptionMessages.WriteSession_NoItemExistsForUpdate.Inject(structureSchema.Name, structureId.Value));
             }
             else
-                EnsureConcurrencyTokenIsValid(structureSchema, structureId, item, item.GetType());
+                await EnsureConcurrencyTokenIsValidAsync(structureSchema, structureId, item, item.GetType());
 
             PrepareCacheForUpdate(structureSchema, structureId);
             await DbClient.DeleteIndexesAndUniquesByIdAsync(structureId, structureSchema);
@@ -123,7 +123,7 @@ namespace SisoDb.DbSessionHelpers
                 return;
 
             if (structureSchema.HasConcurrencyToken)
-                EnsureConcurrencyTokenIsValid(structureSchema, structureId, item, typeof(TImpl));
+                await EnsureConcurrencyTokenIsValidAsync(structureSchema, structureId, item, typeof(TImpl));
 
             PrepareCacheForUpdate(structureSchema, structureId);
             await DbClient.DeleteIndexesAndUniquesByIdAsync(structureId, structureSchema);
@@ -283,10 +283,23 @@ namespace SisoDb.DbSessionHelpers
             return sqlQuery;
         }
 
-        protected virtual void EnsureConcurrencyTokenIsValid(IStructureSchema structureSchema, IStructureId structureId, object newItem, Type typeForDeserialization)
+        private void EnsureConcurrencyTokenIsValid(IStructureSchema structureSchema, IStructureId structureId, object newItem, Type typeForDeserialization)
         {
-            var existingJson = DbClient.GetJsonById(structureId, structureSchema);
+            string existingJson = DbClient.GetJsonById(structureId, structureSchema);
 
+            EnsureConcurrencyTokenIsValid(existingJson, structureSchema, structureId, newItem, typeForDeserialization);
+        }
+
+        private async Task EnsureConcurrencyTokenIsValidAsync(IStructureSchema structureSchema, IStructureId structureId, object newItem, Type typeForDeserialization)
+        {
+            string existingJson = await DbClient.GetJsonByIdAsync(structureId, structureSchema);
+
+            EnsureConcurrencyTokenIsValid(existingJson, structureSchema, structureId, newItem, typeForDeserialization);
+        }
+
+        private void EnsureConcurrencyTokenIsValid(string existingJson, IStructureSchema structureSchema, IStructureId structureId,
+                                                             object newItem, Type typeForDeserialization)
+        {
             if (string.IsNullOrWhiteSpace(existingJson))
                 throw new SisoDbException(ExceptionMessages.WriteSession_NoItemExistsForUpdate.Inject(structureSchema.Name, structureId.Value));
 
@@ -319,5 +332,6 @@ namespace SisoDb.DbSessionHelpers
 
             throw new SisoDbException(ExceptionMessages.ConcurrencyTokenIsOfWrongType);
         }
+
     }
 }

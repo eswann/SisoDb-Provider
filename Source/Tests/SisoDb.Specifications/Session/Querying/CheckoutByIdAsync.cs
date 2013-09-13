@@ -68,11 +68,11 @@ namespace SisoDb.Specifications.Session.Querying
 
 #if !SqlCe4Provider
             It should_have_timed_out_trying_to_get_the_structure =
-                () => CaughtException.ShouldHaveTimedOut();
+                () => CaughtException.InnerException.ShouldHaveTimedOut();
 #endif
 #if SqlCe4Provider
             It should_not_have_timed_out_trying_to_get_the_structure =
-                () => CaughtException.ShouldBeNull();
+                () => CaughtException.InnerException.ShouldBeNull();
 #endif
             private static ISession _firstSession;
             private static IList<QueryGuidItem> _structures;
@@ -113,7 +113,7 @@ namespace SisoDb.Specifications.Session.Querying
             };
 
             It should_have_timed_out_trying_to_get_the_structure =
-                () => CaughtException.ShouldHaveTimedOut();
+                () => CaughtException.InnerException.ShouldHaveTimedOut();
 
             private static ISession _firstSession;
             private static IList<QueryGuidItem> _structures;
@@ -180,7 +180,7 @@ namespace SisoDb.Specifications.Session.Querying
 
 #if !SqlCe4Provider
             It should_have_timed_out_trying_to_get_the_structure =
-                () => CaughtException.ShouldHaveTimedOut();
+                () => CaughtException.InnerException.ShouldHaveTimedOut();
 #endif
 #if SqlCe4Provider
             It should_not_have_timed_out_trying_to_get_the_structure =
@@ -226,7 +226,7 @@ namespace SisoDb.Specifications.Session.Querying
             };
 
             It should_have_timed_out_trying_to_get_the_structure =
-                () => CaughtException.ShouldHaveTimedOut();
+                () => CaughtException.InnerException.ShouldHaveTimedOut();
 
             private static ISession _firstSession;
             private static IList<QueryIdentityItem> _structures;
@@ -293,11 +293,11 @@ namespace SisoDb.Specifications.Session.Querying
 
 #if !SqlCe4Provider
             It should_have_timed_out_trying_to_get_the_structure =
-                () => CaughtException.ShouldHaveTimedOut();
+                () => CaughtException.InnerException.ShouldHaveTimedOut();
 #endif
 #if SqlCe4Provider
             It should_not_have_timed_out_trying_to_get_the_structure =
-                () => CaughtException.ShouldBeNull();
+                () => CaughtException.InnerException.ShouldBeNull();
 #endif
 
             private static ISession _firstSession;
@@ -339,7 +339,7 @@ namespace SisoDb.Specifications.Session.Querying
             };
 
             It should_have_timed_out_trying_to_get_the_structure =
-                () => CaughtException.ShouldHaveTimedOut();
+                () => CaughtException.InnerException.ShouldHaveTimedOut();
 
             private static ISession _firstSession;
             private static IList<QueryBigIdentityItem> _structures;

@@ -242,6 +242,9 @@
     <Compile Include="..\SisoDb.Specifications\Session\Querying\NamedQueries.cs">
       <Link>Session\Querying\NamedQueries.cs</Link>
     </Compile>
+    <Compile Include="..\SisoDb.Specifications\Session\Querying\NamedQueriesAsync.cs">
+      <Link>Session\Querying\NamedQueriesAsync.cs</Link>
+    </Compile>
     <Compile Include="..\SisoDb.Specifications\Session\Querying\Projection.cs">
       <Link>Session\Querying\Projection.cs</Link>
     </Compile>
@@ -262,6 +265,9 @@
     </Compile>
     <Compile Include="..\SisoDb.Specifications\Session\Querying\RawQueries.cs">
       <Link>Session\Querying\RawQueries.cs</Link>
+    </Compile>
+    <Compile Include="..\SisoDb.Specifications\Session\Querying\RawQueriesAsync.cs">
+      <Link>Session\Querying\RawQueriesAsync.cs</Link>
     </Compile>
     <Compile Include="..\sisodb.specifications\session\querying\setfunctions\QxAny.cs">
       <Link>Session\Querying\SetFunctions\QxAny.cs</Link>

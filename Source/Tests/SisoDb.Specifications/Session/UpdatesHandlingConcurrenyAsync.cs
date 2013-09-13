@@ -83,9 +83,9 @@ namespace SisoDb.Specifications.Session
             It should_have_thrown_SisoDbConcurrencyException = () =>
             {
                 CaughtException.ShouldNotBeNull();
-                CaughtException.ShouldBeOfType<SisoDbConcurrencyException>();
+                CaughtException.InnerException.ShouldBeOfType<SisoDbConcurrencyException>();
 
-                var ex = (SisoDbConcurrencyException)CaughtException;
+                var ex = (SisoDbConcurrencyException)CaughtException.InnerException;
                 ex.StructureId.ShouldEqual(_orgItem.Id);
                 ex.StructureName.ShouldEqual(typeof(ModelWithIntToken).Name);
             };
@@ -548,7 +548,7 @@ namespace SisoDb.Specifications.Session
             It should_have_thrown_a_timeout_exception = () =>
             {
                 CaughtException.ShouldNotBeNull();
-                CaughtException.Message.ShouldContain("Timeout expired");
+                CaughtException.InnerException.Message.ShouldContain("Timeout expired");
             };
 #endif
 

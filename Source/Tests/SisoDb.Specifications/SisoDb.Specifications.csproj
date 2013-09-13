@@ -98,6 +98,7 @@
     <Compile Include="Session\Querying\GetIdsAsync.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Session\Querying\NamedQueriesAsync.cs" />
     <Compile Include="Session\Querying\ProjectionAsync.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -105,6 +106,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Session\Querying\QueryAsync.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Session\Querying\RawQueriesAsync.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Session\UpdatesOfSingleValuesAsync.cs" />

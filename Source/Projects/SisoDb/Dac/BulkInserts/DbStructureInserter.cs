@@ -105,7 +105,7 @@ namespace SisoDb.Dac.BulkInserts
             await MainDbClient.SingleUpdateOfStructureAsync(structure, structureSchema);
             await InsertUniquesAsync(structureSchema, structures);
 
-            var groupedIndexInsertActions = CreateGroupedIndexInsertActions(structureSchema, new[] { structure }, false);
+            var groupedIndexInsertActions = CreateGroupedIndexInsertActions(structureSchema, new[] { structure }, true);
             if (groupedIndexInsertActions.Length == 0)
                 return;
 
@@ -142,7 +142,7 @@ namespace SisoDb.Dac.BulkInserts
 
         protected virtual async Task InsertIndexesAsync(IndexInsertAction[] groupedIndexInsertActions)
         {
-            var actionsToExecute = groupedIndexInsertActions.Where(i => i.Action != null);
+            var actionsToExecute = groupedIndexInsertActions.Where(i => i.AsyncAction != null);
             await Task.WhenAll(actionsToExecute.Select(x => x.AsyncAction(x.Data, MainDbClient)));
         }
 
