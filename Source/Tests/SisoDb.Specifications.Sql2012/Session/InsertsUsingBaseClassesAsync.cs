@@ -12,7 +12,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<MyItem>();
             };
 
@@ -52,7 +52,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<MyItemBase>();
             };
 

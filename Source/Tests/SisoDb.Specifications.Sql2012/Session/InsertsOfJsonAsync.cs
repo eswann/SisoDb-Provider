@@ -14,7 +14,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _json = "{\"String1\":\"1\",\"Int1\":1,\"Decimal1\":0.1,\"DateTime1\":\"2000-01-01T00:00:00.0000000" + GetUtcOffset() + ":00\",\"Ints\":[1,2]}";
             };
 
@@ -64,7 +64,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _json = "{\"String1\":\"1\",\"Int1\":1,\"Decimal1\":0.1,\"DateTime1\":\"2000-01-01T00:00:00.0000000" + GetUtcOffset() + ":00\",\"Ints\":[1,2]}";
             };
 
@@ -114,7 +114,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _idString = "f767c34625fce011983e544249037e42";
                 _json = "{{\"StructureId\":\"{0}\",\"String1\":\"1\"}}".Inject(_idString);
             };
@@ -152,7 +152,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _json = "{\"STRING1\":\"1\"}";
             };
 

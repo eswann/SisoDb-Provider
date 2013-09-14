@@ -14,7 +14,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = new[]
                 {
                     new Model { LongText = new string('a', 4001) }, 
@@ -56,7 +56,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
             };
 
 #if SqlAzureProvider || Sql2005Provider || Sql2008Provider || Sql2012Provider || SqlProfilerProvider
@@ -88,7 +88,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structure = new ModelFoo { Guids = new List<Guid>() };
 
                 for (var c = 0; c < 1000; c++)

@@ -34,6 +34,29 @@ namespace SisoDb.Specifications
             throw new NotSupportedException("No provider has been specified for the test context.");
         }
 
+        public static ITestContext CreateAsync()
+        {
+#if SqlAzureProvider
+            return new AzureTestContext(TestConstants.ConnectionStringNameForAzureAsync);
+#endif
+#if Sql2005Provider
+            return new Sql2005TestContext(TestConstants.ConnectionStringNameForSql2005Async);
+#endif
+#if Sql2008Provider
+            return new Sql2008TestContext(TestConstants.ConnectionStringNameForSql2008Async);
+#endif
+#if Sql2012Provider
+            return new Sql2012TestContext(TestConstants.ConnectionStringNameForSql2012Async);
+#endif
+#if SqlCe4Provider
+            return new SqlCe4TestContext(TestConstants.ConnectionStringNameForSqlCe4Async);
+#endif
+#if SqlProfilerProvider
+            return new SqlProfilerTestContext(TestConstants.ConnectionStringNameForSqlProfilerAsync);
+#endif
+            throw new NotSupportedException("No provider has been specified for the test context.");
+        }
+
         public static ITestContext CreateTemp()
         {
 #if SqlAzureProvider

@@ -9,12 +9,12 @@ namespace SisoDb.Specifications.Session
 {
     class DeletesAsync
     {
-        [Subject(typeof(ISession), "Delete by query")]
+        [Subject(typeof(ISession), "Delete by query Async")]
         public class when_guiditem_and_deleting_async_two_of_four_items_using_query : SpecificationBase
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = TestContext.Database.InsertGuidItems(4);
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<GuidItem>();
             };
@@ -66,7 +66,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = TestContext.Database.InsertStringItems(4);
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<StringItem>();
             };
@@ -118,7 +118,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = TestContext.Database.InsertIdentityItems(4);
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<IdentityItem>();
             };
@@ -170,7 +170,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = TestContext.Database.InsertBigIdentityItems(4);
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<BigIdentityItem>();
             };
@@ -222,7 +222,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = TestContext.Database.InsertGuidItems(4);
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<GuidItem>();
             };
@@ -275,7 +275,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = TestContext.Database.InsertUniqueGuidItems(4);
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<UniqueGuidItem>();
             };
@@ -340,7 +340,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = TestContext.Database.InsertStringItems(4);
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<StringItem>();
             };
@@ -393,7 +393,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = TestContext.Database.InsertUniqueStringItems(4);
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<UniqueStringItem>();
             };
@@ -458,7 +458,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = TestContext.Database.InsertIdentityItems(4);
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<IdentityItem>();
             };
@@ -511,7 +511,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = TestContext.Database.InsertUniqueIdentityItems(4);
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<UniqueIdentityItem>();
             };
@@ -576,7 +576,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = TestContext.Database.InsertBigIdentityItems(4);
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<BigIdentityItem>();
             };
@@ -629,7 +629,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = TestContext.Database.InsertUniqueBigIdentityItems(4);
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<UniqueBigIdentityItem>();
             };
@@ -693,7 +693,7 @@ namespace SisoDb.Specifications.Session
         public class when_guiditem_and_deleting_async_item_by_id_in_empty_set : SpecificationBase
         {
             Establish context = 
-                () => TestContext = TestContextFactory.Create();
+                () => TestContext = TestContextFactory.CreateAsync();
             
             Because of = () =>
             {
@@ -714,7 +714,7 @@ namespace SisoDb.Specifications.Session
         public class when_stringitem_and_deleting_async_item_by_id_in_empty_set : SpecificationBase
         {
             Establish context =
-                () => TestContext = TestContextFactory.Create();
+                () => TestContext = TestContextFactory.CreateAsync();
 
             Because of = () =>
             {
@@ -735,7 +735,7 @@ namespace SisoDb.Specifications.Session
         public class when_identityitem_and_deleting_async_item_by_id_in_empty_set : SpecificationBase
         {
             Establish context =
-                () => TestContext = TestContextFactory.Create();
+                () => TestContext = TestContextFactory.CreateAsync();
 
             Because of = () =>
             {
@@ -757,7 +757,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = TestContext.Database.InsertGuidItems(4);
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<GuidItem>();
             };
@@ -809,7 +809,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = TestContext.Database.InsertStringItems(4);
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<StringItem>();
             };
@@ -861,7 +861,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = TestContext.Database.InsertIdentityItems(4);
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<IdentityItem>();
             };
@@ -913,7 +913,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = TestContext.Database.InsertBigIdentityItems(4);
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<BigIdentityItem>();
             };
@@ -965,7 +965,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = TestContext.Database.InsertGuidItems(4);
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<GuidItem>();
             };
@@ -1011,7 +1011,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = TestContext.Database.InsertGuidItems(4);
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<GuidItem>();
             };
@@ -1057,7 +1057,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = TestContext.Database.InsertGuidItems(4);
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<GuidItem>();
             };
@@ -1098,7 +1098,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = TestContext.Database.InsertGuidItems(4);
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<GuidItem>();
             };
@@ -1139,7 +1139,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = TestContext.Database.InsertGuidItems(4);
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<GuidItem>();
             };
@@ -1191,7 +1191,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = TestContext.Database.InsertGuidItems(4);
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<GuidItem>();
             };
@@ -1243,7 +1243,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = TestContext.Database.InsertGuidItems(4);
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<GuidItem>();
             };

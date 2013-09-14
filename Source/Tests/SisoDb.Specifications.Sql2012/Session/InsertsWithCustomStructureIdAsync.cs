@@ -12,7 +12,7 @@ namespace SisoDb.Specifications.Session
 		{
 			Establish context = () =>
 			{
-				TestContext = TestContextFactory.Create();
+				TestContext = TestContextFactory.CreateAsync();
 			    _structures = new[]
 			    {
 			        new MyEvent { IntValue = 1 },
@@ -49,7 +49,7 @@ namespace SisoDb.Specifications.Session
 		{
 			Establish context = () =>
 			{
-				TestContext = TestContextFactory.Create();
+				TestContext = TestContextFactory.CreateAsync();
 				_structures = new[]
 				{
 					new CustomAlpha{IntValue = 1},
@@ -88,7 +88,7 @@ namespace SisoDb.Specifications.Session
 		{
 			Establish context = () =>
 			{
-				TestContext = TestContextFactory.Create();
+				TestContext = TestContextFactory.CreateAsync();
 				_structures = new[]
 				{
 					new CustomBeta{IntValue = 1},

@@ -8,12 +8,12 @@ namespace SisoDb.Specifications.Session.Querying
 {
     class ExistsAsync
     {
-        [Subject(typeof(ISisoQueryable<>), "Exists by Id (guid)")]
+        [Subject(typeof(ISisoQueryable<>), "Exists by Id (guid) Async")]
         public class when_set_with_guid_id_contains_match_async : SpecificationBase
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = QueryGuidItem.CreateFourItems<QueryGuidItem>();
                 TestContext.Database.UseOnceTo().InsertMany(_structures);
             };
@@ -34,7 +34,7 @@ namespace SisoDb.Specifications.Session.Querying
             {
                 _fooId = Guid.Parse("f4bbe786-2231-4b62-b82c-22c5c3b4ed7d");
 
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = QueryGuidItem.CreateFourItems<QueryGuidItem>();
                 TestContext.Database.UseOnceTo().InsertMany(_structures);
             };

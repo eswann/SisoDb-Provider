@@ -14,7 +14,7 @@ namespace SisoDb.Specifications.Session
         [Subject(typeof(ISession), "Insert (unique per type)")]
         public class when_inserting_async_one_unique_per_type_guid_entity : SpecificationBase
         {
-            Establish context = () => TestContext = TestContextFactory.Create();
+            Establish context = () => TestContext = TestContextFactory.CreateAsync();
 
             Because of = () =>
             {
@@ -40,7 +40,7 @@ namespace SisoDb.Specifications.Session
         [Subject(typeof(ISession), "Insert (unique per type)")]
         public class when_inserting_async_two_unique_per_type_guid_entities : SpecificationBase
         {
-            Establish context = () => TestContext = TestContextFactory.Create();
+            Establish context = () => TestContext = TestContextFactory.CreateAsync();
 
             Because of = () =>
             {
@@ -78,7 +78,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _orgStructure = new VehicleWithGuidId { VehRegNo = "ABC123" };
                 TestContext.Database.UseOnceTo().InsertAsync(_orgStructure).Wait();
             };
@@ -108,7 +108,7 @@ namespace SisoDb.Specifications.Session
         [Subject(typeof(ISession), "Insert (unique per type)")]
         public class when_inserting_async_one_unique_per_type_string_entity : SpecificationBase
         {
-            Establish context = () => TestContext = TestContextFactory.Create();
+            Establish context = () => TestContext = TestContextFactory.CreateAsync();
 
             Because of = () =>
             {
@@ -134,7 +134,7 @@ namespace SisoDb.Specifications.Session
         [Subject(typeof(ISession), "Insert (unique per type)")]
         public class when_inserting_async_two_unique_per_type_string_entities : SpecificationBase
         {
-            Establish context = () => TestContext = TestContextFactory.Create();
+            Establish context = () => TestContext = TestContextFactory.CreateAsync();
 
             Because of = () =>
             {
@@ -172,7 +172,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _orgStructure = new VehicleWithStringId { StructureId = "A1", VehRegNo = "ABC123" };
                 TestContext.Database.UseOnceTo().InsertAsync(_orgStructure).Wait();
             };
@@ -204,7 +204,7 @@ namespace SisoDb.Specifications.Session
         [Subject(typeof(ISession), "Insert (unique per type)")]
         public class when_inserting_async_one_unique_per_type_identity_entity : SpecificationBase
         {
-            Establish context = () => TestContext = TestContextFactory.Create();
+            Establish context = () => TestContext = TestContextFactory.CreateAsync();
 
             Because of = () =>
             {
@@ -230,7 +230,7 @@ namespace SisoDb.Specifications.Session
         [Subject(typeof(ISession), "Insert (unique per type)")]
         public class when_inserting_async_two_unique_per_type_identity_entities : SpecificationBase
         {
-            Establish context = () => TestContext = TestContextFactory.Create();
+            Establish context = () => TestContext = TestContextFactory.CreateAsync();
 
             Because of = () =>
             {
@@ -268,7 +268,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _orgStructure = new VehicleWithIdentityId {VehRegNo = "ABC123"};
                 TestContext.Database.UseOnceTo().InsertAsync(_orgStructure).Wait();
             };
@@ -299,7 +299,7 @@ namespace SisoDb.Specifications.Session
         [Subject(typeof(ISession), "Insert (unique per type)")]
         public class when_inserting_async_one_unique_per_type_big_identity_entity : SpecificationBase
         {
-            Establish context = () => TestContext = TestContextFactory.Create();
+            Establish context = () => TestContext = TestContextFactory.CreateAsync();
 
             Because of = () =>
             {
@@ -325,7 +325,7 @@ namespace SisoDb.Specifications.Session
         [Subject(typeof(ISession), "Insert (unique per type)")]
         public class when_inserting_async_two_unique_per_type_big_identity_entities : SpecificationBase
         {
-            Establish context = () => TestContext = TestContextFactory.Create();
+            Establish context = () => TestContext = TestContextFactory.CreateAsync();
 
             Because of = () =>
             {
@@ -363,7 +363,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
 
                 _orgStructure = new VehicleWithBigIdentityId {VehRegNo = "ABC123"};
                 TestContext.Database.UseOnceTo().InsertAsync(_orgStructure).Wait();
@@ -395,7 +395,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _orgStructure = new VehicleWithGuidId { VehRegNo = null };
             };
 
@@ -416,7 +416,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<WithCollectionOfUnqies>();
                 _orgStructure = new WithCollectionOfUnqies { Items = null };
             };
@@ -437,7 +437,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<WithCollectionOfUnqies>();
                 _orgStructure = new WithCollectionOfUnqies { Items = new List<WithUniqueStringPerType>() };
             };

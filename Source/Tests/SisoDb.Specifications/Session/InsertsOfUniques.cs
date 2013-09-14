@@ -398,7 +398,7 @@ namespace SisoDb.Specifications.Session
             It should_have_failed = () =>
             {
                 CaughtException.ShouldNotBeNull();
-                (CaughtException as AggregateException).InnerExceptions[0].Message.ShouldStartWith("The Unique index 'VehicleWithGuidId':'VehRegNo' is evaluated to Null. This is not alowed.");
+                UnwrapAggregateException(CaughtException).Message.ShouldStartWith("The Unique index 'VehicleWithGuidId':'VehRegNo' is evaluated to Null. This is not alowed.");
             };
 
             private static VehicleWithGuidId _orgStructure;

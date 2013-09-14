@@ -19,6 +19,29 @@ namespace SisoDb.Testing
             return stringUtcOffset;
         }
 
+        protected static Exception UnwrapAggregateException(Exception ex)
+        {
+            while (ex is AggregateException)
+            {
+                var aggException = ex as AggregateException;
+
+                if (aggException.InnerException != null)
+                {
+                    ex = aggException.InnerException;
+                }
+                else if (aggException.InnerExceptions != null && aggException.InnerExceptions.Count > 0)
+                {
+                    ex = aggException.InnerExceptions[0];
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return ex;
+        }
+
         protected SpecificationBase()
         {
             SysDateTime.NowFn = () => TestConstants.FixedDateTime;   

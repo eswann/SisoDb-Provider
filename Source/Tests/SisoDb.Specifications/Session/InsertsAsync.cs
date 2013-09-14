@@ -11,7 +11,7 @@ namespace SisoDb.Specifications.Session
 {
     class InsertsAsync
     {
-        [Subject(typeof(ISession), "Insert")]
+        [Subject(typeof(ISession), "Insert Async")]
         public class when_inserting_async_item_with_single_string_member_that_is_null : SpecificationBase
         {
             Establish context = () =>

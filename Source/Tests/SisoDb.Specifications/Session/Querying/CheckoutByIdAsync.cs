@@ -8,12 +8,12 @@ namespace SisoDb.Specifications.Session.Querying
 {
     class CheckoutByIdAsync
     {
-        [Subject(typeof(ISession), "Checkout by Id (guid)")]
+        [Subject(typeof(ISession), "Checkout by Id (guid) Async")]
         public class when_getting_one_of_four_guid_items_async : SpecificationBase
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = QueryGuidItem.CreateFourItems<QueryGuidItem>();
                 TestContext.Database.UseOnceTo().InsertMany(_structures);
             };
@@ -38,7 +38,7 @@ namespace SisoDb.Specifications.Session.Querying
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = QueryGuidItem.CreateFourItems<QueryGuidItem>();
                 TestContext.Database.UseOnceTo().InsertMany(_structures);
 
@@ -68,11 +68,11 @@ namespace SisoDb.Specifications.Session.Querying
 
 #if !SqlCe4Provider
             It should_have_timed_out_trying_to_get_the_structure =
-                () => CaughtException.InnerException.ShouldHaveTimedOut();
+                () => UnwrapAggregateException(CaughtException).ShouldHaveTimedOut();
 #endif
 #if SqlCe4Provider
             It should_not_have_timed_out_trying_to_get_the_structure =
-                () => CaughtException.InnerException.ShouldBeNull();
+                () => UnwrapAggregateException(CaughtException).ShouldBeNull();
 #endif
             private static ISession _firstSession;
             private static IList<QueryGuidItem> _structures;
@@ -84,7 +84,7 @@ namespace SisoDb.Specifications.Session.Querying
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = QueryGuidItem.CreateFourItems<QueryGuidItem>();
                 TestContext.Database.UseOnceTo().InsertMany(_structures);
 
@@ -113,7 +113,7 @@ namespace SisoDb.Specifications.Session.Querying
             };
 
             It should_have_timed_out_trying_to_get_the_structure =
-                () => CaughtException.InnerException.ShouldHaveTimedOut();
+                () => UnwrapAggregateException(CaughtException).ShouldHaveTimedOut();
 
             private static ISession _firstSession;
             private static IList<QueryGuidItem> _structures;
@@ -125,7 +125,7 @@ namespace SisoDb.Specifications.Session.Querying
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = QueryIdentityItem.CreateFourItems<QueryIdentityItem>();
                 TestContext.Database.UseOnceTo().InsertMany(_structures);
             };
@@ -150,7 +150,7 @@ namespace SisoDb.Specifications.Session.Querying
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = QueryIdentityItem.CreateFourItems<QueryIdentityItem>();
                 TestContext.Database.UseOnceTo().InsertMany(_structures);
 
@@ -180,7 +180,7 @@ namespace SisoDb.Specifications.Session.Querying
 
 #if !SqlCe4Provider
             It should_have_timed_out_trying_to_get_the_structure =
-                () => CaughtException.InnerException.ShouldHaveTimedOut();
+                () => UnwrapAggregateException(CaughtException).ShouldHaveTimedOut();
 #endif
 #if SqlCe4Provider
             It should_not_have_timed_out_trying_to_get_the_structure =
@@ -197,7 +197,7 @@ namespace SisoDb.Specifications.Session.Querying
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = QueryIdentityItem.CreateFourItems<QueryIdentityItem>();
                 TestContext.Database.UseOnceTo().InsertMany(_structures);
 
@@ -226,7 +226,7 @@ namespace SisoDb.Specifications.Session.Querying
             };
 
             It should_have_timed_out_trying_to_get_the_structure =
-                () => CaughtException.InnerException.ShouldHaveTimedOut();
+                () => UnwrapAggregateException(CaughtException).ShouldHaveTimedOut();
 
             private static ISession _firstSession;
             private static IList<QueryIdentityItem> _structures;
@@ -238,7 +238,7 @@ namespace SisoDb.Specifications.Session.Querying
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = QueryBigIdentityItem.CreateFourItems<QueryBigIdentityItem>();
                 TestContext.Database.UseOnceTo().InsertMany(_structures);
             };
@@ -263,7 +263,7 @@ namespace SisoDb.Specifications.Session.Querying
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = QueryBigIdentityItem.CreateFourItems<QueryBigIdentityItem>();
                 TestContext.Database.UseOnceTo().InsertMany(_structures);
 
@@ -293,11 +293,11 @@ namespace SisoDb.Specifications.Session.Querying
 
 #if !SqlCe4Provider
             It should_have_timed_out_trying_to_get_the_structure =
-                () => CaughtException.InnerException.ShouldHaveTimedOut();
+                () => UnwrapAggregateException(CaughtException).ShouldHaveTimedOut();
 #endif
 #if SqlCe4Provider
             It should_not_have_timed_out_trying_to_get_the_structure =
-                () => CaughtException.InnerException.ShouldBeNull();
+                () => UnwrapAggregateException(CaughtException).ShouldBeNull();
 #endif
 
             private static ISession _firstSession;
@@ -310,7 +310,7 @@ namespace SisoDb.Specifications.Session.Querying
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = QueryBigIdentityItem.CreateFourItems<QueryBigIdentityItem>();
                 TestContext.Database.UseOnceTo().InsertMany(_structures);
 
@@ -339,7 +339,7 @@ namespace SisoDb.Specifications.Session.Querying
             };
 
             It should_have_timed_out_trying_to_get_the_structure =
-                () => CaughtException.InnerException.ShouldHaveTimedOut();
+                () => UnwrapAggregateException(CaughtException).ShouldHaveTimedOut();
 
             private static ISession _firstSession;
             private static IList<QueryBigIdentityItem> _structures;

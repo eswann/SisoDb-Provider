@@ -11,12 +11,12 @@ namespace SisoDb.Specifications.Session.Querying
 #if SqlAzureProvider || Sql2005Provider || Sql2008Provider || Sql2012Provider || SqlProfilerProvider
     class NamedQueriesAsync
     {
-        [Subject(typeof(ISession), "Named Query Async")]
+        [Subject(typeof(ISession), "Named Query Async Async")]
         public class when_named_query_async_async_returns_no_result : SpecificationBase, ICleanupAfterEveryContextInAssembly
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 TestContext.DbHelper.DropProcedure(ProcedureName);
                 TestContext.DbHelper.CreateProcedure(@"create procedure [" + ProcedureName + "] as begin select '{}' as Json where 1=2; end");
             };
@@ -47,7 +47,7 @@ namespace SisoDb.Specifications.Session.Querying
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 TestContext.DbHelper.CreateProcedure(@"create procedure [" + ProcedureName + "] as begin select '{}' as Json where 1=2; end");
             };
 
@@ -77,7 +77,7 @@ namespace SisoDb.Specifications.Session.Querying
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = QueryGuidItem.CreateFourItems<QueryGuidItem>();
                 TestContext.Database.UseOnceTo().InsertMany(_structures);
                 using(var session = TestContext.Database.BeginSession())
@@ -125,7 +125,7 @@ namespace SisoDb.Specifications.Session.Querying
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = QueryGuidItem.CreateFourItems<QueryGuidItem>();
                 TestContext.Database.UseOnceTo().InsertMany(_structures);
                 using (var session = TestContext.Database.BeginSession())
@@ -173,7 +173,7 @@ namespace SisoDb.Specifications.Session.Querying
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = QueryGuidItem.CreateFourItems<QueryGuidItem>();
                 TestContext.Database.UseOnceTo().InsertMany(_structures);
                 using (var session = TestContext.Database.BeginSession())
@@ -219,7 +219,7 @@ namespace SisoDb.Specifications.Session.Querying
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = QueryGuidItem.CreateFourItems<QueryGuidItem>();
                 TestContext.Database.UseOnceTo().InsertMany(_structures);
                 using (var session = TestContext.Database.BeginSession())

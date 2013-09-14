@@ -13,7 +13,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structure = ModelFactory.CreateItems<CompleteGuidEntity, Guid>(1).Single();
             };
 
@@ -34,7 +34,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = ModelFactory.CreateItems<CompleteGuidEntity, Guid>(2);
             };
 
@@ -55,7 +55,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structure = ModelFactory.CreateItems<CompleteGuidEntity, Guid>(1).Single();
             };
 
@@ -76,7 +76,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = ModelFactory.CreateItems<CompleteGuidEntity, Guid>(2);
             };
 
@@ -97,7 +97,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structure = ModelFactory.CreateItems<CompleteStringEntity, string>(1).Single();
             };
 
@@ -118,7 +118,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = ModelFactory.CreateItems<CompleteStringEntity, string>(2);
             };
 
@@ -139,7 +139,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structure = ModelFactory.CreateItems<CompleteIdentityEntity, int>(1).Single();
             };
 
@@ -160,7 +160,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = ModelFactory.CreateItems<CompleteIdentityEntity, int>(2);
             };
 
@@ -181,7 +181,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structure = ModelFactory.CreateItems<CompleteBigIdentityEntity, long>(1).Single();
             };
 
@@ -202,7 +202,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = ModelFactory.CreateItems<CompleteBigIdentityEntity, long>(2);
             };
 

@@ -7,7 +7,7 @@ namespace SisoDb.Specifications.Session.Querying
 {
     class ProjectionAsync
     {
-        [Subject(typeof(ISisoQueryable<>), "Projection")]
+        [Subject(typeof(ISisoQueryable<>), "Projection Async")]
         public class when_mapping_properties_one_to_one_using_anonymous_type_async : SpecificationBase
         {
             Establish context = () =>
@@ -19,7 +19,7 @@ namespace SisoDb.Specifications.Session.Querying
                     new QueryGuidItem {IntegerValue = 3, NullableIntegerValue = 2, StringValue = "C"}
                 };
 
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 TestContext.Database.UseOnceTo().InsertMany(_structures);
             };
 

@@ -12,7 +12,7 @@ namespace SisoDb.Specifications.Session.Querying
 {
     class QueryAsync
     {
-        [Subject(typeof(ISisoQueryable<>), "Query")]
+        [Subject(typeof(ISisoQueryable<>), "Query Async")]
         public class when_using_plain_bool_and_nullable_int_hasvalue_and_chained_wheres_in_expression_async : SpecificationBase
         {
             Establish context = () =>

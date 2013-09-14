@@ -7,7 +7,7 @@ namespace SisoDb.Specifications.Session
 {
 	class InsertsIdBehaviorAsync
     {
-        [Subject(typeof(ISession), "Insert (id behavior)")]
+        [Subject(typeof(ISession), "Insert (id behavior) Async")]
         public class when_guiditem_with_private_unassigned_id_setter_async : SpecificationBase
         {
             Establish context = () =>

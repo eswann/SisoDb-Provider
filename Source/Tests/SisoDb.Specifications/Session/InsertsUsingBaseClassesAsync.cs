@@ -7,7 +7,7 @@ namespace SisoDb.Specifications.Session
 {
 	class InsertsUsingBaseClassesAsync
     {
-        [Subject(typeof(ISession), "Insert (base classes)")]
+        [Subject(typeof(ISession), "Insert (base classes) Async")]
         public class when_inserting_async_subclass_as_subclass : SpecificationBase
         {
             Establish context = () =>

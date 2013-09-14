@@ -8,10 +8,10 @@ namespace SisoDb.Specifications.Session.Querying
 {
     class GetIdsAsync
     {
-        [Subject(typeof(ISession), "GetIds (guid)")]
+        [Subject(typeof(ISession), "GetIds (guid) Async")]
         public class when_set_with_guid_id_is_empty : SpecificationBase
         {
-            Establish context = () => TestContext = TestContextFactory.Create();
+            Establish context = () => TestContext = TestContextFactory.CreateAsync();
 
             Because of = () =>
                 _fetchedIds = TestContext.Database.UseOnceTo().GetIdsAsync<QueryGuidItem, Guid>(i => i.IntegerValue == 42).Result;
@@ -25,7 +25,7 @@ namespace SisoDb.Specifications.Session.Querying
         [Subject(typeof(ISession), "GetIds (identity)")]
         public class when_set_with_identity_id_is_empty : SpecificationBase
         {
-            Establish context = () => TestContext = TestContextFactory.Create();
+            Establish context = () => TestContext = TestContextFactory.CreateAsync();
 
             Because of = () =>
                 _fetchedIds = TestContext.Database.UseOnceTo().GetIdsAsync<QueryIdentityItem, int>(i => i.IntegerValue == 42).Result;
@@ -39,7 +39,7 @@ namespace SisoDb.Specifications.Session.Querying
         [Subject(typeof(ISession), "GetIds (big identity)")]
         public class when_set_with_bigidentity_id_is_empty : SpecificationBase
         {
-            Establish context = () => TestContext = TestContextFactory.Create();
+            Establish context = () => TestContext = TestContextFactory.CreateAsync();
 
             Because of = () =>
                 _fetchedIds = TestContext.Database.UseOnceTo().GetIdsAsync<QueryBigIdentityItem, long>(i => i.IntegerValue == 42).Result;
@@ -53,7 +53,7 @@ namespace SisoDb.Specifications.Session.Querying
         [Subject(typeof(ISession), "GetIds (string)")]
         public class when_set_with_string_id_is_empty : SpecificationBase
         {
-            Establish context = () => TestContext = TestContextFactory.Create();
+            Establish context = () => TestContext = TestContextFactory.CreateAsync();
 
             Because of = () =>
                 _fetchedIds = TestContext.Database.UseOnceTo().GetIdsAsync<QueryStringItem, string>(i => i.IntegerValue == 42).Result;
@@ -69,7 +69,7 @@ namespace SisoDb.Specifications.Session.Querying
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = QueryGuidItem.CreateFourItems<QueryGuidItem>();
                 TestContext.Database.UseOnceTo().InsertMany(_structures);
             };
@@ -95,7 +95,7 @@ namespace SisoDb.Specifications.Session.Querying
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = QueryIdentityItem.CreateFourItems<QueryIdentityItem>();
                 TestContext.Database.UseOnceTo().InsertMany(_structures);
             };
@@ -121,7 +121,7 @@ namespace SisoDb.Specifications.Session.Querying
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = QueryIdentityItem.CreateFourItems<QueryIdentityItem>();
                 TestContext.Database.UseOnceTo().InsertMany(_structures);
             };
@@ -147,7 +147,7 @@ namespace SisoDb.Specifications.Session.Querying
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = QueryBigIdentityItem.CreateFourItems<QueryBigIdentityItem>();
                 TestContext.Database.UseOnceTo().InsertMany(_structures);
             };
@@ -173,7 +173,7 @@ namespace SisoDb.Specifications.Session.Querying
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = QueryBigIdentityItem.CreateFourItems<QueryBigIdentityItem>();
                 TestContext.Database.UseOnceTo().InsertMany(_structures);
             };
@@ -199,7 +199,7 @@ namespace SisoDb.Specifications.Session.Querying
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = QueryStringItem.CreateFourItems<QueryStringItem>();
                 TestContext.Database.UseOnceTo().InsertMany(_structures);
             };
@@ -225,7 +225,7 @@ namespace SisoDb.Specifications.Session.Querying
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = QueryStringItem.CreateFourItems<QueryStringItem>();
                 TestContext.Database.UseOnceTo().InsertMany(_structures);
             };

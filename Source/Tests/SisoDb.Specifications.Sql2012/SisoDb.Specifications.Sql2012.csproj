@@ -320,6 +320,9 @@
     <Compile Include="..\SisoDb.Specifications\Session\Transactions.cs">
       <Link>Session\Transactions.cs</Link>
     </Compile>
+    <Compile Include="..\SisoDb.Specifications\Session\TransactionsAsync.cs">
+      <Link>Session\TransactionsAsync.cs</Link>
+    </Compile>
     <Compile Include="..\SisoDb.Specifications\Session\UpdateMany.cs">
       <Link>Session\UpdateMany.cs</Link>
     </Compile>

@@ -12,7 +12,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structure = new GuidItemWithPrivateIdSetter();
             };
 
@@ -41,7 +41,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structure = new GuidItemWithPrivateIdSetter(Guid.Parse("702BDF42-47E9-42E9-9132-C11CC0896458"));
                 _orgId = _structure.StructureId;
             };
@@ -72,7 +72,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structure = new GuidItemWithNullableId();
             };
 
@@ -108,7 +108,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structure = new GuidItemWithNullableId { StructureId = Guid.Parse("702BDF42-47E9-42E9-9132-C11CC0896458") };
                 _orgId = _structure.StructureId;
             };
@@ -139,7 +139,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structure = new IdentityItemWithPrivateIdSetter();
             };
 
@@ -168,7 +168,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structure = new IdentityItemWithPrivateIdSetter(42);
                 _orgId = _structure.StructureId;
             };
@@ -199,7 +199,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structure = new IdentityItemWithNullableId();
             };
 
@@ -235,7 +235,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structure = new IdentityItemWithNullableId { StructureId = 42 };
                 _orgId = _structure.StructureId;
             };
@@ -266,7 +266,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structure = new BigIdentityItemWithPrivateIdSetter();
             };
 
@@ -295,7 +295,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structure = new BigIdentityItemWithPrivateIdSetter(42);
                 _orgId = _structure.StructureId;
             };
@@ -326,7 +326,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structure = new BigIdentityItemWithNullableId();
             };
 
@@ -362,7 +362,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structure = new BigIdentityItemWithNullableId { StructureId = 42 };
                 _orgId = _structure.StructureId;
             };

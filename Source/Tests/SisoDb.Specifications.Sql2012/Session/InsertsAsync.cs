@@ -16,7 +16,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structure = new SingleStringMember { Value = null };
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<SingleStringMember>();
             };
@@ -45,7 +45,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<SingleStringMember>();
                 _structures = new[]
                 {
@@ -84,7 +84,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<SingleDateTimeMember>();
                 _structure = new SingleDateTimeMember { Value = null };
             };
@@ -112,7 +112,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
             };
 
             Because of =
@@ -133,7 +133,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
             };
 
             Because of = () => TestContext.Database.UseOnceTo().InsertManyAsync(new[]
@@ -158,7 +158,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structure = new SingleTextMember { Text = null };
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<SingleTextMember>();
             };
@@ -186,7 +186,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<SingleTextMember>();
                 _structures = new[]
                 {
@@ -225,7 +225,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _orgItem = new UnsignedMembers { UShort = 42, UInt = 142, ULong = 242 };
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<UnsignedMembers>();
             };
@@ -268,7 +268,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<Root2>();
                 _structure = new Root2
                 {
@@ -307,7 +307,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 TestContext.Database.StructureSchemas.StructureTypeFactory.Configurations = new StructureTypeConfigurations();
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<Root2>();
                 _structure = new Root2
@@ -347,7 +347,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
 
                 _customer = new Customer { Name = "Volvo" };
                 var employee = new Employee

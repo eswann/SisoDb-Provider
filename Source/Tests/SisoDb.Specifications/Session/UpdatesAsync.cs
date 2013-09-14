@@ -9,12 +9,12 @@ namespace SisoDb.Specifications.Session
 {
 	class UpdatesAsync
     {
-        [Subject(typeof(ISession), "Update")]
+        [Subject(typeof(ISession), "Update Async")]
         public class when_guiditem_and_updating_async_two_of_four_items : SpecificationBase
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
 
                 _structures = TestContext.Database.InsertGuidItems(4);
                 _orgItem1 = CopyObject.Deep(_structures[1]);
@@ -57,7 +57,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
 
                 _structures = TestContext.Database.InsertStringItems(4);
                 _orgItem1 = CopyObject.Deep(_structures[1]);
@@ -100,7 +100,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
 
                 _structures = TestContext.Database.InsertIdentityItems(4);
                 _orgItem1 = CopyObject.Deep(_structures[1]);
@@ -143,7 +143,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
 
                 _structures = TestContext.Database.InsertBigIdentityItems(4);
                 _orgItem1 = CopyObject.Deep(_structures[1]);
@@ -186,7 +186,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
 
                 _structures = TestContext.Database.InsertUniqueGuidItems(2);
                 _orgItem1 = CopyObject.Deep(_structures[0]);
@@ -232,7 +232,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
 
                 _structures = TestContext.Database.InsertUniqueIdentityItems(2);
                 _orgItem1 = CopyObject.Deep(_structures[0]);
@@ -278,7 +278,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
 
                 _structures = TestContext.Database.InsertUniqueBigIdentityItems(2);
                 _orgItem1 = CopyObject.Deep(_structures[0]);
@@ -324,7 +324,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
 
                 _structures = TestContext.Database.InsertUniqueGuidItems(2);
                 _orgItem1 = CopyObject.Deep(_structures[0]);
@@ -364,7 +364,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
 
                 _structures = TestContext.Database.InsertUniqueIdentityItems(2);
                 _orgItem1 = CopyObject.Deep(_structures[0]);
@@ -404,7 +404,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
 
                 _structures = TestContext.Database.InsertUniqueBigIdentityItems(2);
                 _orgItem1 = CopyObject.Deep(_structures[0]);

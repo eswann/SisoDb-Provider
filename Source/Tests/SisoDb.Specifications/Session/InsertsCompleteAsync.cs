@@ -8,7 +8,7 @@ namespace SisoDb.Specifications.Session
 {
 	class InsertsCompleteAsync
     {
-        [Subject(typeof(ISession), "Insert (complete)")]
+        [Subject(typeof(ISession), "Insert (complete) Async")]
         public class when_inserting_async_complete_guid_entity_with_populated_hierarchy_using_type : SpecificationBase
         {
             Establish context = () =>

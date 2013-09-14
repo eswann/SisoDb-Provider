@@ -9,7 +9,7 @@ namespace SisoDb.Specifications.Session
 {
     class InsertBigStructuresAsync
     {
-        [Subject(typeof(ISession), "Insert")]
+        [Subject(typeof(ISession), "Insert Async")]
         public class when_inserting_async_batch_of_items_with_single_string_index_of_4001_characters : SpecificationBase
         {
             Establish context = () =>

@@ -6,11 +6,11 @@ namespace SisoDb.Specifications.Session.Querying
 {
     class CountAsync
     {
-        [Subject(typeof(ISisoQueryable<>), "Count")]
+        [Subject(typeof(ISisoQueryable<>), "Count Async")]
         public class when_no_expression_is_specified_and_no_items_exists_async : SpecificationBase
         {
             Establish context = () =>
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
 
             Because of = () =>
                 _itemsCount = TestContext.Database.UseOnceTo().Query<QueryGuidItem>().CountAsync().Result;
@@ -25,7 +25,7 @@ namespace SisoDb.Specifications.Session.Querying
         public class when_expression_is_specified_and_no_items_exists_async : SpecificationBase
         {
             Establish context = () =>
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
 
             Because of = () =>
                 _itemsCount = TestContext.Database.UseOnceTo().Query<QueryGuidItem>().CountAsync(x => x.StringValue == "Goofy").Result;
@@ -41,7 +41,7 @@ namespace SisoDb.Specifications.Session.Querying
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 TestContext.Database.UseOnceTo().InsertMany(new[]
                 {
                     new QueryGuidItem{SortOrder = 1, StringValue = "A"},
@@ -61,7 +61,7 @@ namespace SisoDb.Specifications.Session.Querying
         [Subject(typeof(ISisoQueryable<>), "Count")]
         public class when_expression_is_specified_and_it_matches_two_of_four_items_that_are_in_uncommitted_mode_async : SpecificationBase
         {
-            Establish context = () => TestContext = TestContextFactory.Create();
+            Establish context = () => TestContext = TestContextFactory.CreateAsync();
 
             Because of = () =>
             {
@@ -83,7 +83,7 @@ namespace SisoDb.Specifications.Session.Querying
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 TestContext.Database.UseOnceTo().InsertMany(new[]
                 {
                     new QueryGuidItem{SortOrder = 1, StringValue = "A"},
@@ -106,7 +106,7 @@ namespace SisoDb.Specifications.Session.Querying
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 TestContext.Database.UseOnceTo().InsertMany(new[]
                 {
                     new QueryGuidItem{SortOrder = 1, StringValue = "A"},
@@ -129,7 +129,7 @@ namespace SisoDb.Specifications.Session.Querying
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 TestContext.Database.UseOnceTo().InsertMany(new[]
                 {
                     new QueryGuidItem{SortOrder = 1, StringValue = "A"},

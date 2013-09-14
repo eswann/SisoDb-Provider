@@ -9,12 +9,12 @@ namespace SisoDb.Specifications.Session
 {
     class UpdatesHandlingConcurrenyAsync
     {
-        [Subject(typeof(ISession), "Update (concurrencies)")]
+        [Subject(typeof(ISession), "Update (concurrencies) Async")]
         public class when_item_has_enabled_concurrency_check_and_update_async_is_not_latest : SpecificationBase
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _orgItem = new ModelWithGuidToken { StringValue = "Org string", IntValue = 42 };
                 TestContext.Database.UseOnceTo().Insert(_orgItem);
             };
@@ -31,16 +31,19 @@ namespace SisoDb.Specifications.Session
 
                     copy2.StringValue = "From copy 2";
 
-                    CaughtException = Catch.Exception(() => session.Update(copy2));
+                    CaughtException = Catch.Exception(() => session.UpdateAsync(copy2).Wait());
                 }
             };
 
             It should_have_thrown_SisoDbConcurrencyException = () =>
             {
                 CaughtException.ShouldNotBeNull();
-                CaughtException.ShouldBeOfType<SisoDbConcurrencyException>();
 
-                var ex = (SisoDbConcurrencyException)CaughtException;
+                var exception = UnwrapAggregateException(CaughtException);
+
+                exception.ShouldBeOfType<SisoDbConcurrencyException>();
+
+                var ex = (SisoDbConcurrencyException)exception;
                 ex.StructureId.ShouldEqual(_orgItem.Id);
                 ex.StructureName.ShouldEqual(typeof(ModelWithGuidToken).Name);
             };
@@ -59,7 +62,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _orgItem = new ModelWithIntToken { StringValue = "Org string", IntValue = 42 };
                 TestContext.Database.UseOnceTo().Insert(_orgItem);
             };
@@ -83,9 +86,11 @@ namespace SisoDb.Specifications.Session
             It should_have_thrown_SisoDbConcurrencyException = () =>
             {
                 CaughtException.ShouldNotBeNull();
-                CaughtException.InnerException.ShouldBeOfType<SisoDbConcurrencyException>();
 
-                var ex = (SisoDbConcurrencyException)CaughtException.InnerException;
+                var exception = UnwrapAggregateException(CaughtException);
+                exception.ShouldBeOfType<SisoDbConcurrencyException>();
+
+                var ex = (SisoDbConcurrencyException)exception;
                 ex.StructureId.ShouldEqual(_orgItem.Id);
                 ex.StructureName.ShouldEqual(typeof(ModelWithIntToken).Name);
             };
@@ -104,7 +109,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _orgItem = new ModelWithLongToken { StringValue = "Org string", IntValue = 42 };
                 TestContext.Database.UseOnceTo().Insert(_orgItem);
             };
@@ -128,9 +133,11 @@ namespace SisoDb.Specifications.Session
             It should_have_thrown_SisoDbConcurrencyException = () =>
             {
                 CaughtException.ShouldNotBeNull();
-                CaughtException.ShouldBeOfType<SisoDbConcurrencyException>();
 
-                var ex = (SisoDbConcurrencyException)CaughtException;
+                var exception = UnwrapAggregateException(CaughtException);
+                exception.ShouldBeOfType<SisoDbConcurrencyException>();
+
+                var ex = (SisoDbConcurrencyException)exception;
                 ex.StructureId.ShouldEqual(_orgItem.Id);
                 ex.StructureName.ShouldEqual(typeof(ModelWithLongToken).Name);
             };
@@ -149,7 +156,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<ModelWithGuidToken>();
                 _orgItem = new ModelWithGuidToken { StringValue = "Org string", IntValue = 42 };
                 TestContext.Database.UseOnceTo().Insert(_orgItem);
@@ -191,7 +198,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<ModelWithIntToken>();
                 _orgItem = new ModelWithIntToken { StringValue = "Org string", IntValue = 42 };
                 TestContext.Database.UseOnceTo().Insert(_orgItem);
@@ -239,7 +246,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<ModelWithLongToken>();
                 _orgItem = new ModelWithLongToken { StringValue = "Org string", IntValue = 42 };
                 TestContext.Database.UseOnceTo().Insert(_orgItem);
@@ -287,7 +294,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _orgItem = new ModelWithGuidToken { StringValue = "Org string", IntValue = 42 };
                 TestContext.Database.UseOnceTo().Insert(_orgItem);
             };
@@ -326,7 +333,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _orgItem = new ModelWithGuidToken { StringValue = "Org string", IntValue = 42 };
                 TestContext.Database.UseOnceTo().Insert<IModelWithGuidToken>(_orgItem);
             };
@@ -365,7 +372,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _orgItem = new ModelWithGuidToken { StringValue = "Org string", IntValue = 42 };
                 TestContext.Database.UseOnceTo().Insert(_orgItem);
             };
@@ -404,7 +411,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _orgItem = new ModelWithGuidToken { StringValue = "Org string", IntValue = 42 };
                 TestContext.Database.UseOnceTo().Insert(_orgItem);
             };
@@ -495,7 +502,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _orgItem = new ModelWithGuidToken { StringValue = "Org string", IntValue = 42 };
                 TestContext.Database.UseOnceTo().Insert(_orgItem);
             };
@@ -548,7 +555,7 @@ namespace SisoDb.Specifications.Session
             It should_have_thrown_a_timeout_exception = () =>
             {
                 CaughtException.ShouldNotBeNull();
-                CaughtException.InnerException.Message.ShouldContain("Timeout expired");
+                UnwrapAggregateException(CaughtException).Message.ShouldContain("Timeout expired");
             };
 #endif
 
@@ -581,7 +588,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structureSchema = TestContext.Database.StructureSchemas.GetSchema<IModelWithGuidToken>();
                 _orgItem = new ModelWithGuidToken { StringValue = "Org string", IntValue = 42 };
                 TestContext.Database.UseOnceTo().Insert<IModelWithGuidToken>(_orgItem);

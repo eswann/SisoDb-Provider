@@ -9,7 +9,7 @@ namespace SisoDb.Specifications.Session
 {
 	class UpdateManyAsync
 	{
-		[Subject(typeof(ISession), "Update many")]
+        [Subject(typeof(ISession), "Update many Async")]
 		public class when_the_second_of_two_new_structures_does_not_get_an_identity_id_async : SpecificationBase
 		{
 			Establish context = () =>
@@ -17,14 +17,14 @@ namespace SisoDb.Specifications.Session
 				var orgItem1 = new ItemForPropChange { Int1 = 142, String1 = "A" };
 				var orgItem2 = new ItemForPropChange { Int1 = 242, String1 = "B" };
 
-				var testContext = TestContextFactory.Create();
+				var testContext = TestContextFactory.CreateAsync();
 				using (var session = testContext.Database.BeginSession())
 					session.InsertMany(new[] { orgItem1, orgItem2 });
 
 				_orgItem1Id = orgItem1.StructureId;
 				_orgItem2Id = orgItem2.StructureId;
 
-				TestContext = TestContextFactory.Create();
+				TestContext = TestContextFactory.CreateAsync();
 			};
 
 			Because of = () => CaughtException = Catch.Exception(() =>
@@ -46,7 +46,7 @@ namespace SisoDb.Specifications.Session
 			It should_have_failed = () => CaughtException.ShouldNotBeNull();
 
 			It should_have_descriptive_message = () =>
-                CaughtException.InnerException.Message.ShouldEqual(ExceptionMessages.WriteSession_UpdateMany_NewIdDoesNotMatchOldId.Inject(0, _orgItem2Id));
+                UnwrapAggregateException(CaughtException).Message.ShouldEqual(ExceptionMessages.WriteSession_UpdateMany_NewIdDoesNotMatchOldId.Inject(0, _orgItem2Id));
 
 			It should_have_kept_old_items_untouched = () =>
 			{
@@ -81,7 +81,7 @@ namespace SisoDb.Specifications.Session
 				var orgItem1 = new GuidItemForPropChange { Int1 = 142, String1 = "A" };
 				var orgItem2 = new GuidItemForPropChange { Int1 = 242, String1 = "B" };
 
-				var testContext = TestContextFactory.Create();
+				var testContext = TestContextFactory.CreateAsync();
 				using (var session = testContext.Database.BeginSession())
 				{
 					session.InsertMany(new[] { orgItem1, orgItem2 });
@@ -90,7 +90,7 @@ namespace SisoDb.Specifications.Session
 				_orgItem1Id = orgItem1.StructureId;
 				_orgItem2Id = orgItem2.StructureId;
 
-				TestContext = TestContextFactory.Create();
+				TestContext = TestContextFactory.CreateAsync();
 			};
 
 			Because of = () => CaughtException = Catch.Exception(() =>
@@ -112,7 +112,7 @@ namespace SisoDb.Specifications.Session
 			It should_have_failed = () => CaughtException.ShouldNotBeNull();
 
 			It should_have_descriptive_message = () =>
-                CaughtException.InnerException.Message.ShouldEqual(ExceptionMessages.WriteSession_UpdateMany_NewIdDoesNotMatchOldId.Inject(Guid.Empty, _orgItem2Id));
+                UnwrapAggregateException(CaughtException).Message.ShouldEqual(ExceptionMessages.WriteSession_UpdateMany_NewIdDoesNotMatchOldId.Inject(Guid.Empty, _orgItem2Id));
 
 			It should_have_kept_old_items_untouched = () =>
 			{
@@ -147,7 +147,7 @@ namespace SisoDb.Specifications.Session
 				var orgItem1 = new ItemForPropChange { Int1 = 142, String1 = "A" };
 				var orgItem2 = new ItemForPropChange { Int1 = 242, String1 = "B" };
 
-				var testContext = TestContextFactory.Create();
+				var testContext = TestContextFactory.CreateAsync();
 				using (var session = testContext.Database.BeginSession())
 				{
 					session.InsertMany(new[] { orgItem1, orgItem2 });
@@ -157,7 +157,7 @@ namespace SisoDb.Specifications.Session
 				_orgItem2Id = orgItem2.StructureId;
 				_newItem2Id = _orgItem2Id + 1;
 
-				TestContext = TestContextFactory.Create();
+				TestContext = TestContextFactory.CreateAsync();
 			};
 
 			Because of = () => CaughtException = Catch.Exception(() =>
@@ -179,7 +179,7 @@ namespace SisoDb.Specifications.Session
 			It should_have_failed = () => CaughtException.ShouldNotBeNull();
 
 			It should_have_descriptive_message = () =>
-				CaughtException.InnerException.Message.ShouldEqual(ExceptionMessages.WriteSession_UpdateMany_NewIdDoesNotMatchOldId.Inject(_newItem2Id, _orgItem2Id));
+                UnwrapAggregateException(CaughtException).Message.ShouldEqual(ExceptionMessages.WriteSession_UpdateMany_NewIdDoesNotMatchOldId.Inject(_newItem2Id, _orgItem2Id));
 
 			It should_have_kept_old_items_untouched = () =>
 			{
@@ -215,7 +215,7 @@ namespace SisoDb.Specifications.Session
 				var orgItem1 = new GuidItemForPropChange { Int1 = 142, String1 = "A" };
 				var orgItem2 = new GuidItemForPropChange { Int1 = 242, String1 = "B" };
 
-				var testContext = TestContextFactory.Create();
+				var testContext = TestContextFactory.CreateAsync();
 				using (var session = testContext.Database.BeginSession())
 				{
 					session.InsertMany(new[] { orgItem1, orgItem2 });
@@ -225,7 +225,7 @@ namespace SisoDb.Specifications.Session
 				_orgItem2Id = orgItem2.StructureId;
 				_newItem2Id = Guid.Parse("ED563B06-7D30-4136-BE05-B12A0D5B9798");
 
-				TestContext = TestContextFactory.Create();
+				TestContext = TestContextFactory.CreateAsync();
 			};
 
 			Because of = () => CaughtException = Catch.Exception(() =>
@@ -247,7 +247,7 @@ namespace SisoDb.Specifications.Session
 			It should_have_failed = () => CaughtException.ShouldNotBeNull();
 
 			It should_have_descriptive_message = () =>
-                CaughtException.InnerException.Message.ShouldEqual(ExceptionMessages.WriteSession_UpdateMany_NewIdDoesNotMatchOldId.Inject(_newItem2Id, _orgItem2Id));
+                UnwrapAggregateException(CaughtException).Message.ShouldEqual(ExceptionMessages.WriteSession_UpdateMany_NewIdDoesNotMatchOldId.Inject(_newItem2Id, _orgItem2Id));
 
 			It should_have_kept_old_items_untouched = () =>
 			{
@@ -283,7 +283,7 @@ namespace SisoDb.Specifications.Session
 				var orgItem1 = new ItemForPropChange { Int1 = 142, String1 = "A" };
 				var orgItem2 = new ItemForPropChange { Int1 = 242, String1 = "B" };
 
-				var testContext = TestContextFactory.Create();
+				var testContext = TestContextFactory.CreateAsync();
 				using (var session = testContext.Database.BeginSession())
 				{
 					session.InsertMany(new[] { orgItem1, orgItem2 });
@@ -293,7 +293,7 @@ namespace SisoDb.Specifications.Session
 				_orgItem2Id = orgItem2.StructureId;
 				_newItem2Id = _orgItem2Id + 1;
 
-				TestContext = TestContextFactory.Create();
+				TestContext = TestContextFactory.CreateAsync();
 			};
 
 			Because of = () =>
@@ -342,7 +342,7 @@ namespace SisoDb.Specifications.Session
 				var orgItem1 = new GuidItemForPropChange { Int1 = 142, String1 = "A" };
 				var orgItem2 = new GuidItemForPropChange { Int1 = 242, String1 = "B" };
 
-				var testContext = TestContextFactory.Create();
+				var testContext = TestContextFactory.CreateAsync();
 				using (var session = testContext.Database.BeginSession())
 				{
 					session.InsertMany(new[] { orgItem1, orgItem2 });
@@ -352,7 +352,7 @@ namespace SisoDb.Specifications.Session
 				_orgItem2Id = orgItem2.StructureId;
 				_newItem2Id = Guid.Parse("ED563B06-7D30-4136-BE05-B12A0D5B9798");
 
-				TestContext = TestContextFactory.Create();
+				TestContext = TestContextFactory.CreateAsync();
 			};
 
 			Because of = () =>

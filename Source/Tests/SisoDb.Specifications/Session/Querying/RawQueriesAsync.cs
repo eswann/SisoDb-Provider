@@ -10,10 +10,10 @@ namespace SisoDb.Specifications.Session.Querying
 {
     class RawQueriesAsync
     {
-        [Subject(typeof(ISession), "Raw Query")]
+        [Subject(typeof(ISession), "Raw Query Async")]
         public class when_raw_query_async_returns_no_result : SpecificationBase
         {
-            Establish context = () => TestContext = TestContextFactory.Create();
+            Establish context = () => TestContext = TestContextFactory.CreateAsync();
 
             Because of = () =>
             {
@@ -33,7 +33,7 @@ namespace SisoDb.Specifications.Session.Querying
         [Subject(typeof(ISession), "Raw Query as Json")]
         public class when_raw_query_async_returns_no_json_result : SpecificationBase
         {
-            Establish context = () => TestContext = TestContextFactory.Create();
+            Establish context = () => TestContext = TestContextFactory.CreateAsync();
 
             Because of = () =>
             {
@@ -55,7 +55,7 @@ namespace SisoDb.Specifications.Session.Querying
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = QueryGuidItem.CreateFourItems<QueryGuidItem>();
                 TestContext.Database.UseOnceTo().InsertMany(_structures);
             };
@@ -91,7 +91,7 @@ namespace SisoDb.Specifications.Session.Querying
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = QueryGuidItem.CreateFourItems<QueryGuidItem>();
                 TestContext.Database.UseOnceTo().InsertMany(_structures);
             };

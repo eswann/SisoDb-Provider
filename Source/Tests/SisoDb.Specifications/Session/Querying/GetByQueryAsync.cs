@@ -7,11 +7,11 @@ namespace SisoDb.Specifications.Session.Querying
 {
     class GetByQueryAsync
     {
-        [Subject(typeof(ISession), "GetByQuery")]
+        [Subject(typeof(ISession), "GetByQuery Async")]
         public class when_no_structures_are_present_async : SpecificationBase
         {
             Establish context = 
-                () => TestContext = TestContextFactory.Create();
+                () => TestContext = TestContextFactory.CreateAsync();
 
             Because of = 
                 () => _fetchedStructure = TestContext.Database.UseOnceTo().GetByQueryAsync<QueryGuidItem>(i => i.IntegerValue == 42).Result;
@@ -27,7 +27,7 @@ namespace SisoDb.Specifications.Session.Querying
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _structures = QueryGuidItem.CreateFourItems<QueryGuidItem>();
                 TestContext.Database.UseOnceTo().InsertMany(_structures);
             };

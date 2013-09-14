@@ -6,7 +6,7 @@ namespace SisoDb.Specifications.Session
 {
     class InsertAsAsync
     {
-        [Subject(typeof(ISession), "InsertAs (when anonymous")]
+        [Subject(typeof(ISession), "InsertAwhen anonymous Async")]
         public class when_inserting_async_anonymous_that_partially_conforms_to_contract_using_type : SpecificationBase
         {
             Establish context = () =>

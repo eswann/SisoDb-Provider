@@ -6,12 +6,12 @@ namespace SisoDb.Specifications.Session
 {
     class ClearAsync
     {
-        [Subject(typeof(ISession), "Clear")]
+        [Subject(typeof(ISession), "Clear Async")]
         public class when_four_guiditems_exists_clear_async_is_called_using_session : SpecificationBase
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 TestContext.Database.InsertGuidItems(4);
             };
 
@@ -31,7 +31,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 TestContext.Database.InsertGuidItems(4);
             };
 

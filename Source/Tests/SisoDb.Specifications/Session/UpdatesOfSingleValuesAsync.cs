@@ -8,12 +8,12 @@ namespace SisoDb.Specifications.Session
 {
     class UpdatesOfSingleValuesAsync
     {
-        [Subject(typeof(ISession), "Update (when single string member")]
+        [Subject(typeof(ISession), "Update (when single string member) Async")]
         public class when_updating_async_item_with_single_string_member_to_null : SpecificationBase
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _item = new SingleStringMember { Value = "I have a value" };
                 TestContext.Database.UseOnceTo().Insert(_item);
             };
@@ -39,7 +39,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _item = new SingleDateTimeMember { Value = new DateTime(2012, 1, 1) };
                 TestContext.Database.UseOnceTo().Insert(_item);
             };
@@ -65,7 +65,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _item = new SingleIntMember { Value = 42 };
                 TestContext.Database.UseOnceTo().Insert(_item);
             };
@@ -91,7 +91,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _item = new SingleLongMember { Value = 42 };
                 TestContext.Database.UseOnceTo().Insert(_item);
             };
@@ -117,7 +117,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _item = new SingleBoolMember { Value = true };
                 TestContext.Database.UseOnceTo().Insert(_item);
             };
@@ -143,7 +143,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _item = new SingleDecimalMember { Value = 42.33M };
                 TestContext.Database.UseOnceTo().Insert(_item);
             };
@@ -169,7 +169,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _item = new SingleDoubleMember { Value = 42.33 };
                 TestContext.Database.UseOnceTo().Insert(_item);
             };
@@ -195,7 +195,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _item = new Root();
                 TestContext.Database.UseOnceTo().Insert(_item);
             };
@@ -222,7 +222,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _item = new Root();
                 TestContext.Database.UseOnceTo().Insert(_item);
             };
@@ -249,7 +249,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _item = new Root();
                 TestContext.Database.UseOnceTo().Insert(_item);
             };
@@ -276,7 +276,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _item = new Root();
                 TestContext.Database.UseOnceTo().Insert(_item);
             };
@@ -303,7 +303,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _item = new Root();
                 TestContext.Database.UseOnceTo().Insert(_item);
             };
@@ -330,7 +330,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _item = new Root();
                 TestContext.Database.UseOnceTo().Insert(_item);
             };
@@ -357,7 +357,7 @@ namespace SisoDb.Specifications.Session
         {
             Establish context = () =>
             {
-                TestContext = TestContextFactory.Create();
+                TestContext = TestContextFactory.CreateAsync();
                 _item = new Root();
                 TestContext.Database.UseOnceTo().Insert(_item);
             };

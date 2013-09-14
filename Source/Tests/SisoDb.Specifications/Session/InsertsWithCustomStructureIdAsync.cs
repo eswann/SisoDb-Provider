@@ -7,7 +7,7 @@ namespace SisoDb.Specifications.Session
 {
 	class InsertsWithCustomStructureIdAsync
 	{
-		[Subject(typeof(ISession), "Insert (custom structure id)")]
+        [Subject(typeof(ISession), "Insert (custom structure id) Async")]
 		public class when_structure_has_structure_id_with_name_matching_interface_and_query_targets_first_and_last_of_four_items_async : SpecificationBase
 		{
 			Establish context = () =>

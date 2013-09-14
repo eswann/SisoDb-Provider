@@ -9,7 +9,7 @@ namespace SisoDb.Specifications.Session
 {
 	class InsertsOfJsonAsync
     {
-        [Subject(typeof(ISession), "InsertJson (json)")]
+        [Subject(typeof(ISession), "InsertJson (json) Async")]
         public class when_json_is_inserted_async : SpecificationBase
         {
             Establish context = () =>
