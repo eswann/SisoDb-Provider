@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
+using SisoDb.EnsureThat;
 using SisoDb.Caching;
 using SisoDb.Dac;
-using SisoDb.EnsureThat;
 using SisoDb.Querying;
 using SisoDb.Structures;
 using SisoDb.Structures.Schemas;

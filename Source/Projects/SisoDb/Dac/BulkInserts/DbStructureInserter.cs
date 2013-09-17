@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using SisoDb.DbSchema;
 using SisoDb.NCore.Collections;
+using SisoDb.DbSchema;
 using SisoDb.Structures;
 using SisoDb.Structures.Schemas;
 

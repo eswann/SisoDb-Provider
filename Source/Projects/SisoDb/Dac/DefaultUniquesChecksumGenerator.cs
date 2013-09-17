@@ -1,4 +1,5 @@
-﻿using SisoDb.NCore.Cryptography;
+﻿using SisoDb.NCore;
+using SisoDb.NCore.Cryptography;
 using SisoDb.Resources;
 using SisoDb.Structures;
 using SisoDb.NCore;

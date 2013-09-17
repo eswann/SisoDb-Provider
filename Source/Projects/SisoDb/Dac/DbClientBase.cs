@@ -11,6 +11,7 @@ using SisoDb.Resources;
 using SisoDb.Structures;
 using SisoDb.Structures.Schemas;
 
+
 namespace SisoDb.Dac
 {
     public abstract class DbClientBase : IDbClient
@@ -260,7 +261,7 @@ namespace SisoDb.Dac
             var newIndexesTableNames = new IndexesTableNames(newStructureName);
 
             if (TableExists(newStructureTableName))
-                throw new SisoDbException("There allready seems to exist tables for '{0}' in the database.".Inject(newStructureTableName));
+                throw new SisoDbException(StringExtensions.Inject("There allready seems to exist tables for '{0}' in the database.", newStructureTableName));
 
             OnBeforeRenameOfStructureSet(oldStructureTableName, oldSpatialTableName, oldUniquesTableName, oldIndexesTableNames);
             OnRenameStructureTable(oldStructureTableName, newStructureTableName);
@@ -400,8 +401,7 @@ namespace SisoDb.Dac
             var names = new ModelTableNames(structureSchema);
             EnsureValidNames(names);
 
-            var sql = SqlStatements.GetSql("DropStructureTables").Inject(
-                names.IndexesTableNames.IntegersTableName,
+            var sql = StringExtensions.Inject(SqlStatements.GetSql("DropStructureTables"), names.IndexesTableNames.IntegersTableName,
                 names.IndexesTableNames.FractalsTableName,
                 names.IndexesTableNames.BooleansTableName,
                 names.IndexesTableNames.DatesTableName,
@@ -423,7 +423,7 @@ namespace SisoDb.Dac
             EnsureValidDbObjectName(name);
             Ensure.That(createSpSql, "createSpSql").IsNotNullOrWhiteSpace();
 
-            var sql = SqlStatements.GetSql("DropSp").Inject(name);
+            var sql = StringExtensions.Inject(SqlStatements.GetSql("DropSp"), name);
 
             ExecuteNonQuery(sql);
             ExecuteNonQuery(createSpSql);
@@ -446,7 +446,7 @@ namespace SisoDb.Dac
 
                 foreach (var tableName in tableNamesToDrop)
                 {
-                    cmd.CommandText = dropTableTemplate.Inject(tableName);
+                    cmd.CommandText = StringExtensions.Inject(dropTableTemplate, tableName);
                     cmd.ExecuteNonQuery();
                 }
 
@@ -462,8 +462,7 @@ namespace SisoDb.Dac
             var names = new ModelTableNames(structureSchema);
             EnsureValidNames(names);
 
-            var sql = SqlStatements.GetSql("ClearIndexesTables").Inject(
-                names.IndexesTableNames.IntegersTableName,
+            var sql = StringExtensions.Inject(SqlStatements.GetSql("ClearIndexesTables"), names.IndexesTableNames.IntegersTableName,
                 names.IndexesTableNames.FractalsTableName,
                 names.IndexesTableNames.BooleansTableName,
                 names.IndexesTableNames.DatesTableName,
@@ -481,7 +480,7 @@ namespace SisoDb.Dac
         {
             Ensure.That(structureSchema, "structureSchema").IsNotNull();
 
-            var sql = SqlStatements.GetSql("DeleteAll").Inject(structureSchema.GetStructureTableName());
+            var sql = StringExtensions.Inject(SqlStatements.GetSql("DeleteAll"), structureSchema.GetStructureTableName());
 
             ExecuteNonQuery(sql);
         }
@@ -492,7 +491,7 @@ namespace SisoDb.Dac
         {
             Ensure.That(structureSchema, "structureSchema").IsNotNull();
 
-            var sql = SqlStatements.GetSql("DeleteById").Inject(structureSchema.GetStructureTableName());
+            var sql = StringExtensions.Inject(SqlStatements.GetSql("DeleteById"), structureSchema.GetStructureTableName());
 
             ExecuteNonQuery(sql, new DacParameter("id", structureId.Value));
         }
@@ -503,8 +502,7 @@ namespace SisoDb.Dac
         {
             Ensure.That(structureSchema, "structureSchema").IsNotNull();
 
-            var sql = SqlStatements.GetSql("DeleteByQuery").Inject(
-                structureSchema.GetStructureTableName(),
+            var sql = StringExtensions.Inject(SqlStatements.GetSql("DeleteByQuery"), structureSchema.GetStructureTableName(),
                 query.Sql);
 
             ExecuteNonQuery(sql, query.Parameters);
@@ -517,8 +515,7 @@ namespace SisoDb.Dac
             var indexesTableNames = structureSchema.GetIndexesTableNames();
             var uniquesTableName = structureSchema.GetUniquesTableName();
 
-            var sql = SqlStatements.GetSql("DeleteIndexesAndUniquesById").Inject(
-                uniquesTableName,
+            var sql = StringExtensions.Inject(SqlStatements.GetSql("DeleteIndexesAndUniquesById"), uniquesTableName,
                 indexesTableNames.BooleansTableName,
                 indexesTableNames.DatesTableName,
                 indexesTableNames.FractalsTableName,
@@ -604,7 +601,7 @@ namespace SisoDb.Dac
         {
             Ensure.That(structureSchema, "structureSchema").IsNotNull();
 
-            var sql = SqlStatements.GetSql("RowCount").Inject(structureSchema.GetStructureTableName());
+            var sql = StringExtensions.Inject(SqlStatements.GetSql("RowCount"), structureSchema.GetStructureTableName());
 
             return ExecuteScalar<int>(sql);
         }
@@ -632,7 +629,7 @@ namespace SisoDb.Dac
             Ensure.That(structureSchema, "structureSchema").IsNotNull();
             Ensure.That(structureId, "structureId").IsNotNull();
 
-            var sql = SqlStatements.GetSql("ExistsById").Inject(structureSchema.GetStructureTableName());
+            var sql = StringExtensions.Inject(SqlStatements.GetSql("ExistsById"), structureSchema.GetStructureTableName());
 
             return ExecuteScalar<int>(sql, new DacParameter("id", structureId.Value)) > 0;
         }
@@ -641,7 +638,7 @@ namespace SisoDb.Dac
         {
             Ensure.That(structureSchema, "structureSchema").IsNotNull();
 
-            var sql = SqlStatements.GetSql("GetJsonById").Inject(structureSchema.GetStructureTableName());
+            var sql = StringExtensions.Inject(SqlStatements.GetSql("GetJsonById"), structureSchema.GetStructureTableName());
 
             return HasPipe 
                 ? Pipe.Reading(structureSchema, ExecuteScalar<string>(sql, new DacParameter("id", structureId.Value)))
@@ -652,7 +649,7 @@ namespace SisoDb.Dac
         {
             Ensure.That(structureSchema, "structureSchema").IsNotNull();
 
-            var sql = SqlStatements.GetSql("GetJsonByIdWithLock").Inject(structureSchema.GetStructureTableName());
+            var sql = StringExtensions.Inject(SqlStatements.GetSql("GetJsonByIdWithLock"), structureSchema.GetStructureTableName());
 
             return HasPipe 
                 ? Pipe.Reading(structureSchema, ExecuteScalar<string>(sql, new DacParameter("id", structureId.Value)))
@@ -663,7 +660,7 @@ namespace SisoDb.Dac
         {
             Ensure.That(structureSchema, "structureSchema").IsNotNull();
 
-            var sql = SqlStatements.GetSql("GetAllJson").Inject(structureSchema.GetStructureTableName());
+            var sql = StringExtensions.Inject(SqlStatements.GetSql("GetAllJson"), structureSchema.GetStructureTableName());
 
             return ReadJson(structureSchema, sql);
         }
@@ -794,8 +791,7 @@ namespace SisoDb.Dac
             if (HasPipe)
                 structure.Data = Pipe.Writing(structureSchema, structure.Data);
 
-            var sql = SqlStatements.GetSql("SingleInsertStructure").Inject(
-                structureSchema.GetStructureTableName(),
+            var sql = StringExtensions.Inject(SqlStatements.GetSql("SingleInsertStructure"), structureSchema.GetStructureTableName(),
                 StructureStorageSchema.Fields.Id.Name,
                 StructureStorageSchema.Fields.Json.Name);
 
@@ -808,8 +804,7 @@ namespace SisoDb.Dac
         {
             EnsureValidDbObjectName(valueTypeIndexesTableName);
 
-            var sql = SqlStatements.GetSql("SingleInsertOfValueTypeIndex").Inject(
-                valueTypeIndexesTableName,
+            var sql = StringExtensions.Inject(SqlStatements.GetSql("SingleInsertOfValueTypeIndex"), valueTypeIndexesTableName,
                 IndexStorageSchema.Fields.StructureId.Name,
                 IndexStorageSchema.Fields.MemberPath.Name,
                 IndexStorageSchema.Fields.Value.Name,
@@ -826,8 +821,7 @@ namespace SisoDb.Dac
         {
             EnsureValidDbObjectName(stringishIndexesTableName);
 
-            var sql = SqlStatements.GetSql("SingleInsertOfStringTypeIndex").Inject(
-                stringishIndexesTableName,
+            var sql = StringExtensions.Inject(SqlStatements.GetSql("SingleInsertOfStringTypeIndex"), stringishIndexesTableName,
                 IndexStorageSchema.Fields.StructureId.Name,
                 IndexStorageSchema.Fields.MemberPath.Name,
                 IndexStorageSchema.Fields.Value.Name);
@@ -840,8 +834,7 @@ namespace SisoDb.Dac
 
         public virtual void SingleInsertOfUniqueIndex(IStructureIndex uniqueStructureIndex, IStructureSchema structureSchema)
         {
-            var sql = SqlStatements.GetSql("SingleInsertOfUniqueIndex").Inject(
-                structureSchema.GetUniquesTableName(),
+            var sql = StringExtensions.Inject(SqlStatements.GetSql("SingleInsertOfUniqueIndex"), structureSchema.GetUniquesTableName(),
                 UniqueStorageSchema.Fields.StructureId.Name,
                 UniqueStorageSchema.Fields.UqStructureId.Name,
                 UniqueStorageSchema.Fields.UqMemberPath.Name,
@@ -863,8 +856,7 @@ namespace SisoDb.Dac
             if (HasPipe)
                 structure.Data = Pipe.Writing(structureSchema, structure.Data);
 
-            var sql = SqlStatements.GetSql("SingleUpdateOfStructure").Inject(
-                structureSchema.GetStructureTableName(),
+            var sql = StringExtensions.Inject(SqlStatements.GetSql("SingleUpdateOfStructure"), structureSchema.GetStructureTableName(),
                 StructureStorageSchema.Fields.Json.Name,
                 StructureStorageSchema.Fields.Id.Name);
 

@@ -12,6 +12,8 @@
     <AssemblyName>SisoDb.Specifications.Azure</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,13 +33,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Machine.Specifications, Version=0.5.12.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Machine.Specifications, Version=0.5.16.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Machine.Specifications.0.5.12\lib\net40\Machine.Specifications.dll</HintPath>
+      <HintPath>..\..\packages\Machine.Specifications.0.5.16\lib\net40\Machine.Specifications.dll</HintPath>
     </Reference>
-    <Reference Include="Machine.Specifications.Clr4, Version=0.5.12.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Machine.Specifications.Clr4, Version=0.5.16.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Machine.Specifications.0.5.12\lib\net40\Machine.Specifications.Clr4.dll</HintPath>
+      <HintPath>..\..\packages\Machine.Specifications.0.5.16\lib\net40\Machine.Specifications.Clr4.dll</HintPath>
     </Reference>
     <Reference Include="Machine.Specifications.TDNetRunner">
       <HintPath>..\..\packages\Machine.Specifications.0.5.9\lib\net40\Machine.Specifications.TDNetRunner.dll</HintPath>
@@ -283,41 +285,41 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\Projects\SisoDb.Azure\SisoDb.Azure.csproj">
       <Project>{22bd2738-6f4a-427f-a9ea-c03989aadb51}</Project>
       <Name>SisoDb.Azure</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Projects\SisoDb.Dynamic\SisoDb.Dynamic.csproj">
-      <Project>{9202564D-92FD-448F-851D-3DD3D1AA3137}</Project>
+      <Project>{9202564d-92fd-448f-851d-3dd3d1aa3137}</Project>
       <Name>SisoDb.Dynamic</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Projects\SisoDb.MsMemoryCache\SisoDb.MsMemoryCache.csproj">
-      <Project>{52453C59-B957-46F0-8E44-F1203215758A}</Project>
+      <Project>{52453c59-b957-46f0-8e44-f1203215758a}</Project>
       <Name>SisoDb.MsMemoryCache</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Projects\SisoDb.Spatial\SisoDb.Spatial.csproj">
-      <Project>{247a9856-c54b-4b11-8feb-312fa5e86dfa}</Project>
-      <Name>SisoDb.Spatial</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Projects\SisoDb.SqlServer\SisoDb.SqlServer.csproj">
       <Project>{d9ec3cdf-61a0-4a7e-9022-2903d9a5ff96}</Project>
       <Name>SisoDb.SqlServer</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Projects\SisoDb\SisoDb.csproj">
-      <Project>{B0DBD485-B46D-4566-A755-4BF445FD6375}</Project>
+      <Project>{b0dbd485-b46d-4566-a755-4bf445fd6375}</Project>
       <Name>SisoDb</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SisoDb.Specifications\SisoDb.Specifications.csproj">
+      <Project>{600055ef-5878-4a48-b503-eba55a3fecae}</Project>
+      <Name>SisoDb.Specifications</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SisoDb.Testing\SisoDb.Testing.csproj">
-      <Project>{2C9376C7-514B-4D15-AA63-15AFE8149D40}</Project>
+      <Project>{2c9376c7-514b-4d15-aa63-15afe8149d40}</Project>
       <Name>SisoDb.Testing</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -1,10 +1,15 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using SisoDb.EnsureThat;
 using SisoDb.NCore;
+using SisoDb.NCore.Collections;
 using SisoDb.NCore.Expressions;
 using SisoDb.NCore.Reflections;
 using SisoDb.Querying.Lambdas.Nodes;
+using SisoDb.Querying.Lambdas.Operators;
 using SisoDb.Resources;
 using SisoDb.Structures.Schemas;
 

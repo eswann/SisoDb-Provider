@@ -13,27 +13,27 @@ namespace SisoDb.DbSchema
 
         public SqlDbIndexesSchemaSynchronizer(ISqlStatements sqlStatements)
         {
-        	Ensure.That(sqlStatements, "sqlStatements").IsNotNull();
-			
-			_sqlStatements = sqlStatements;
+            Ensure.That(sqlStatements, "sqlStatements").IsNotNull();
+
+            _sqlStatements = sqlStatements;
         }
 
         public void Synchronize(IStructureSchema structureSchema, IDbClient dbClient, string[] indexesTableNames)
         {
-            if(!indexesTableNames.Any())
+            if (!indexesTableNames.Any())
                 return;
 
-			var structureFields = new HashSet<string>(structureSchema.IndexAccessors.Select(iac => iac.Path));
-			foreach (var indexesTableName in indexesTableNames)
-        	{
-				var keyNamesToDrop = GetMemberPathsToDrop(indexesTableName, structureFields, dbClient);
+            var structureFields = new HashSet<string>(structureSchema.IndexAccessors.Select(iac => iac.Path));
+            foreach (var indexesTableName in indexesTableNames)
+            {
+                var keyNamesToDrop = GetMemberPathsToDrop(indexesTableName, structureFields, dbClient);
 
-				if (keyNamesToDrop.Length > 0)
-					DeleteRecordsMatchingKeyNames(indexesTableName, keyNamesToDrop, dbClient);	
-        	}
+                if (keyNamesToDrop.Length > 0)
+                    DeleteRecordsMatchingKeyNames(indexesTableName, keyNamesToDrop, dbClient);
+            }
         }
 
-		private void DeleteRecordsMatchingKeyNames(string indexesTableName, IEnumerable<string> names, IDbClient dbClient)
+        private void DeleteRecordsMatchingKeyNames(string indexesTableName, IEnumerable<string> names, IDbClient dbClient)
         {
             var inString = string.Join(",", names.Select(n => "'" + n + "'"));
             var sql = _sqlStatements.GetSql("IndexesSchemaSynchronizer_DeleteRecordsMatchingKeyNames")
@@ -42,12 +42,12 @@ namespace SisoDb.DbSchema
             dbClient.ExecuteNonQuery(sql);
         }
 
-		private string[] GetMemberPathsToDrop(string indexesTableName, HashSet<string> structureFields, IDbClient dbClient)
+        private string[] GetMemberPathsToDrop(string indexesTableName, HashSet<string> structureFields, IDbClient dbClient)
         {
-			return GetExistingDbMemberPaths(indexesTableName, dbClient).Where(kn => !structureFields.Contains(kn)).ToArray();
+            return GetExistingDbMemberPaths(indexesTableName, dbClient).Where(kn => !structureFields.Contains(kn)).ToArray();
         }
 
-		private IEnumerable<string> GetExistingDbMemberPaths(string indexesTableName, IDbClient dbClient)
+        private IEnumerable<string> GetExistingDbMemberPaths(string indexesTableName, IDbClient dbClient)
         {
             var dbColumns = new List<string>();
 
