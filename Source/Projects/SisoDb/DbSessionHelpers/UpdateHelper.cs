@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using SisoDb.Caching;
-using SisoDb.Dac;
 using SisoDb.EnsureThat;
 using SisoDb.NCore;
-using SisoDb.Querying;
 using SisoDb.Querying.Sql;
 using SisoDb.Resources;
 using SisoDb.Structures;
@@ -14,10 +12,9 @@ using SisoDb.Structures.Schemas;
 
 namespace SisoDb.DbSessionHelpers
 {
-    internal class UpdateHelper : ModifyHelper
+    internal class UpdateHelper : DbSessionHelper
     {
-        public UpdateHelper(ISisoDatabase db, IDbClient dbClient, IDbQueryGenerator queryGenerator, ISession session, SessionEvents internalEvents) 
-            : base(db, dbClient, queryGenerator, session, internalEvents)
+        public UpdateHelper(DbSession session) : base(session)
         {
         }
 

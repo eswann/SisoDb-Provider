@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using SisoDb.Caching;
-using SisoDb.Dac;
 using SisoDb.EnsureThat;
 using SisoDb.Structures;
 using SisoDb.Structures.Schemas;
@@ -9,8 +8,8 @@ namespace SisoDb.DbSessionHelpers
 {
     internal class CheckoutByIdHelper : DbSessionHelper
     {
-        public CheckoutByIdHelper(ISisoDatabase db, IDbClient dbClient)
-            : base(db, dbClient)
+        public CheckoutByIdHelper(DbSession session)
+            : base(session)
         {
         }
 

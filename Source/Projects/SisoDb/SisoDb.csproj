@@ -95,10 +95,8 @@
     <Compile Include="DbSessionHelpers\GetByIdHelper.cs" />
     <Compile Include="DbSessionHelpers\GetByIdsHelper.cs" />
     <Compile Include="DbSessionHelpers\GetByQueryHelper.cs" />
-    <Compile Include="DbSessionHelpers\ReadHelper.cs" />
     <Compile Include="DbSessionHelpers\GetIdsHelper.cs" />
     <Compile Include="DbSessionHelpers\InsertHelper.cs" />
-    <Compile Include="DbSessionHelpers\ModifyHelper.cs" />
     <Compile Include="DbSessionHelpers\UpdateHelper.cs" />
     <Compile Include="DbSettings.cs" />
     <Compile Include="DbSchema\DbObjectNameValidator.cs" />

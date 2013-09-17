@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Threading.Tasks;
 using SisoDb.Caching;
-using SisoDb.Dac;
 using SisoDb.EnsureThat;
-using SisoDb.Querying;
 using SisoDb.Structures;
 using SisoDb.Structures.Schemas;
 
 namespace SisoDb.DbSessionHelpers
 {
-    internal class GetByIdHelper : ReadHelper
+    internal class GetByIdHelper : DbSessionHelper
     {
-        public GetByIdHelper(ISisoDatabase db, IDbClient dbClient, IDbQueryGenerator queryGenerator) : base(db, dbClient, queryGenerator)
+        public GetByIdHelper(DbSession session)
+            : base(session)
         {
         }
 

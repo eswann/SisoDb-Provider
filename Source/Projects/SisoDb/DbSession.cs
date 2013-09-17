@@ -20,10 +20,11 @@ namespace SisoDb
         private readonly ISisoDatabase _db;
         private readonly IQueryEngine _queryEngine;
         private readonly IAdvanced _advanced;
-        protected readonly SessionEvents InternalEvents;
-        protected readonly IDbQueryGenerator QueryGenerator;
+        private readonly IDbQueryGenerator _queryGenerator;
         protected readonly ISqlExpressionBuilder SqlExpressionBuilder;
         protected readonly ISqlStatements SqlStatements;
+        protected internal readonly SessionEvents InternalEvents;
+
 
         public Guid Id { get { return _id; } }
         public ISessionExecutionContext ExecutionContext { get; private set; }
@@ -35,7 +36,9 @@ namespace SisoDb
         public ISessionEvents Events { get { return InternalEvents; } }
         public IQueryEngine QueryEngine { get { return _queryEngine; } }
         public IAdvanced Advanced { get { return _advanced; } }
-        public CacheConsumeModes CacheConsumeMode { get; protected set; }
+        public CacheConsumeModes CacheConsumeMode { get; protected internal set; }
+        public IDbQueryGenerator QueryGenerator { get { return _queryGenerator; } }
+        
 
         protected DbSession(ISisoDatabase db)
         {
@@ -48,7 +51,7 @@ namespace SisoDb
             Status = SessionStatus.Active;
             InternalEvents = new SessionEvents();
             SqlStatements = Db.ProviderFactory.GetSqlStatements();
-            QueryGenerator = Db.ProviderFactory.GetDbQueryGenerator();
+            _queryGenerator = Db.ProviderFactory.GetDbQueryGenerator();
             SqlExpressionBuilder = Db.ProviderFactory.GetSqlExpressionBuilder();
             _queryEngine = new DbQueryEngine(ExecutionContext, QueryGenerator);
             _advanced = new DbSessionAdvanced(ExecutionContext, QueryGenerator, SqlExpressionBuilder);
@@ -212,62 +215,62 @@ namespace SisoDb
 
         public virtual T CheckoutById<T>(object id) where T : class
         {
-            return Try(() => new CheckoutByIdHelper(Db, DbClient).CheckoutById<T>(id));
+            return Try(() => new CheckoutByIdHelper(this).CheckoutById<T>(id));
         }
 
         public virtual async Task<T> CheckoutByIdAsync<T>(object id) where T : class
         {
-            return await TryAsync(async () => await new CheckoutByIdHelper(Db, DbClient).CheckoutByIdAsync<T>(id));
+            return await TryAsync(async () => await new CheckoutByIdHelper(this).CheckoutByIdAsync<T>(id));
         }
 
         public virtual IEnumerable<TId> GetIds<T, TId>(Expression<Func<T, bool>> predicate) where T : class
         {
-            return Try(() => new GetIdsHelper(Db, DbClient, QueryGenerator).GetIds<T, TId>(predicate));
+            return Try(() => new GetIdsHelper(this).GetIds<T, TId>(predicate));
         }
 
         public virtual async Task<IEnumerable<TId>> GetIdsAsync<T, TId>(Expression<Func<T, bool>> predicate) where T : class
         {
-            return await TryAsync(async () => await new GetIdsHelper(Db, DbClient, QueryGenerator).GetIdsAsync<T, TId>(predicate));
+            return await TryAsync(async () => await new GetIdsHelper(this).GetIdsAsync<T, TId>(predicate));
         }
 
         public virtual IEnumerable<object> GetIds<T>(Expression<Func<T, bool>> predicate) where T : class
         {
-            return Try(() => new GetIdsHelper(Db, DbClient, QueryGenerator).GetIds<T, object>(predicate));
+            return Try(() => new GetIdsHelper(this).GetIds<T, object>(predicate));
         }
 
         public virtual async Task<IEnumerable<object>> GetIdsAsync<T>(Expression<Func<T, bool>> predicate) where T : class
         {
-            return await TryAsync(async () => await new GetIdsHelper(Db, DbClient, QueryGenerator).GetIdsAsync<T, object>(predicate));
+            return await TryAsync(async () => await new GetIdsHelper(this).GetIdsAsync<T, object>(predicate));
         }
 
         public virtual T GetByQuery<T>(Expression<Func<T, bool>> predicate) where T : class
         {
-            return Try(() => new GetByQueryHelper(Db, DbClient, QueryGenerator).GetByQueryAs(typeof(T), predicate));
+            return Try(() => new GetByQueryHelper(this).GetByQueryAs(typeof(T), predicate));
         }
 
         public virtual async Task<T> GetByQueryAsync<T>(Expression<Func<T, bool>> predicate) where T : class
         {
-            return await TryAsync(async () => await new GetByQueryHelper(Db, DbClient, QueryGenerator).GetByQueryAsAsync(typeof(T), predicate));
+            return await TryAsync(async () => await new GetByQueryHelper(this).GetByQueryAsAsync(typeof(T), predicate));
         }
 
         public virtual T GetById<T>(object id) where T : class
         {
-            return Try(() => new GetByIdHelper(Db, DbClient, QueryGenerator).GetByIdAs<T>(typeof(T), id));
+            return Try(() => new GetByIdHelper(this).GetByIdAs<T>(typeof(T), id));
         }
 
         public virtual async Task<T> GetByIdAsync<T>(object id) where T : class
         {
-            return await TryAsync(async () => await new GetByIdHelper(Db, DbClient, QueryGenerator).GetByIdAsAsync<T>(typeof(T), id));
+            return await TryAsync(async () => await new GetByIdHelper(this).GetByIdAsAsync<T>(typeof(T), id));
         }
 
         public virtual object GetById(Type structureType, object id)
         {
-            return Try(() => new GetByIdHelper(Db, DbClient, QueryGenerator).GetById(structureType, id));
+            return Try(() => new GetByIdHelper(this).GetById(structureType, id));
         }
 
         public virtual async Task<object> GetByIdAsync(Type structureType, object id)
         {
-            return await TryAsync(async () => await new GetByIdHelper(Db, DbClient, QueryGenerator).GetByIdAsync(structureType, id));
+            return await TryAsync(async () => await new GetByIdHelper(this).GetByIdAsync(structureType, id));
         }
 
        
@@ -275,44 +278,44 @@ namespace SisoDb
             where TContract : class
             where TOut : class
         {
-            return Try(() => new GetByIdHelper(Db, DbClient, QueryGenerator).GetByIdAs<TOut>(typeof(TContract), id));
+            return Try(() => new GetByIdHelper(this).GetByIdAs<TOut>(typeof(TContract), id));
         }
 
         public virtual async Task<TOut> GetByIdAsAsync<TContract, TOut>(object id)
             where TContract : class
             where TOut : class
         {
-            return await TryAsync(async () => await new GetByIdHelper(Db, DbClient, QueryGenerator).GetByIdAsAsync<TOut>(typeof(TContract), id));
+            return await TryAsync(async () => await new GetByIdHelper(this).GetByIdAsAsync<TOut>(typeof(TContract), id));
         }
 
         public TOut GetByIdAs<TOut>(Type structureType, object id) where TOut : class
         {
-            return Try(() => new GetByIdHelper(Db, DbClient, QueryGenerator).GetByIdAs<TOut>(structureType, id));
+            return Try(() => new GetByIdHelper(this).GetByIdAs<TOut>(structureType, id));
         }
 
         public async Task<TOut> GetByIdAsAsync<TOut>(Type structureType, object id) where TOut : class
         {
-            return await TryAsync(async () => await new GetByIdHelper(Db, DbClient, QueryGenerator).GetByIdAsAsync<TOut>(structureType, id));
+            return await TryAsync(async () => await new GetByIdHelper(this).GetByIdAsAsync<TOut>(structureType, id));
         }
 
         public virtual IEnumerable<T> GetByIds<T>(params object[] ids) where T : class
         {
-            return Try(() => new GetByIdsHelper(Db, DbClient, QueryGenerator).GetByIdsAs<T>(typeof(T), ids));
+            return Try(() => new GetByIdsHelper(this).GetByIdsAs<T>(typeof(T), ids));
         }
 
         public virtual async Task<IEnumerable<T>> GetByIdsAsync<T>(params object[] ids) where T : class
         {
-            return await TryAsync(async () => await new GetByIdsHelper(Db, DbClient, QueryGenerator).GetByIdsAsAsync<T>(typeof(T), ids));
+            return await TryAsync(async () => await new GetByIdsHelper(this).GetByIdsAsAsync<T>(typeof(T), ids));
         }
 
         public virtual IEnumerable<object> GetByIds(Type structureType, params object[] ids)
         {
-            return Try(() => new GetByIdsHelper(Db, DbClient, QueryGenerator).GetByIds(structureType, ids));
+            return Try(() => new GetByIdsHelper(this).GetByIds(structureType, ids));
         }
 
         public virtual async Task<IEnumerable<object>> GetByIdsAsync(Type structureType, params object[] ids)
         {
-            return await TryAsync(async () => await new GetByIdsHelper(Db, DbClient, QueryGenerator).GetByIdsAsync(structureType, ids));
+            return await TryAsync(async () => await new GetByIdsHelper(this).GetByIdsAsync(structureType, ids));
         }
 
 
@@ -321,92 +324,92 @@ namespace SisoDb
             where TContract : class
             where TOut : class
         {
-            return Try(() => new GetByIdsHelper(Db, DbClient, QueryGenerator).GetByIdsAs<TOut>(typeof(TContract), ids));
+            return Try(() => new GetByIdsHelper(this).GetByIdsAs<TOut>(typeof(TContract), ids));
         }
 
         public virtual async Task<IEnumerable<TOut>> GetByIdsAsAsync<TContract, TOut>(params object[] ids)
             where TContract : class
             where TOut : class
         {
-            return await TryAsync(async () => await new GetByIdsHelper(Db, DbClient, QueryGenerator).GetByIdsAsAsync<TOut>(typeof(TContract), ids));
+            return await TryAsync(async () => await new GetByIdsHelper(this).GetByIdsAsAsync<TOut>(typeof(TContract), ids));
         }
 
         public virtual IEnumerable<TOut> GetByIdsAs<TOut>(Type structureType, params object[] ids)
             where TOut : class
         {
-            return Try(() => new GetByIdsHelper(Db, DbClient, QueryGenerator).GetByIdsAs<TOut>(structureType, ids));
+            return Try(() => new GetByIdsHelper(this).GetByIdsAs<TOut>(structureType, ids));
         }
 
         public virtual async Task<IEnumerable<TOut>> GetByIdsAsAsync<TOut>(Type structureType, params object[] ids)
             where TOut : class
         {
-            return await TryAsync(async () => await new GetByIdsHelper(Db, DbClient, QueryGenerator).GetByIdsAsAsync<TOut>(structureType, ids));
+            return await TryAsync(async () => await new GetByIdsHelper(this).GetByIdsAsAsync<TOut>(structureType, ids));
         }
 
         public virtual string GetByIdAsJson<T>(object id) where T : class
         {
-            return Try(() => new GetByIdHelper(Db, DbClient, QueryGenerator).GetByIdAsJson(typeof(T), id));
+            return Try(() => new GetByIdHelper(this).GetByIdAsJson(typeof(T), id));
         }
 
         public virtual async Task<string> GetByIdAsJsonAsync<T>(object id) where T : class
         {
-            return await TryAsync(async () => await new GetByIdHelper(Db, DbClient, QueryGenerator).GetByIdAsJsonAsync(typeof(T), id));
+            return await TryAsync(async () => await new GetByIdHelper(this).GetByIdAsJsonAsync(typeof(T), id));
         }
 
         public virtual string GetByIdAsJson(Type structureType, object id)
         {
-            return Try(() => new GetByIdHelper(Db, DbClient, QueryGenerator).GetByIdAsJson(structureType, id));
+            return Try(() => new GetByIdHelper(this).GetByIdAsJson(structureType, id));
         }
 
         public virtual async Task<string> GetByIdAsJsonAsync(Type structureType, object id)
         {
-            return await TryAsync(async () => await new GetByIdHelper(Db, DbClient, QueryGenerator).GetByIdAsJsonAsync(structureType, id));
+            return await TryAsync(async () => await new GetByIdHelper(this).GetByIdAsJsonAsync(structureType, id));
         }
 
         public virtual IEnumerable<string> GetByIdsAsJson<T>(params object[] ids) where T : class
         {
-            return Try(() => new GetByIdsHelper(Db, DbClient, QueryGenerator).GetByIdsAsJson(typeof(T), ids));
+            return Try(() => new GetByIdsHelper(this).GetByIdsAsJson(typeof(T), ids));
         }
 
         public virtual async Task<IEnumerable<string>> GetByIdsAsJsonAsync<T>(params object[] ids) where T : class
         {
-            return await TryAsync(async () => await new GetByIdsHelper(Db, DbClient, QueryGenerator).GetByIdsAsJsonAsync(typeof(T), ids));
+            return await TryAsync(async () => await new GetByIdsHelper(this).GetByIdsAsJsonAsync(typeof(T), ids));
         }
 
         public virtual IEnumerable<string> GetByIdsAsJson(Type structureType, params object[] ids)
         {
-            return Try(() => new GetByIdsHelper(Db, DbClient, QueryGenerator).GetByIdsAsJson(structureType, ids));
+            return Try(() => new GetByIdsHelper(this).GetByIdsAsJson(structureType, ids));
         }
 
         public virtual async Task<IEnumerable<string>> GetByIdsAsJsonAsync(Type structureType, params object[] ids)
         {
-            return await TryAsync(async () => await new GetByIdsHelper(Db, DbClient, QueryGenerator).GetByIdsAsJsonAsync(structureType, ids));
+            return await TryAsync(async () => await new GetByIdsHelper(this).GetByIdsAsJsonAsync(structureType, ids));
         }
 
         public virtual ISession Insert<T>(T item) where T : class
         {
-            Try(() => new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).Insert(typeof(T), item));
+            Try(() => new InsertHelper(this).Insert(typeof(T), item));
 
             return this;
         }
 
         public virtual async Task<ISession> InsertAsync<T>(T item) where T : class
         {
-            await TryAsync(async() => await new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertAsync(typeof(T), item));
+            await TryAsync(async() => await new InsertHelper(this).InsertAsync(typeof(T), item));
 
             return this;
         }
 
         public virtual ISession Insert(Type structureType, object item)
         {
-            Try(() => new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).Insert(structureType, item));
+            Try(() => new InsertHelper(this).Insert(structureType, item));
 
             return this;
         }
 
         public virtual async Task<ISession> InsertAsync(Type structureType, object item)
         {
-            await TryAsync(async () => await new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertAsync(structureType, item));
+            await TryAsync(async () => await new InsertHelper(this).InsertAsync(structureType, item));
 
             return this;
         }
@@ -414,122 +417,122 @@ namespace SisoDb
     
         public virtual ISession InsertAs<T>(object item) where T : class
         {
-            Try(() => new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertAs(typeof(T), item));
+            Try(() => new InsertHelper(this).InsertAs(typeof(T), item));
 
             return this;
         }
 
         public virtual async Task<ISession> InsertAsAsync<T>(object item) where T : class
         {
-            await TryAsync(async () => await new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertAsAsync(typeof(T), item));
+            await TryAsync(async () => await new InsertHelper(this).InsertAsAsync(typeof(T), item));
 
             return this;
         }
 
         public virtual ISession InsertAs(Type structureType, object item)
         {
-            Try(() => new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertAs(structureType, item));
+            Try(() => new InsertHelper(this).InsertAs(structureType, item));
 
             return this;
         }
 
         public virtual async Task<ISession> InsertAsAsync(Type structureType, object item)
         {
-            await TryAsync(async () => await new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertAsAsync(structureType, item));
+            await TryAsync(async () => await new InsertHelper(this).InsertAsAsync(structureType, item));
 
             return this;
         }
 
         public virtual string InsertJson<T>(string json) where T : class
         {
-            return Try(() => new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertJson(typeof(T), json));
+            return Try(() => new InsertHelper(this).InsertJson(typeof(T), json));
         }
 
         public virtual async Task<string> InsertJsonAsync<T>(string json) where T : class
         {
-            return await TryAsync(async () => await new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertJsonAsync(typeof(T), json));
+            return await TryAsync(async () => await new InsertHelper(this).InsertJsonAsync(typeof(T), json));
         }
 
         public virtual string InsertJson(Type structureType, string json)
         {
-            return Try(() => new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertJson(structureType, json));
+            return Try(() => new InsertHelper(this).InsertJson(structureType, json));
         }
 
         public virtual async Task<string> InsertJsonAsync(Type structureType, string json)
         {
-            return await TryAsync(async () => await new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertJsonAsync(structureType, json));
+            return await TryAsync(async () => await new InsertHelper(this).InsertJsonAsync(structureType, json));
         }
 
         public virtual ISession InsertMany<T>(IEnumerable<T> items) where T : class
         {
-            Try(() => new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertMany(typeof(T), items));
+            Try(() => new InsertHelper(this).InsertMany(typeof(T), items));
             return this;
         }
 
         public virtual async Task<ISession> InsertManyAsync<T>(IEnumerable<T> items) where T : class
         {
-            await TryAsync(async() => await new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertManyAsync(typeof(T), items));
+            await TryAsync(async() => await new InsertHelper(this).InsertManyAsync(typeof(T), items));
             return this;
         }
 
         public virtual ISession InsertMany(Type structureType, IEnumerable<object> items)
         {
-            Try(() => new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertMany(structureType, items));
+            Try(() => new InsertHelper(this).InsertMany(structureType, items));
             return this;
         }
 
         public virtual async Task<ISession> InsertManyAsync(Type structureType, IEnumerable<object> items)
         {
-            await TryAsync(async() => await new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertManyAsync(structureType, items));
+            await TryAsync(async() => await new InsertHelper(this).InsertManyAsync(structureType, items));
             return this;
         }
         
 
         public virtual void InsertManyJson<T>(IEnumerable<string> json) where T : class
         {
-            Try(() => new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertManyJson(typeof(T), json));
+            Try(() => new InsertHelper(this).InsertManyJson(typeof(T), json));
         }
 
         public virtual async Task InsertManyJsonAsync<T>(IEnumerable<string> json) where T : class
         {
-            await TryAsync(async () => await new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertManyJsonAsync(typeof(T), json));
+            await TryAsync(async () => await new InsertHelper(this).InsertManyJsonAsync(typeof(T), json));
         }
 
         public virtual void InsertManyJson(Type structureType, IEnumerable<string> json)
         {
-            Try(() => new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertManyJson(structureType, json));
+            Try(() => new InsertHelper(this).InsertManyJson(structureType, json));
         }
 
         public virtual async Task InsertManyJsonAsync(Type structureType, IEnumerable<string> json)
         {
-            await TryAsync(async() => await new InsertHelper(Db, DbClient, QueryGenerator, this, InternalEvents).InsertManyJsonAsync(structureType, json));
+            await TryAsync(async() => await new InsertHelper(this).InsertManyJsonAsync(structureType, json));
         }
 
 
         public virtual ISession Update<T>(T item) where T : class
         {
-            Try(() => new UpdateHelper(Db, DbClient, QueryGenerator, this, InternalEvents).Update(typeof(T), item));
+            Try(() => new UpdateHelper(this).Update(typeof(T), item));
 
             return this;
         }
 
         public virtual async Task<ISession> UpdateAsync<T>(T item) where T : class
         {
-            await TryAsync(async () => await new UpdateHelper(Db, DbClient, QueryGenerator, this, InternalEvents).UpdateAsync(typeof(T), item));
+            await TryAsync(async () => await new UpdateHelper(this).UpdateAsync(typeof(T), item));
 
             return this;
         }
 
         public virtual ISession Update(Type structureType, object item)
         {
-            Try(() => new UpdateHelper(Db, DbClient, QueryGenerator, this, InternalEvents).Update(structureType, item));
+            Try(() => new UpdateHelper(this).Update(structureType, item));
 
             return this;
         }
 
         public virtual async Task<ISession> UpdateAsync(Type structureType, object item)
         {
-            await TryAsync(async () => await new UpdateHelper(Db, DbClient, QueryGenerator, this, InternalEvents).UpdateAsync(structureType, item));
+            await TryAsync(async () => await new UpdateHelper(this).UpdateAsync(structureType, item));
 
             return this;
         }
@@ -537,14 +540,14 @@ namespace SisoDb
         
         public virtual ISession Update<T>(object id, Action<T> modifier, Func<T, bool> proceed = null) where T : class
         {
-            Try(() => new UpdateHelper(Db, DbClient, QueryGenerator, this, InternalEvents).Update<T, T>(id, modifier, proceed));
+            Try(() => new UpdateHelper(this).Update<T, T>(id, modifier, proceed));
 
             return this;
         }
 
         public virtual async Task<ISession> UpdateAsync<T>(object id, Action<T> modifier, Func<T, bool> proceed = null) where T : class
         {
-            await TryAsync(async () => await new UpdateHelper(Db, DbClient, QueryGenerator, this, InternalEvents).UpdateAsync<T, T>(id, modifier, proceed));
+            await TryAsync(async () => await new UpdateHelper(this).UpdateAsync<T, T>(id, modifier, proceed));
 
             return this;
         }
@@ -553,7 +556,7 @@ namespace SisoDb
             where TContract : class
             where TImpl : class
         {
-            Try(() => new UpdateHelper(Db, DbClient, QueryGenerator, this, InternalEvents).Update<TContract, TImpl>(id, modifier, proceed));
+            Try(() => new UpdateHelper(this).Update<TContract, TImpl>(id, modifier, proceed));
 
             return this;
         }
@@ -562,7 +565,7 @@ namespace SisoDb
             where TContract : class
             where TImpl : class
         {
-            await TryAsync(async () => await new UpdateHelper(Db, DbClient, QueryGenerator, this, InternalEvents).UpdateAsync<TContract, TImpl>(id, modifier, proceed));
+            await TryAsync(async () => await new UpdateHelper(this).UpdateAsync<TContract, TImpl>(id, modifier, proceed));
 
             return this;
         }
@@ -571,126 +574,126 @@ namespace SisoDb
 
         public virtual ISession UpdateMany<T>(Expression<Func<T, bool>> predicate, Action<T> modifier) where T : class
         {
-            Try(() => new UpdateHelper(Db, DbClient, QueryGenerator, this, InternalEvents).UpdateMany(predicate, modifier));
+            Try(() => new UpdateHelper(this).UpdateMany(predicate, modifier));
 
             return this;
         }
 
         public virtual async Task<ISession> UpdateManyAsync<T>(Expression<Func<T, bool>> predicate, Action<T> modifier) where T : class
         {
-            await TryAsync(async () => await new UpdateHelper(Db, DbClient, QueryGenerator, this, InternalEvents).UpdateManyAsync(predicate, modifier));
+            await TryAsync(async () => await new UpdateHelper(this).UpdateManyAsync(predicate, modifier));
 
             return this;
         }
 
         public virtual ISession Clear<T>() where T : class
         {
-            Try(() => new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).Clear(typeof(T)));
+            Try(() => new DeleteHelper(this).Clear(typeof(T)));
 
             return this;
         }
 
         public virtual async Task<ISession> ClearAsync<T>() where T : class
         {
-            await TryAsync(async() => await new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).ClearAsync(typeof(T)));
+            await TryAsync(async() => await new DeleteHelper(this).ClearAsync(typeof(T)));
 
             return this;
         }
 
         public virtual ISession Clear(Type structureType)
         {
-            Try(() => new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).Clear(structureType));
+            Try(() => new DeleteHelper(this).Clear(structureType));
 
             return this;
         }
 
         public virtual async Task<ISession> ClearAsync(Type structureType)
         {
-            await TryAsync(async() => await new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).ClearAsync(structureType));
+            await TryAsync(async() => await new DeleteHelper(this).ClearAsync(structureType));
 
             return this;
         }
 
         public virtual ISession DeleteAllExceptIds<T>(params object[] ids) where T : class
         {
-            Try(() => new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).DeleteAllExceptIds(typeof(T), ids));
+            Try(() => new DeleteHelper(this).DeleteAllExceptIds(typeof(T), ids));
 
             return this;
         }
 
         public virtual async Task<ISession> DeleteAllExceptIdsAsync<T>(params object[] ids) where T : class
         {
-            await TryAsync(async () => await new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).DeleteAllExceptIdsAsync(typeof(T), ids));
+            await TryAsync(async () => await new DeleteHelper(this).DeleteAllExceptIdsAsync(typeof(T), ids));
 
             return this;
         }
 
         public virtual ISession DeleteAllExceptIds(Type structureType, params object[] ids)
         {
-            Try(() => new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).DeleteAllExceptIds(structureType, ids));
+            Try(() => new DeleteHelper(this).DeleteAllExceptIds(structureType, ids));
 
             return this;
         }
 
         public virtual async Task<ISession> DeleteAllExceptIdsAsync(Type structureType, params object[] ids)
         {
-            await TryAsync(async () => await new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).DeleteAllExceptIdsAsync(structureType, ids));
+            await TryAsync(async () => await new DeleteHelper(this).DeleteAllExceptIdsAsync(structureType, ids));
 
             return this;
         }
 
         public virtual ISession DeleteById<T>(object id) where T : class
         {
-            Try(() => new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).DeleteById(typeof(T), id));
+            Try(() => new DeleteHelper(this).DeleteById(typeof(T), id));
 
             return this;
         }
 
         public virtual async Task<ISession> DeleteByIdAsync<T>(object id) where T : class
         {
-            await TryAsync(async () => await new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).DeleteByIdAsync(typeof(T), id));
+            await TryAsync(async () => await new DeleteHelper(this).DeleteByIdAsync(typeof(T), id));
 
             return this;
         }
 
         public virtual ISession DeleteById(Type structureType, object id)
         {
-            Try(() => new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).DeleteById(structureType, id));
+            Try(() => new DeleteHelper(this).DeleteById(structureType, id));
 
             return this;
         }
 
         public virtual async Task<ISession> DeleteByIdAsync(Type structureType, object id)
         {
-            await TryAsync(async () => await new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).DeleteByIdAsync(structureType, id));
+            await TryAsync(async () => await new DeleteHelper(this).DeleteByIdAsync(structureType, id));
 
             return this;
         }
 
         public virtual ISession DeleteByIds<T>(params object[] ids) where T : class
         {
-            Try(() => new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).DeleteByIds(typeof(T), ids));
+            Try(() => new DeleteHelper(this).DeleteByIds(typeof(T), ids));
 
             return this;
         }
 
         public virtual async Task<ISession> DeleteByIdsAsync<T>(params object[] ids) where T : class
         {
-            await TryAsync(async() => await new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).DeleteByIdsAsync(typeof(T), ids));
+            await TryAsync(async() => await new DeleteHelper(this).DeleteByIdsAsync(typeof(T), ids));
 
             return this;
         }
 
         public virtual ISession DeleteByIds(Type structureType, params object[] ids)
         {
-            Try(() => new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).DeleteByIds(structureType, ids));
+            Try(() => new DeleteHelper(this).DeleteByIds(structureType, ids));
 
             return this;
         }
 
         public virtual async Task<ISession> DeleteByIdsAsync(Type structureType, params object[] ids)
         {
-            await TryAsync(async() => await new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).DeleteByIdsAsync(structureType, ids));
+            await TryAsync(async() => await new DeleteHelper(this).DeleteByIdsAsync(structureType, ids));
 
             return this;
         }
@@ -698,14 +701,14 @@ namespace SisoDb
 
         public virtual ISession DeleteByQuery<T>(Expression<Func<T, bool>> predicate) where T : class
         {
-            Try(() => new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).DeleteByQuery(predicate));
+            Try(() => new DeleteHelper(this).DeleteByQuery(predicate));
 
             return this;
         }
 
         public virtual async Task<ISession> DeleteByQueryAsync<T>(Expression<Func<T, bool>> predicate) where T : class
         {
-            await TryAsync(async() => await new DeleteHelper(Db, DbClient, QueryGenerator, this, InternalEvents).DeleteByQueryAsync(predicate));
+            await TryAsync(async() => await new DeleteHelper(this).DeleteByQueryAsync(predicate));
 
             return this;
         }

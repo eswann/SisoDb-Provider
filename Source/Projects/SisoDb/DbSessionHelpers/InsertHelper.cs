@@ -2,19 +2,17 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using SisoDb.Caching;
-using SisoDb.Dac;
 using SisoDb.EnsureThat;
 using SisoDb.NCore.Collections;
-using SisoDb.Querying;
 using SisoDb.Structures;
 using SisoDb.Structures.Schemas;
 
 namespace SisoDb.DbSessionHelpers
 {
-    internal class InsertHelper : ModifyHelper
+    internal class InsertHelper : DbSessionHelper
     {
-        public InsertHelper(ISisoDatabase db, IDbClient dbClient, IDbQueryGenerator queryGenerator, ISession session, SessionEvents internalEvents) 
-            : base(db, dbClient, queryGenerator, session, internalEvents)
+        public InsertHelper(DbSession session)
+            : base(session)
         {
         }
 

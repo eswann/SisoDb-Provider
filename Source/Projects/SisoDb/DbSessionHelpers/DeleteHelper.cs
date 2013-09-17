@@ -4,19 +4,17 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using SisoDb.Caching;
-using SisoDb.Dac;
 using SisoDb.EnsureThat;
 using SisoDb.NCore.Collections;
-using SisoDb.Querying;
 using SisoDb.Structures;
 using SisoDb.Structures.Schemas;
 
 namespace SisoDb.DbSessionHelpers
 {
-    internal class DeleteHelper : ModifyHelper
+    internal class DeleteHelper : DbSessionHelper
     {
-        public DeleteHelper(ISisoDatabase db, IDbClient dbClient, IDbQueryGenerator queryGenerator, ISession session, SessionEvents internalEvents) 
-            : base(db, dbClient, queryGenerator, session, internalEvents)
+        public DeleteHelper(DbSession session)
+            : base(session)
         {
         }
 

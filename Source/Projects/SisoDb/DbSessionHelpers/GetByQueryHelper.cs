@@ -3,17 +3,16 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using SisoDb.Caching;
-using SisoDb.Dac;
 using SisoDb.EnsureThat;
-using SisoDb.Querying;
 using SisoDb.Querying.Sql;
 using SisoDb.Structures.Schemas;
 
 namespace SisoDb.DbSessionHelpers
 {
-    internal class GetByQueryHelper : ReadHelper
+    internal class GetByQueryHelper : DbSessionHelper
     {
-        public GetByQueryHelper(ISisoDatabase db, IDbClient dbClient, IDbQueryGenerator queryGenerator) : base(db, dbClient, queryGenerator)
+        public GetByQueryHelper(DbSession session)
+            : base(session)
         {
         }
 
