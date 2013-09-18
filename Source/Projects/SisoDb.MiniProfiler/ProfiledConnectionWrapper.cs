@@ -12,7 +12,7 @@ namespace SisoDb.MiniProfiler
         {
         }
 
-        public IDbConnection GetInnerConnection()
+        public DbConnection GetInnerConnection()
         {
             return _connection;
         }

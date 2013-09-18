@@ -1,4 +1,4 @@
-﻿using System.Data;
+﻿using System.Data.Common;
 
 namespace SisoDb.Dac.Profiling
 {
@@ -8,6 +8,6 @@ namespace SisoDb.Dac.Profiling
     /// </summary>
     public interface IWrappedConnection
     {
-        IDbConnection GetInnerConnection();
+        DbConnection GetInnerConnection();
     }
 }

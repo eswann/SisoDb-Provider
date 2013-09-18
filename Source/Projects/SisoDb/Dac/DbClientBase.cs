@@ -913,7 +913,8 @@ namespace SisoDb.Dac
         {
             using (var cmd = CreateCommand(sql, parameters))
             {
-                return RetreiveJson(structureSchema, cmd);
+                foreach (var json in RetreiveJson(structureSchema, cmd))
+                    yield return json;
             }
         }
 
@@ -929,7 +930,8 @@ namespace SisoDb.Dac
         {
             using (var cmd = CreateSpCommand(sql, parameters))
             {
-                return RetreiveJson(structureSchema, cmd);
+                foreach (var json in RetreiveJson(structureSchema, cmd))
+                    yield return json;
             }
         }
 

@@ -324,7 +324,9 @@ namespace SisoDb.Querying
 
         public virtual IEnumerable<T> ToEnumerable()
         {
-            return QueryEngine.Query<T>(QueryBuilder.Build());
+            var query = QueryEngine.Query<T>(QueryBuilder.Build());
+
+            return query;
         }
 
         public virtual async Task<IEnumerable<T>> ToEnumerableAsync()

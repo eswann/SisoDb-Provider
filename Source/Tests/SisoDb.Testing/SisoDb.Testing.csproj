@@ -52,7 +52,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="ServiceStack.Text">
-      <HintPath>..\..\packages\ServiceStack.Text.3.9.59\lib\net35\ServiceStack.Text.dll</HintPath>
+      <HintPath>..\..\packages\ServiceStack.Text.3.9.62\lib\net35\ServiceStack.Text.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

@@ -270,7 +270,7 @@ namespace SisoDb.Specifications.Session
             };
 
             Because of =
-                () => CaughtException = Catch.Exception(() => TestContext.Database.UseOnceTo().InsertAsync(new VehicleWithIdentityId { VehRegNo = "ABC123" }));
+                () => CaughtException = Catch.Exception(() => TestContext.Database.UseOnceTo().InsertAsync(new VehicleWithIdentityId { VehRegNo = "ABC123" }).Wait());
 
 
             It should_have_failed = () =>

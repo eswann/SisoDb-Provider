@@ -1,4 +1,3 @@
-using System.Data;
 using System.Data.Common;
 using SisoDb.Dac.Profiling;
 using StackExchange.Profiling.Data;
@@ -15,7 +14,7 @@ namespace SisoDb.MiniProfiler
             Transaction = transaction;
         }
 
-        public virtual IDbTransaction GetInnerTransaction()
+        public virtual DbTransaction GetInnerTransaction()
         {
             return Transaction;
         }
