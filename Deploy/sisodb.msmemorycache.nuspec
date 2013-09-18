@@ -21,11 +21,11 @@
 			<dependency id="SisoDb" version="[$version$]" />
 		</dependencies>
 		<frameworkAssemblies>
-			<frameworkAssembly assemblyName="System.Runtime.Caching" targetFramework="net40" />
+			<frameworkAssembly assemblyName="System.Runtime.Caching" targetFramework="net45" />
 		</frameworkAssemblies>
 	</metadata>
 	<files>
-	  <file src="SisoDb.MsMemoryCache.dll" target="lib\net40\" />
-	  <file src="SisoDb.MsMemoryCache.xml" target="lib\net40\" />
+	  <file src="SisoDb.MsMemoryCache.dll" target="lib\net45\" />
+	  <file src="SisoDb.MsMemoryCache.xml" target="lib\net45\" />
 	</files>
 </package>
