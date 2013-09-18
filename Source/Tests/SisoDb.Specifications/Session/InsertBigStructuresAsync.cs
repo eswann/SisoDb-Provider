@@ -45,7 +45,7 @@ namespace SisoDb.Specifications.Session
             It should_have_thrown_an_exception = () =>
             {
                 CaughtException.ShouldNotBeNull();
-                CaughtException.Message.ShouldStartWith("String truncation: max=4000");
+                UnwrapAggregateException(CaughtException).Message.ShouldStartWith("String truncation: max=4000");
             };
 #endif
             private static Model[] _structures;
@@ -78,7 +78,7 @@ namespace SisoDb.Specifications.Session
             It should_have_thrown_an_exception = () =>
             {
                 CaughtException.ShouldNotBeNull();
-                CaughtException.Message.ShouldEqual(ExceptionMessages.SqlCe4_ToLongIndividualStringValue);
+                UnwrapAggregateException(CaughtException).Message.ShouldEqual(ExceptionMessages.SqlCe4_ToLongIndividualStringValue);
             };
 #endif
         }

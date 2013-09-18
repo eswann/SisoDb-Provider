@@ -563,7 +563,7 @@ namespace SisoDb.Specifications.Session
             It should_have_thrown_a_timeout_exception = () =>
             {
                 CaughtException.ShouldNotBeNull();
-                CaughtException.Message.ShouldContain("SQL Server Compact timed out waiting for a lock");
+                UnwrapAggregateException(CaughtException).Message.ShouldContain("SQL Server Compact timed out waiting for a lock");
             };
 #endif
 
