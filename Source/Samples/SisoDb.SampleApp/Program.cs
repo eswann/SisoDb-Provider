@@ -47,6 +47,7 @@ namespace SisoDb.SampleApp
             //db.Settings.AllowDynamicSchemaUpdates = false;
 
             //To get rid of warm up in tests as it first syncs schemas etc
+            db.Configure().StructureType<Customer>(cfg => cfg.OnlyIndexThis(x => x.CustomerNo));
             db.UpsertStructureSet<Customer>();
 
             InsertCustomers(1, 10000, db);
@@ -54,6 +55,7 @@ namespace SisoDb.SampleApp
             ProfileSyncOperations(db);
 
             db.EnsureNewDatabase();
+            db.Configure().StructureType<Customer>(cfg => cfg.OnlyIndexThis(x => x.CustomerNo));
             db.UpsertStructureSet<Customer>();
 
             InsertCustomers(1, 10000, db);
