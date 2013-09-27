@@ -113,7 +113,7 @@ namespace SisoDb.NCore.Reflections
             if (elementType != null)
                 return elementType;
 
-            if (type.BaseType.IsEnumerableType())
+            if (type.BaseType != null && type.BaseType.IsEnumerableType())
                 elementType = type.BaseType.GetEnumerableElementType();
 
             return elementType;

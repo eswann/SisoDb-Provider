@@ -1,1 +1,1 @@
-rake -f rake-build.rb -t local
+rake -f rake-build.rb -t buildandpackage

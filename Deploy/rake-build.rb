@@ -28,7 +28,7 @@ require 'albacore'
 @env_projectnameSpatial = 'SisoDb.Spatial'
 
 @env_buildfolderpath = 'build'
-@env_assversion = "16.2.1"
+@env_assversion = "17.0.1"
 @env_version = "#{@env_assversion}"
 @env_buildversion = @env_version + (ENV['env_buildnumber'].to_s.empty? ? "" : ".#{ENV['env_buildnumber'].to_s}")
 @env_buildconfigname = ENV['env_buildconfigname'].to_s.empty? ? "Release" : ENV['env_buildconfigname'].to_s
@@ -69,7 +69,9 @@ sharedAssemblyInfoPath = "#{@env_solutionfolderpath}/SharedAssemblyInfo.cs"
 #--------------------------------------
 task :ci => [:installNuGets, :buildIt, :copyIt, :testIt, :zipIt, :packIt]
 
-task :local => [:installNuGets, :cleanIt, :versionIt, :buildIt, :copyIt, :testIt, :zipIt, :packIt]
+task :local => [:cleanIt, :versionIt, :buildIt, :copyIt, :testIt, :zipIt, :packIt]
+
+task :buildandpackage => [:cleanIt, :versionIt, :buildIt, :copyIt, :zipIt, :packIt]
 #--------------------------------------
 task :copyIt => [:copyCore, :copyAzure, :copySql2005, :copySql2008, :copySql2012, :copySqlCe4, :copyMsMemoryCache, :copyDynamic, :copyGlimpse, :copyMiniProfiler, :copyJsonNet, :copyServiceStack, :copySpatial]
 
@@ -227,7 +229,7 @@ zip :zipSpatial do |zip|
 end
 
 def packProject(cmd, projectname, basepath)
-    cmd.command = "NuGet.exe"
+    cmd.command = "#{@env_solutionfolderpath}/.nuget/NuGet.exe"
     cmd.parameters = "pack #{projectname}.nuspec -version #{@env_version} -basepath #{basepath} -outputdirectory #{@env_buildfolderpath}"
 end
 
