@@ -5,11 +5,12 @@ using ServiceStack.Text;
 using SisoDb.EnsureThat;
 using SisoDb.Serialization;
 
+
 namespace SisoDb.ServiceStack
 {
     public class ServiceStackSisoSerializer : ISisoSerializer
     {
-        protected const JsonDateHandler DefaultDateHandler = JsonDateHandler.ISO8601;
+        protected const DateHandler DefaultDateHandler = DateHandler.ISO8601;
 
         protected virtual void OnConfigForSerialization<T>() where T : class
         {

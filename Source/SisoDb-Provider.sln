@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SisoDb", "Projects\SisoDb\SisoDb.csproj", "{B0DBD485-B46D-4566-A755-4BF445FD6375}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Verifications", "Verifications", "{DE508E74-C9A8-4617-A293-AF1FA476CAEE}"
@@ -60,8 +62,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SisoDb.JsonNet", "Projects\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Serialization", "Serialization", "{09987DD7-DBDB-49CB-B064-DBC86BD1C293}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SisoDb.ServiceStack", "Projects\SisoDb.ServiceStack\SisoDb.ServiceStack.csproj", "{D340BBCB-812E-4E48-ABCE-5A2E64AE8D63}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SisoDb.Serialization", "Projects\SisoDb.Serialization\SisoDb.Serialization.csproj", "{5DF24B31-1222-467D-AD80-FD3B97A2671A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SisoDb.Spatial", "Projects\SisoDb.Spatial\SisoDb.Spatial.csproj", "{247A9856-C54B-4B11-8FEB-312FA5E86DFA}"
@@ -76,6 +76,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{261E7E
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SisoDb.ServiceStack", "Projects\SisoDb.ServiceStack\SisoDb.ServiceStack.csproj", "{D340BBCB-812E-4E48-ABCE-5A2E64AE8D63}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -163,10 +165,6 @@ Global
 		{1C63DD91-FC7E-40E0-A546-F206F6923BE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C63DD91-FC7E-40E0-A546-F206F6923BE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C63DD91-FC7E-40E0-A546-F206F6923BE0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D340BBCB-812E-4E48-ABCE-5A2E64AE8D63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D340BBCB-812E-4E48-ABCE-5A2E64AE8D63}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D340BBCB-812E-4E48-ABCE-5A2E64AE8D63}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D340BBCB-812E-4E48-ABCE-5A2E64AE8D63}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5DF24B31-1222-467D-AD80-FD3B97A2671A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5DF24B31-1222-467D-AD80-FD3B97A2671A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5DF24B31-1222-467D-AD80-FD3B97A2671A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -183,6 +181,10 @@ Global
 		{EE91FE36-8CA9-4C99-9444-9773300ABAF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE91FE36-8CA9-4C99-9444-9773300ABAF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE91FE36-8CA9-4C99-9444-9773300ABAF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D340BBCB-812E-4E48-ABCE-5A2E64AE8D63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D340BBCB-812E-4E48-ABCE-5A2E64AE8D63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D340BBCB-812E-4E48-ABCE-5A2E64AE8D63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D340BBCB-812E-4E48-ABCE-5A2E64AE8D63}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -202,7 +204,7 @@ Global
 		{2024BA8F-33C4-4B1F-8101-73CD3B9CAE70} = {7CB84C47-1AD0-4953-A453-69B7C41B1A78}
 		{35D70540-2CB9-4DE7-9741-2292F275518B} = {7CB84C47-1AD0-4953-A453-69B7C41B1A78}
 		{1C63DD91-FC7E-40E0-A546-F206F6923BE0} = {09987DD7-DBDB-49CB-B064-DBC86BD1C293}
-		{D340BBCB-812E-4E48-ABCE-5A2E64AE8D63} = {09987DD7-DBDB-49CB-B064-DBC86BD1C293}
 		{5DF24B31-1222-467D-AD80-FD3B97A2671A} = {09987DD7-DBDB-49CB-B064-DBC86BD1C293}
+		{D340BBCB-812E-4E48-ABCE-5A2E64AE8D63} = {09987DD7-DBDB-49CB-B064-DBC86BD1C293}
 	EndGlobalSection
 EndGlobal
